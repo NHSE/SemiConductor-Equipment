@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemiConductor Equipment", "SemiConductor Equipment.csproj", "{AE85A715-E3F1-4C63-AC11-41B6E80CD484}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE85A715-E3F1-4C63-AC11-41B6E80CD484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE85A715-E3F1-4C63-AC11-41B6E80CD484}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE85A715-E3F1-4C63-AC11-41B6E80CD484}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE85A715-E3F1-4C63-AC11-41B6E80CD484}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB6A96A4-766F-4381-93CD-A65B55226413}
+	EndGlobalSection
+EndGlobal
