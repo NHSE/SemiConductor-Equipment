@@ -31,7 +31,7 @@ namespace SemiConductor_Equipment.Views.Windows
             {
                 ViewModel = viewModel;
                 InitializeComponent();
-                DataContext = viewModel;
+                DataContext = this;
             }
             catch (Exception ex)
             {
@@ -54,6 +54,27 @@ namespace SemiConductor_Equipment.Views.Windows
         public void SetServiceProvider(IServiceProvider serviceProvider)
         {
             throw new NotImplementedException();
+        }
+
+        private void OpenContextMenu()
+        {
+            if (!bMenu.ContextMenu.IsOpen)
+            {
+                bMenu.ContextMenu.PlacementTarget = bMenu;
+                bMenu.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                bMenu.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void bMenu_Click(object sender, RoutedEventArgs e)
+        {
+            OpenContextMenu();
+        }
+
+        private void bMenu_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            OpenContextMenu();
+            e.Handled = true; // 이벤트가 더 이상 전파되지 않게 막음 (선택)
         }
     }
 }

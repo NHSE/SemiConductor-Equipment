@@ -6,17 +6,115 @@
         xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Windows"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:vm="clr-namespace:SemiConductor_Equipment.ViewModels.Windows"
-        d:DataContext="{d:DesignInstance local:MainWindow,
-                                 IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance local:MainWindow, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{Binding ViewModel.ApplicationTitle}" 
-        Height="450" Width="800">
+        Height="600" Width="1000">
+    <Window.Resources>
+        <Style x:Key="ProcessButtonStyle" TargetType="ui:Button">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="MouseOverBackground" Value="#FFD54F"/>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Grid Grid.Column="0" x:Name="Test1" Visibility="Collapsed" Grid.ColumnSpan="2" Margin="0,0,396,0">
-            <ui:Button x:Name="tbkID" Margin="0,0,0,5">
-            </ui:Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0">
+        <ui:Button x:Name="bMenu" Width="60" Height="40"
+            Click="bMenu_Click" MouseRightButtonUp="bMenu_MouseRightButtonUp"
+            Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+            MouseOverBackground="LightGray">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <ui:TextBlock Text="Menu" FontSize="13" FontWeight="Bold" Foreground="Black"/>
+            </StackPanel>
+            <ui:Button.ContextMenu>
+                <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
+                    <MenuItem Header="LOG">
+                        <!-- 서브 메뉴 1의 하위 메뉴 -->
+                        <MenuItem Header="LOG"/>
+                    </MenuItem>
+                    <MenuItem Header="서브 메뉴 2">
+                        <!-- 서브 메뉴 2의 하위 메뉴 -->
+                        <MenuItem Header="서브 메뉴 2-1"/>
+                        <MenuItem Header="서브 메뉴 2-2"/>
+                    </MenuItem>
+                    <MenuItem Header="CEID Setting"/>
+                    <MenuItem Header="IP Setting"/>
+                </ContextMenu>
+            </ui:Button.ContextMenu>
+        </ui:Button>
+    </Grid>
+
+    <Grid Grid.Row="1" Margin="30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                <!-- 포토레지스트리 (2x2) -->
+                <UniformGrid Rows="2" Columns="2" Margin="0,0,0,0">
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR3" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR4" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR7" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR8" Margin="0"/>
+                </UniformGrid>
+                <!-- 버퍼 (2x4) -->
+                <UniformGrid Rows="2" Columns="4" Margin="0,0,0,0">
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B1" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B2" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B3" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B4" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B5" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B6" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B7" Margin="0"/>
+                    <ui:Button Background="#5D4037" Foreground="White" Content="B8" Margin="0"/>
+                </UniformGrid>
+            </StackPanel>
+
+            <!-- 중앙: 로봇 암(Q1, Q1) -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,40,0,40">
+                <ui:Button Background="#F57C00" Foreground="White" Content="Q1" Width="80" Height="60" FontWeight="Bold" FontSize="16" Margin="20,0"/>
+                <ui:Button Background="#F57C00" Foreground="White" Content="Q1" Width="80" Height="60" FontWeight="Bold" FontSize="16" Margin="60,0"/>
+            </StackPanel>
+
+            <!-- 하단: 포토레지스트리(2x2) + 베이크(2x2) (좌우로 붙어서) -->
+            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
+                <!-- 포토레지스트리 (2x2) -->
+                <UniformGrid Rows="2" Columns="2" Margin="0,0,20,0">
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR1" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR2" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR5" Margin="0"/>
+                    <ui:Button Background="#6A1B9A" Foreground="White" Content="PR6" Margin="0"/>
+                </UniformGrid>
+                <!-- 베이크 (2x2) -->
+                <UniformGrid Rows="2" Columns="2" Margin="0,0,0,0">
+                    <ui:Button Background="#1565C0" Foreground="White" Content="Bake1" Margin="0"/>
+                    <ui:Button Background="#1565C0" Foreground="White" Content="Bake2" Margin="0"/>
+                    <ui:Button Background="#1565C0" Foreground="White" Content="Bake3" Margin="0"/>
+                    <ui:Button Background="#1565C0" Foreground="White" Content="Bake4" Margin="0"/>
+                </UniformGrid>
+            </StackPanel>
+
+            <!-- 오른쪽: 큐(Q2, Q3, Q4) 세로 정렬 -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ui:Button Background="#B71C1C" Foreground="White" Content="Q2" Width="80" Height="60" FontWeight="Bold" FontSize="16" Margin="0,10"/>
+                <ui:Button Background="#B71C1C" Foreground="White" Content="Q3" Width="80" Height="60" FontWeight="Bold" FontSize="16" Margin="0,10"/>
+                <ui:Button Background="#B71C1C" Foreground="White" Content="Q4" Width="80" Height="60" FontWeight="Bold" FontSize="16" Margin="0,10"/>
+            </StackPanel>
         </Grid>
-
-
     </Grid>
 </Window>
