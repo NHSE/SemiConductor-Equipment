@@ -26,7 +26,7 @@ namespace SemiConductor_Equipment.Services
                 var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow 인스턴스 생성 성공");
                 Application.Current.MainWindow = mainWindow; // WPF의 MainWindow 속성도 설정
-                mainWindow.ShowWindow();
+                mainWindow.Show();
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow.Show() 호출 완료");
             }
             catch (Exception ex)

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using SemiConductor_Equipment.ViewModels.Windows;
+using SemiConductor_Equipment.Views.Pages;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
 using Wpf.Ui.Appearance;
@@ -24,14 +25,29 @@ namespace SemiConductor_Equipment.Views.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public MainWindowViewModel ViewModel { get; }
         public MainWindow(MainWindowViewModel viewModel)
         {
             try
             {
                 ViewModel = viewModel;
-                InitializeComponent();
                 DataContext = this;
+                InitializeComponent();
+                MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
             }
             catch (Exception ex)
             {
@@ -39,9 +55,6 @@ namespace SemiConductor_Equipment.Views.Windows
                 System.Windows.MessageBox.Show(ex.ToString(), "MainWindow 생성자 예외");
             }
         }
-        public void ShowWindow() => Show();
-
-        public void CloseWindow() => Close();
 
         protected override void OnClosed(EventArgs e)
         {
@@ -55,26 +68,7 @@ namespace SemiConductor_Equipment.Views.Windows
         {
             throw new NotImplementedException();
         }
+        #endregion
 
-        private void OpenContextMenu()
-        {
-            if (!bMenu.ContextMenu.IsOpen)
-            {
-                bMenu.ContextMenu.PlacementTarget = bMenu;
-                bMenu.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-                bMenu.ContextMenu.IsOpen = true;
-            }
-        }
-
-        private void bMenu_Click(object sender, RoutedEventArgs e)
-        {
-            OpenContextMenu();
-        }
-
-        private void bMenu_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            OpenContextMenu();
-            e.Handled = true; // 이벤트가 더 이상 전파되지 않게 막음 (선택)
-        }
     }
 }

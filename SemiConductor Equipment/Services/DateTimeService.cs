@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using Wpf.Ui.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+using SemiConductor_Equipment.interfaces;
 
-namespace SemiConductor_Equipment.ViewModels.Windows
+namespace SemiConductor_Equipment.Services
 {
-    public partial class MainWindowViewModel : ObservableObject
+    class DateTimeService : IDateTime
     {
         #region FIELDS
         #endregion
 
         #region PROPERTIES
-        [ObservableProperty]
-        private string _applicationTitle = "SemiConductor Equipment";
         #endregion
 
         #region CONSTRUCTOR
@@ -26,6 +22,10 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region METHOD
+        public DateTime? GetCurrentTime()
+        {
+            return DateTime.Now;
+        }
         #endregion
     }
 }

@@ -10,6 +10,9 @@ using Wpf.Ui.DependencyInjection;
 using SemiConductor_Equipment.Views.Windows;
 using SemiConductor_Equipment.ViewModels.Windows;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment
 {
@@ -29,8 +32,20 @@ namespace SemiConductor_Equipment
             .ConfigureServices((context, services) =>
             {
                 services.AddHostedService<ApplicationHostService>();
+
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
+
+                services.AddSingleton<MainPage>();
+                services.AddSingleton<MainPageViewModel>();
+
+                services.AddSingleton<LoadPort1_Page>();
+                services.AddSingleton<LoadPort1_ViewModel>();
+
+                services.AddSingleton<LoadPort2_Page>();
+                services.AddSingleton<LoadPort2_ViewModel>();
+
+                services.AddSingleton<IDateTime, DateTimeService>();
 
                 services.AddSingleton<IThemeService, ThemeService>();
 
