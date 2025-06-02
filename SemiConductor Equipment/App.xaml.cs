@@ -13,6 +13,7 @@ using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment
 {
@@ -39,12 +40,18 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<MainPage>();
                 services.AddSingleton<MainPageViewModel>();
 
+                services.AddSingleton<LogPage>();
+                services.AddSingleton<LogPageViewModel>();
+
                 services.AddSingleton<LoadPort1_Page>();
                 services.AddSingleton<LoadPort1_ViewModel>();
 
                 services.AddSingleton<LoadPort2_Page>();
                 services.AddSingleton<LoadPort2_ViewModel>();
 
+                services.AddDbContext<LogDatabaseContext>();
+
+                services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
 
                 services.AddSingleton<IThemeService, ThemeService>();

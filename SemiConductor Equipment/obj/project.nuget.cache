@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2lQYFAWnCDg=",
+  "dgSpecHash": "XyUDk0uF/mQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+  "projectFilePath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\2-2\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\36175\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

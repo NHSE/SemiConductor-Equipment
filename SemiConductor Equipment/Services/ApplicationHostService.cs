@@ -18,7 +18,7 @@ namespace SemiConductor_Equipment.Services
             _serviceProvider = serviceProvider;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -34,10 +34,10 @@ namespace SemiConductor_Equipment.Services
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: 예외 발생: " + ex.ToString());
                 System.Windows.MessageBox.Show(ex.ToString(), "예외 발생");
             }
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        => Task.CompletedTask;
+        public async Task StopAsync(CancellationToken cancellationToken)
+        => await Task.CompletedTask;
     }
 }

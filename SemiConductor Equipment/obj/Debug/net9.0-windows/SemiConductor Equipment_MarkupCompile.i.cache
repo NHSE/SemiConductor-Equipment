@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\obj\Debug\net9.0-windows\
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\
 SemiConductor_Equipment
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\App.xaml
-2-151654708
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\App.xaml
+7-647696276
 1282391436
-10-572618496
+26-1351528181
 2401164365010
-Views\Menus\LoadPortMenu.xaml;Views\Windows\MainWindow.xaml;
+Controls\LoadingControl.xaml;Views\Menus\LoadPortMenu.xaml;Views\Pages\LoadPort1_Page.xaml;Views\Pages\LoadPort2_Page.xaml;Views\Pages\LogPage.xaml;Views\Pages\MainPage.xaml;Views\Windows\MainWindow.xaml;
 
-False
+True
 

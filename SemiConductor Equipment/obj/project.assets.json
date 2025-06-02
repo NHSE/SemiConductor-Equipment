@@ -6973,11 +6973,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+      "projectUniqueName": "C:\\Users\\36175\\OneDrive\\문서\\Project\\2-2\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
       "projectName": "SemiConductor Equipment",
-      "projectPath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+      "projectPath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\2-2\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
       "packagesPath": "C:\\Users\\36175\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\obj\\",
+      "outputPath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\2-2\\SemiConductor Equipment\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

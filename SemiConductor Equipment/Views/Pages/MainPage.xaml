@@ -12,6 +12,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Page1"
       Background="#232C39"
+      Loaded="Page_Loaded"
     >
 
     <Page.Resources>
@@ -49,7 +50,7 @@
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
                                 <MenuItem Header="LOG">
-                                    <MenuItem Header="LOG"/>
+                                    <MenuItem Header="LOG" Click="SubMenu_Log_Click"/>
                                 </MenuItem>
                                 <MenuItem Header="서브 메뉴 2">
                                     <MenuItem Header="서브 메뉴 2-1"/>
@@ -132,26 +133,33 @@
                 </Border>
             </Grid>
 
-            <!-- 하단 정보 패널 -->
+            <!-- 하단 장비 Run 패널 -->
             <Border Background="#1A2233" CornerRadius="12" Margin="24" Height="120"
                 VerticalAlignment="Bottom" Effect="{StaticResource DropShadow}">
                 <Grid Margin="18">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <!-- 센서 정보 -->
-                    <StackPanel>
-                        <controls:LoadingControl x:Name="DataLoadingControl" HorizontalAlignment="Center" Visibility="Visible" Height="66" Width="62"/>
-                        <TextBlock Text="SENSOR DATA" Visibility="Collapsed" Foreground="#B0B7C3" FontWeight="Bold"/>
-                        <TextBlock Text="온도: 23.4℃   진공: 1.2E-5 Torr   알람: 없음" Visibility="Collapsed" Foreground="White" Margin="0,8,0,0"/>
-                    </StackPanel>
+
+                    <Grid Grid.Column="0" ShowGridLines="True">
+                        <ui:Button x:Name="btnRun" Background="ForestGreen" Height="25" Width="40" VerticalAlignment="Top" Margin="46,12,0,0">
+                            <ui:SymbolIcon Symbol="StarThreeQuarter12"/>
+                        </ui:Button>
+                        <ui:Button x:Name="btnStop" Height="25" Width="40" Margin="91,42,0,0" VerticalAlignment="Top"/>
+                        <ui:Button x:Name="btnPause" Height="25" Width="40" Margin="46,42,0,0" VerticalAlignment="Top"/>
+                        <ui:Button x:Name="btnInit" Height="25" Width="40" Margin="91,12,0,0" VerticalAlignment="Top"/>
+                    </Grid>
+
+                    <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />
                     <!-- 로그 -->
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="이벤트 로그" Foreground="#B0B7C3" FontWeight="Bold"/>
-                        <controls:LoadingControl x:Name="LogLoadingControl" Visibility="Visible" Height="66" Width="102"/>
-                        <TextBlock Text="10:01:23 - LoadPort1 OPEN, 10:02:01 - Process Start..." Visibility="Collapsed" Foreground="Orange" Margin="0,8,0,0"/>
-                    </StackPanel>
+                    <Grid Grid.Column="1">
+                        <Viewbox>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0">
+                                <controls:LoadingControl x:Name="LogLoadingControl" Visibility="Visible" Height="67" Width="124"/>
+                            </StackPanel>
+                        </Viewbox>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

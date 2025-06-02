@@ -48,6 +48,10 @@ namespace SemiConductor_Equipment.Views.Pages
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void OpenContextMenu()
         {
             if (!bMenu.ContextMenu.IsOpen)
@@ -90,9 +94,20 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             switch (e.PropertyName)
             {
-
+                case "Logtables": // 이벤트로 온 데이터가 View Model에 ObservableProperty로 선언된 무엇이냐
+                    this.LogLoadingControl.Visibility = Visibility.Collapsed;
+                    break;
             }
         }
         #endregion
+
+        private void SubMenu_Log_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/LogPage.xaml", UriKind.Relative);
+            }
+        }
     }
 }

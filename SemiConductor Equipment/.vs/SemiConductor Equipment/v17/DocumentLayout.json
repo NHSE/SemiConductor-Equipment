@@ -1,53 +1,156 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\",
+  "WorkspaceRootPath": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\loadport1_page.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\loadport1_page.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\loadport2_page.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\loadport2_page.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\logpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\logpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\logpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\logpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\loadport1_page.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\loadport1_page.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\viewmodels\\pages\\logpageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:viewmodels\\pages\\logpageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\loadport2_page.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\loadport2_page.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\services\\logtableservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:services\\logtableservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\interface\\idatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:interface\\idatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\interface\\idatetime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:interface\\idatetime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\models\\logdatabasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:models\\logdatabasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\models\\logtable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:models\\logtable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\models\\chamberlogtable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:models\\chamberlogtable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\services\\datetimeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:services\\datetimeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\pages\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\pages\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\a471b765a5e0bae0afb18649191ffc4599eefb2d24410fddc473056ddd3d3edc\\DefaultBinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\SourceServer\\b99df405426df226594bbf92663bc55fdae9a67c2eb527fd12c9a2078d4472fb\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\PortableThreadPool.WorkerThread.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\SourceServer\\1025858e24a6c8a3bf06ed1e11a7dc390aecd8814da19a51474cae801e183acd\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ThreadPoolWorkQueue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\SourceServer\\8bd8d6d4bf79ee4d3cdd3f2a83f50e64fcb5d36ec5da33c14b525daf1c40fa4e\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ExecutionContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\SourceServer\\dd2ebf7b835bff25266f9bdb6fb24ec9eee30894208529a4b4ddc2d2e8746179\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\Tasks\\Future.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\7359755a63a0eef4e8a101bde875a0a6c6013760bb23441bb9b04a92876a282b\\ExecutionContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\services\\applicationhostservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:services\\applicationhostservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\controls\\loadingcontrol.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:controls\\loadingcontrol.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\views\\menus\\loadportmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\menus\\loadportmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\viewmodels\\pages\\loadport1_viewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:viewmodels\\pages\\loadport1_viewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\viewmodels\\pages\\loadport2_viewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:viewmodels\\pages\\loadport2_viewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\52fdd1c807542d3658f935b8796391dfb3283823\\SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\viewmodels\\windows\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:viewmodels\\windows\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\usings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:usings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\views\\menus\\loadportmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\services\\applicationhostservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:services\\applicationhostservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\72fcc9d293775e3f6181a33f5118555e9cd45b9d8314e8f80a9f5cfe16e57bb4\\App.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\45b150da2e6256716d9b1d4880a6b4afe5ca9368965747505c3469313d5d8054\\DynamicMethodRuntime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\menus\\loadportmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\menus\\loadportmenu.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\semiconductor equipment.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\usings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:usings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\viewmodels\\windows\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:viewmodels\\windows\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\views\\menus\\loadportmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:views\\menus\\loadportmenu.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\semiconductor equipment.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:semiconductor equipment.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\semiconductor equipment\\semiconductor equipment\\wpfui-icon.ico||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "AbsoluteMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|c:\\users\\36175\\onedrive\\\uBB38\uC11C\\project\\2-2\\semiconductor equipment\\wpfui-icon.ico||{177559E0-D141-11D0-92DF-00A0C9138C45}",
       "RelativeMoniker": "D:0:0:{AE85A715-E3F1-4C63-AC11-41B6E80CD484}|SemiConductor Equipment.csproj|solutionrelative:wpfui-icon.ico||{177559E0-D141-11D0-92DF-00A0C9138C45}"
     }
   ],
@@ -58,118 +161,382 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "LogDatabaseContext.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\LogDatabaseContext.cs",
+              "RelativeDocumentMoniker": "Models\\LogDatabaseContext.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\LogDatabaseContext.cs",
+              "RelativeToolTip": "Models\\LogDatabaseContext.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAADwvxsAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:44:54.737Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LogPage.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LogPage.xaml",
+              "RelativeDocumentMoniker": "Views\\Pages\\LogPage.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LogPage.xaml",
+              "RelativeToolTip": "Views\\Pages\\LogPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-30T06:01:33.647Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LogPage.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LogPage.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Pages\\LogPage.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LogPage.xaml.cs",
+              "RelativeToolTip": "Views\\Pages\\LogPage.xaml.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAAAC0AAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:02:14.359Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IDateTime.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\interface\\IDateTime.cs",
+              "RelativeDocumentMoniker": "interface\\IDateTime.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\interface\\IDateTime.cs",
+              "RelativeToolTip": "interface\\IDateTime.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T10:58:07.605Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "LoadPort2_Page.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort2_Page.xaml",
+              "RelativeDocumentMoniker": "Views\\Pages\\LoadPort2_Page.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort2_Page.xaml",
+              "RelativeToolTip": "Views\\Pages\\LoadPort2_Page.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-30T06:02:02.138Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LoadPort1_Page.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort1_Page.xaml",
+              "RelativeDocumentMoniker": "Views\\Pages\\LoadPort1_Page.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort1_Page.xaml",
+              "RelativeToolTip": "Views\\Pages\\LoadPort1_Page.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-30T06:03:04.233Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LoadPort1_Page.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort1_Page.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Pages\\LoadPort1_Page.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort1_Page.xaml.cs",
+              "RelativeToolTip": "Views\\Pages\\LoadPort1_Page.xaml.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAlwB8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T09:23:45.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainPage.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\MainPage.xaml",
+              "RelativeDocumentMoniker": "Views\\Pages\\MainPage.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\MainPage.xaml",
+              "RelativeToolTip": "Views\\Pages\\MainPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-30T05:57:22.219Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "LogPageViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LogPageViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\Pages\\LogPageViewModel.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LogPageViewModel.cs",
+              "RelativeToolTip": "ViewModels\\Pages\\LogPageViewModel.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAADwvz8AAACIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:06:18.398Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Logtable.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\Logtable.cs",
+              "RelativeDocumentMoniker": "Models\\Logtable.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\Logtable.cs",
+              "RelativeToolTip": "Models\\Logtable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:45:04.271Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LogtableService.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\LogtableService.cs",
+              "RelativeDocumentMoniker": "Services\\LogtableService.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\LogtableService.cs",
+              "RelativeToolTip": "Services\\LogtableService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAawC4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T05:49:13.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IDatabase.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\interface\\IDatabase.cs",
+              "RelativeDocumentMoniker": "interface\\IDatabase.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\interface\\IDatabase.cs",
+              "RelativeToolTip": "interface\\IDatabase.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAApwBcAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:09:58.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LoadPort2_Page.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort2_Page.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Pages\\LoadPort2_Page.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\LoadPort2_Page.xaml.cs",
+              "RelativeToolTip": "Views\\Pages\\LoadPort2_Page.xaml.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACAAAABaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:37:38.659Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Chamberlogtable.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\Chamberlogtable.cs",
+              "RelativeDocumentMoniker": "Models\\Chamberlogtable.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Models\\Chamberlogtable.cs",
+              "RelativeToolTip": "Models\\Chamberlogtable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:28:27.528Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Future.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\dd2ebf7b835bff25266f9bdb6fb24ec9eee30894208529a4b4ddc2d2e8746179\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\Tasks\\Future.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\dd2ebf7b835bff25266f9bdb6fb24ec9eee30894208529a4b4ddc2d2e8746179\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\Tasks\\Future.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\dd2ebf7b835bff25266f9bdb6fb24ec9eee30894208529a4b4ddc2d2e8746179\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\Tasks\\Future.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\dd2ebf7b835bff25266f9bdb6fb24ec9eee30894208529a4b4ddc2d2e8746179\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\Tasks\\Future.cs",
+              "ViewState": "AgIAANUBAAAAAAAAAAAiwOkBAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T05:03:57.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "DefaultBinder.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\a471b765a5e0bae0afb18649191ffc4599eefb2d24410fddc473056ddd3d3edc\\DefaultBinder.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\a471b765a5e0bae0afb18649191ffc4599eefb2d24410fddc473056ddd3d3edc\\DefaultBinder.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\a471b765a5e0bae0afb18649191ffc4599eefb2d24410fddc473056ddd3d3edc\\DefaultBinder.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\a471b765a5e0bae0afb18649191ffc4599eefb2d24410fddc473056ddd3d3edc\\DefaultBinder.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "ViewState": "AgIAACAAAAAAAAAAAAAiwD0AAAADAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:06:29.677Z",
+              "EditorCaption": " [\uC77D\uAE30 \uC804\uC6A9]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "DateTimeService.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\DateTimeService.cs",
+              "RelativeDocumentMoniker": "Services\\DateTimeService.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\DateTimeService.cs",
+              "RelativeToolTip": "Services\\DateTimeService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T09:09:48.294Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "MainPage.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\MainPage.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Pages\\MainPage.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Pages\\MainPage.xaml.cs",
+              "RelativeToolTip": "Views\\Pages\\MainPage.xaml.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAswC0AAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:33:04.442Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "ExecutionContext.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\8bd8d6d4bf79ee4d3cdd3f2a83f50e64fcb5d36ec5da33c14b525daf1c40fa4e\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ExecutionContext.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\8bd8d6d4bf79ee4d3cdd3f2a83f50e64fcb5d36ec5da33c14b525daf1c40fa4e\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ExecutionContext.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\8bd8d6d4bf79ee4d3cdd3f2a83f50e64fcb5d36ec5da33c14b525daf1c40fa4e\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ExecutionContext.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\8bd8d6d4bf79ee4d3cdd3f2a83f50e64fcb5d36ec5da33c14b525daf1c40fa4e\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ExecutionContext.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "ViewState": "AgIAAPMAAAAAAAAAAAAiwAcBAAAQAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T11:04:03.296Z",
+              "EditorCaption": " [\uC77D\uAE30 \uC804\uC6A9]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ThreadPoolWorkQueue.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\1025858e24a6c8a3bf06ed1e11a7dc390aecd8814da19a51474cae801e183acd\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ThreadPoolWorkQueue.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\1025858e24a6c8a3bf06ed1e11a7dc390aecd8814da19a51474cae801e183acd\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ThreadPoolWorkQueue.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\1025858e24a6c8a3bf06ed1e11a7dc390aecd8814da19a51474cae801e183acd\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ThreadPoolWorkQueue.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\1025858e24a6c8a3bf06ed1e11a7dc390aecd8814da19a51474cae801e183acd\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\ThreadPoolWorkQueue.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "ViewState": "AgIAAEsEAAAAAAAAAAAiwF8EAAAUAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T11:04:05.309Z",
+              "EditorCaption": " [\uC77D\uAE30 \uC804\uC6A9]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PortableThreadPool.WorkerThread.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\b99df405426df226594bbf92663bc55fdae9a67c2eb527fd12c9a2078d4472fb\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\PortableThreadPool.WorkerThread.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\b99df405426df226594bbf92663bc55fdae9a67c2eb527fd12c9a2078d4472fb\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\PortableThreadPool.WorkerThread.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\SourceServer\\b99df405426df226594bbf92663bc55fdae9a67c2eb527fd12c9a2078d4472fb\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\PortableThreadPool.WorkerThread.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\SourceServer\\b99df405426df226594bbf92663bc55fdae9a67c2eb527fd12c9a2078d4472fb\\src\\libraries\\System.Private.CoreLib\\src\\System\\Threading\\PortableThreadPool.WorkerThread.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAiwH8AAAAYAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T11:04:06.604Z",
+              "EditorCaption": " [\uC77D\uAE30 \uC804\uC6A9]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ExecutionContext.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\7359755a63a0eef4e8a101bde875a0a6c6013760bb23441bb9b04a92876a282b\\ExecutionContext.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\7359755a63a0eef4e8a101bde875a0a6c6013760bb23441bb9b04a92876a282b\\ExecutionContext.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\7359755a63a0eef4e8a101bde875a0a6c6013760bb23441bb9b04a92876a282b\\ExecutionContext.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\7359755a63a0eef4e8a101bde875a0a6c6013760bb23441bb9b04a92876a282b\\ExecutionContext.cs",
+              "ViewState": "AgIAALcAAAAAAAAAAAAiwMsAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:50:27.659Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
               "Title": "App.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\App.xaml.cs",
               "RelativeDocumentMoniker": "App.xaml.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\App.xaml.cs",
               "RelativeToolTip": "App.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB8AAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-26T10:45:44.085Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ApplicationHostService.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Services\\ApplicationHostService.cs",
-              "RelativeDocumentMoniker": "Services\\ApplicationHostService.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Services\\ApplicationHostService.cs",
-              "RelativeToolTip": "Services\\ApplicationHostService.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAUwBgAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T11:16:34.846Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\Windows\\MainWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml.cs",
-              "RelativeToolTip": "Views\\Windows\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAwCYAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T10:42:20.652Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 24,
               "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml",
               "RelativeDocumentMoniker": "Views\\Windows\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml",
               "RelativeToolTip": "Views\\Windows\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-05-26T10:42:03.685Z",
+              "WhenOpened": "2025-05-26T10:42:03.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "LoadingControl.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Controls\\LoadingControl.xaml",
+              "RelativeDocumentMoniker": "Controls\\LoadingControl.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Controls\\LoadingControl.xaml",
+              "RelativeToolTip": "Controls\\LoadingControl.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-30T06:40:35.329Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "LoadPortMenu.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\Menus\\LoadPortMenu.xaml.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml.cs",
-              "RelativeToolTip": "Views\\Menus\\LoadPortMenu.xaml.cs",
+              "DocumentIndex": 25,
+              "Title": "LoadPort1_ViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LoadPort1_ViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\Pages\\LoadPort1_ViewModel.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LoadPort1_ViewModel.cs",
+              "RelativeToolTip": "ViewModels\\Pages\\LoadPort1_ViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T11:52:11.093Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T06:06:43.454Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MainWindowViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\ViewModels\\Windows\\MainWindowViewModel.cs",
-              "RelativeDocumentMoniker": "ViewModels\\Windows\\MainWindowViewModel.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\ViewModels\\Windows\\MainWindowViewModel.cs",
-              "RelativeToolTip": "ViewModels\\Windows\\MainWindowViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 26,
+              "Title": "LoadPort2_ViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LoadPort2_ViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\Pages\\LoadPort2_ViewModel.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Pages\\LoadPort2_ViewModel.cs",
+              "RelativeToolTip": "ViewModels\\Pages\\LoadPort2_ViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T10:25:28.886Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T06:06:39.062Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AssemblyInfo.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\AssemblyInfo.cs",
-              "RelativeDocumentMoniker": "AssemblyInfo.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\AssemblyInfo.cs",
-              "RelativeToolTip": "AssemblyInfo.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 27,
+              "Title": "SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\52fdd1c807542d3658f935b8796391dfb3283823\\SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\52fdd1c807542d3658f935b8796391dfb3283823\\SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\52fdd1c807542d3658f935b8796391dfb3283823\\SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\52fdd1c807542d3658f935b8796391dfb3283823\\SemiConductor_Equipment.ViewModels.Pages.MainPageViewModel.g.cs [\uC77D\uAE30 \uC804\uC6A9]",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAWwFkAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T11:01:55.918Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T05:04:20.762Z",
+              "EditorCaption": " [\uC77D\uAE30 \uC804\uC6A9]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Usings.cs",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Usings.cs",
-              "RelativeDocumentMoniker": "Usings.cs",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Usings.cs",
-              "RelativeToolTip": "Usings.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 28,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Windows\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Windows\\MainWindow.xaml.cs",
+              "RelativeToolTip": "Views\\Windows\\MainWindow.xaml.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAawC8AAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T11:54:20.922Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-26T10:42:20.652Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 29,
               "Title": "App.xaml",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\App.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\App.xaml",
               "RelativeDocumentMoniker": "App.xaml",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\App.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\App.xaml",
               "RelativeToolTip": "App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-05-26T10:37:41.906Z",
@@ -177,36 +544,118 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "LoadPortMenu.xaml",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml",
-              "RelativeDocumentMoniker": "Views\\Menus\\LoadPortMenu.xaml",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml",
-              "RelativeToolTip": "Views\\Menus\\LoadPortMenu.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-05-26T11:09:28.88Z",
-              "EditorCaption": ""
+              "DocumentIndex": 30,
+              "Title": "ApplicationHostService.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\ApplicationHostService.cs",
+              "RelativeDocumentMoniker": "Services\\ApplicationHostService.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Services\\ApplicationHostService.cs",
+              "RelativeToolTip": "Services\\ApplicationHostService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T11:16:34.846Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SemiConductor Equipment",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+              "DocumentIndex": 31,
+              "Title": "App.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\72fcc9d293775e3f6181a33f5118555e9cd45b9d8314e8f80a9f5cfe16e57bb4\\App.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\72fcc9d293775e3f6181a33f5118555e9cd45b9d8314e8f80a9f5cfe16e57bb4\\App.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\72fcc9d293775e3f6181a33f5118555e9cd45b9d8314e8f80a9f5cfe16e57bb4\\App.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\72fcc9d293775e3f6181a33f5118555e9cd45b9d8314e8f80a9f5cfe16e57bb4\\App.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAiwFUAAAAAAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:48:37.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "DynamicMethodRuntime.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\45b150da2e6256716d9b1d4880a6b4afe5ca9368965747505c3469313d5d8054\\DynamicMethodRuntime.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\45b150da2e6256716d9b1d4880a6b4afe5ca9368965747505c3469313d5d8054\\DynamicMethodRuntime.cs",
+              "ToolTip": "C:\\Users\\36175\\AppData\\Local\\Temp\\.vsdbgsrc\\45b150da2e6256716d9b1d4880a6b4afe5ca9368965747505c3469313d5d8054\\DynamicMethodRuntime.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\45b150da2e6256716d9b1d4880a6b4afe5ca9368965747505c3469313d5d8054\\DynamicMethodRuntime.cs",
+              "ViewState": "AgIAAJYAAAAAAAAAAAAiwKoAAAADAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-29T08:48:31.145Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "LoadPortMenu.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\Menus\\LoadPortMenu.xaml.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml.cs",
+              "RelativeToolTip": "Views\\Menus\\LoadPortMenu.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T11:52:11.093Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "MainWindowViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Windows\\MainWindowViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\Windows\\MainWindowViewModel.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\ViewModels\\Windows\\MainWindowViewModel.cs",
+              "RelativeToolTip": "ViewModels\\Windows\\MainWindowViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T10:25:28.886Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "AssemblyInfo.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\AssemblyInfo.cs",
+              "RelativeToolTip": "AssemblyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T11:01:55.918Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "Usings.cs",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Usings.cs",
+              "RelativeDocumentMoniker": "Usings.cs",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Usings.cs",
+              "RelativeToolTip": "Usings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T11:54:20.922Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "LoadPortMenu.xaml",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml",
+              "RelativeDocumentMoniker": "Views\\Menus\\LoadPortMenu.xaml",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\Views\\Menus\\LoadPortMenu.xaml",
+              "RelativeToolTip": "Views\\Menus\\LoadPortMenu.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-26T11:09:28.88Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "SemiConductor Equipment.csproj",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
               "RelativeDocumentMoniker": "SemiConductor Equipment.csproj",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
               "RelativeToolTip": "SemiConductor Equipment.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-05-26T11:03:36.997Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-26T11:03:36.997Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 39,
               "Title": "wpfui-icon.ico - Icon [16x16, 32\uBE44\uD2B8, BMP]",
-              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\wpfui-icon.ico",
+              "DocumentMoniker": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\wpfui-icon.ico",
               "RelativeDocumentMoniker": "wpfui-icon.ico",
-              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\SemiConductor Equipment\\SemiConductor Equipment\\wpfui-icon.ico - Icon [16x16, 32\uBE44\uD2B8, BMP]",
+              "ToolTip": "C:\\Users\\36175\\OneDrive\\\uBB38\uC11C\\Project\\2-2\\SemiConductor Equipment\\wpfui-icon.ico - Icon [16x16, 32\uBE44\uD2B8, BMP]",
               "RelativeToolTip": "wpfui-icon.ico - Icon [16x16, 32\uBE44\uD2B8, BMP]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001525|",
               "WhenOpened": "2025-05-26T11:02:14.058Z",
