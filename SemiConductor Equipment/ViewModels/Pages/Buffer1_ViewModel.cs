@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
-using System.Windows.Threading;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
-    public partial class LogPageViewModel : ObservableObject
+    public partial class Buffer1_ViewModel : ObservableObject
     {
         #region FIELDS
         private bool _isInitialized = false;
@@ -19,49 +18,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region PROPERTIES
         [ObservableProperty]
         private IEnumerable<Chamberlogtable>? _logpagetable;
-
-        [ObservableProperty]
-        private List<string>? _chambername;
-
-        [ObservableProperty]
-        private IEnumerable<string>? _savelogtime;
-
-        [ObservableProperty]
-        private IEnumerable<string>? _selectlogdata;
-
-        [ObservableProperty]
-        private string? _selectChamberName = "ALL";
-
         #endregion
 
         #region CONSTRUCTOR
         #endregion
 
         #region COMMAND
-        [RelayCommand]
-        public void OnSearch()
-        {
-            if (this.SelectChamberName != null)
-            {
-                var data = this._database?.Search(this.SelectChamberName);
-                if(data != null)
-                {
-                    this.Logpagetable = data;
-                }
-                else
-                {
-                    throw new Exception();
-                }
-            }
-        }
         #endregion
 
         #region METHOD
-
-        public LogPageViewModel(IDatabase<Chamberlogtable> database)
+        public Buffer1_ViewModel(IDatabase<Chamberlogtable> database)
         {
             this._database = database;
-            this.Chambername = new List<string>{ "ALL", "LP1", "LP2", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "B1", "B2", "B3", "B4"};
         }
 
         public async Task OnNavigatedToAsync()
@@ -75,8 +43,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             try
             {
-                this.Logpagetable = await Task.Run(() => _database.Get());
-                _isInitialized = true;
+                this.Logpagetable = await Task.Run(() => this._database?.Search("B1"));
             }
             catch (Exception ex)
             {

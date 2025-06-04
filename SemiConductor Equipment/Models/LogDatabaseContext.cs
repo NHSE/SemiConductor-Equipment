@@ -17,8 +17,6 @@ public partial class LogDatabaseContext : DbContext
 
     public virtual DbSet<Chamberlogtable> Chamberlogtables { get; set; }
 
-    public virtual DbSet<Logtable> Logtables { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Database=LogDatabase;Username=postgres;Password=dlsxj159");
@@ -37,19 +35,17 @@ public partial class LogDatabaseContext : DbContext
             entity.Property(e => e.Logdata)
                 .HasColumnType("character varying")
                 .HasColumnName("logdata");
-            entity.Property(e => e.Time).HasColumnName("time");
-        });
-
-        modelBuilder.Entity<Logtable>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("logtable");
-
-            entity.Property(e => e.Log)
+            entity.Property(e => e.LotId)
                 .HasColumnType("character varying")
-                .HasColumnName("log");
+                .HasColumnName("lot_id");
+            entity.Property(e => e.Slot).HasColumnName("slot");
+            entity.Property(e => e.State)
+                .HasColumnType("character varying")
+                .HasColumnName("state");
             entity.Property(e => e.Time).HasColumnName("time");
+            entity.Property(e => e.WaferId)
+                .HasColumnType("character varying")
+                .HasColumnName("wafer_id");
         });
 
         OnModelCreatingPartial(modelBuilder);

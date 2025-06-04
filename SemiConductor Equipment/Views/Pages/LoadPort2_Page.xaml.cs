@@ -21,6 +21,19 @@ namespace SemiConductor_Equipment.Views.Pages
     /// </summary>
     public partial class LoadPort2_Page : Page
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public LoadPort2_Page()
         {
             InitializeComponent();
@@ -33,5 +46,6 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
             }
         }
+        #endregion
     }
 }

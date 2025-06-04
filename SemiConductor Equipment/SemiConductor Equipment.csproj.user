@@ -5,6 +5,18 @@
     <Compile Update="Controls\LoadingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\Buffer1_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Buffer2_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Buffer3_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Buffer4_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\LoadPort1_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

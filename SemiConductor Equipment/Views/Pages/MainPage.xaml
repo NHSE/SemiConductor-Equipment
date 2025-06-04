@@ -101,10 +101,10 @@
                         <StackPanel>
                             <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
-                                <ui:Button Content="B1" Background="#5D4037" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B2" Background="#5D4037" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B3" Background="#5D4037" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B4" Background="#5D4037" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B1" Background="#5D4037" Click="Buffer1_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B2" Background="#5D4037" Click="Buffer2_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B3" Background="#5D4037" Click="Buffer3_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B4" Background="#5D4037" Click="Buffer4_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
                             </UniformGrid>
                         </StackPanel>
                     </Border>

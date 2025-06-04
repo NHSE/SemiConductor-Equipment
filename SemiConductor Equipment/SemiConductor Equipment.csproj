@@ -37,7 +37,7 @@
     <None Remove="Assets\wpfui-icon-1024.png" />
     <None Remove="Resources\Carrier_in_wafer.png" />
     <None Remove="Resources\Carrier_nothing.png" />
-    <None Remove="Resources\loadport.png" />
+    <None Remove="Resources\LoadPort.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +45,7 @@
     <Resource Include="Assets\wpfui-icon-1024.png" />
     <Resource Include="Resources\Carrier_in_wafer.png" />
     <Resource Include="Resources\Carrier_nothing.png" />
+    <Resource Include="Resources\LoadPort.png" />
   </ItemGroup>
 
   <ItemGroup>

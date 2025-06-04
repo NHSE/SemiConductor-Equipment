@@ -9,5 +9,13 @@ public partial class Chamberlogtable
 
     public DateTime? Time { get; set; }
 
+    public short? Slot { get; set; }
+
+    public string? WaferId { get; set; }
+
+    public string? LotId { get; set; }
+
+    public string? State { get; set; }
+
     public string? Logdata { get; set; }
 }

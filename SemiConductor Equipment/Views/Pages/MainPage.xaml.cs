@@ -109,5 +109,41 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Source = new Uri("../Pages/LogPage.xaml", UriKind.Relative);
             }
         }
+
+        private void Buffer1_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer1_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Buffer2_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer2_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Buffer3_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer3_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Buffer4_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer4_Page.xaml", UriKind.Relative);
+            }
+        }
     }
 }

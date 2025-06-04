@@ -1,20 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 using SemiConductor_Equipment.ViewModels.Pages;
 using System.ComponentModel;
-using Microsoft.EntityFrameworkCore.Storage;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
@@ -27,7 +13,20 @@ namespace SemiConductor_Equipment.Views.Pages
     /// </summary>
     public partial class LogPage : Page
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         public LogPageViewModel ViewModel { get; set; }
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public LogPage()
         {
             InitializeComponent();
@@ -61,5 +60,6 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
             }
         }
+        #endregion
     }
 }
