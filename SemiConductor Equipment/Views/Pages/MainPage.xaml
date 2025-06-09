@@ -1,0 +1,169 @@
+﻿<Page x:Class="SemiConductor_Equipment.Views.Pages.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:vm="clr-namespace:SemiConductor_Equipment.ViewModels.Pages"
+      xmlns:controls="clr-namespace:SemiConductor_Equipment.Controls"
+      d:DataContext="{d:DesignInstance local:MainPage, IsDesignTimeCreatable=True}"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Page1"
+      Background="#232C39"
+      Loaded="Page_Loaded"
+    >
+
+    <Page.Resources>
+        <!-- 공통 ui:Button 스타일 -->
+        <Style TargetType="ui:Button" x:Key="ModuleButtonStyle">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="Padding" Value="18 8"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="MouseOverBackground" Value="#4F5B6B"/>
+        </Style>
+        <!-- 그림자 효과 -->
+        <DropShadowEffect x:Key="DropShadow" BlurRadius="8" ShadowDepth="2" Color="#66000000"/>
+    </Page.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid>
+            <!-- 상단 바 -->
+            <DockPanel Height="48" Background="#1A2233" LastChildFill="False" VerticalAlignment="Top" Margin="0,12,0,500">
+                <TextBlock Text="Etcher-3000" FontSize="20" Foreground="White" 
+                       Margin="16,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0,0,16,0">
+                    <Ellipse Width="16" Height="16" Fill="LimeGreen" Margin="8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="NORMAL" Foreground="LimeGreen" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ViewModel.Currenttime}" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Operator: John" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
+                    <ui:Button x:Name="bMenu" Width="60" Height="30"
+                    Click="Menu_Click" MouseRightButtonUp="bMenu_MouseRightButtonUp"
+                    MouseOverBackground="LightGray">
+                        <ui:Button.ContextMenu>
+                            <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
+                                <MenuItem Header="LOG" Click="SubMenu_Log_Click"/>
+                                <MenuItem Header="Equipment Setting"/>
+                                <MenuItem Header="CEID Setting"/>
+                                <MenuItem Header="IP Setting"/>
+                            </ContextMenu>
+                        </ui:Button.ContextMenu>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <ui:TextBlock Text="Menu" FontSize="13" FontWeight="Bold" Foreground="Black"/>
+                        </StackPanel>
+                    </ui:Button>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- 메인 대시보드 -->
+            <Grid Margin="0,60,0,140">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#2F3B4C" CornerRadius="12" Width="150" Height="250" Margin="12" Padding="18" Effect="{StaticResource DropShadow}">
+                    <StackPanel>
+                        <TextBlock Text="LOAD PORT" Foreground="#B0B7C3" FontWeight="Bold" Margin="0 0 0 12"/>
+                        <UniformGrid Rows="2" Columns="1" Width="100">
+                            <ui:Button Width="100" Height="80" Click="LoadPort1_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Image Source="/Resources/Carrier_nothing.png"/>
+                            </ui:Button>
+                            <ui:Button Width="100" Height="80" Click="LoadPort2_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Image Source="/Resources/Carrier_nothing.png"/>
+                            </ui:Button>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 중앙: 버퍼 & 로봇 -->
+                <Grid Grid.Column="1" Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 버퍼 -->
+                    <Border Grid.Row="0" Background="#2F3B4C" CornerRadius="12" Width="350" Height="150" Margin="0 0 0 0" Padding="18" Effect="{StaticResource DropShadow}">
+                        <StackPanel>
+                            <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
+                                <ui:Button Content="B1" Background="#5D4037" Click="Buffer1_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B2" Background="#5D4037" Click="Buffer2_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B3" Background="#5D4037" Click="Buffer3_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B4" Background="#5D4037" Click="Buffer4_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 로봇 -->
+                    <Border Grid.Row="1" Background="#2F3B4C" CornerRadius="12" Width="350" Height="100" Padding="10" Margin="0 0 0 40" Effect="{StaticResource DropShadow}">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <TextBlock Text="ROBOT Arm" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <ui:Button Content="ROBOT Arm" Background="#F57C00" Style="{StaticResource ModuleButtonStyle}" Width="180"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 우측: 챔버 -->
+                <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="310" Padding="18" Effect="{StaticResource DropShadow}">
+                    <StackPanel>
+                        <TextBlock Text="PROCESS CHAMBER" Foreground="#B0B7C3" FontWeight="Bold"/>
+                        <UniformGrid Rows="4" Columns="2" Margin="0 12 0 0">
+                            <ui:Button Content="CH1" Click="Chamber1_Click" Background="#1565C0" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH2" Click="Chamber2_Click" Background="#607D8B" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH3" Click="Chamber3_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH4" Click="Chamber4_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH5" Click="Chamber5_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH6" Click="Chamber6_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 하단 장비 Run 패널 -->
+            <Border Background="#1A2233" CornerRadius="12" Margin="24" Height="120"
+                VerticalAlignment="Bottom" Effect="{StaticResource DropShadow}">
+                <Grid Margin="18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0" ShowGridLines="True">
+                        <ui:Button x:Name="btnRun" Command="{Binding ViewModel.RunCommand}" Background="ForestGreen" Height="38" Width="82" VerticalAlignment="Top" IsEnabled="True" Margin="6,1,0,0">
+                            <ui:TextBlock Text="Run" FontSize="20" HorizontalAlignment="Center"/>
+                        </ui:Button>
+                        <ui:Button x:Name="btnStop" Background="Red" Height="37" Width="83" Margin="96,2,0,0" VerticalAlignment="Top" IsEnabled="False">
+                            <ui:TextBlock Text="Stop" FontSize="20" Width="42" HorizontalAlignment="Center"/>
+                        </ui:Button>
+                        <ui:Button x:Name="btnPause" Background="DarkViolet" Height="36" Width="82" Margin="6,44,0,0" VerticalAlignment="Top" IsEnabled="False">
+                            <ui:TextBlock Text="Pause" FontSize="20" Width="56" HorizontalAlignment="Center" Height="26" RenderTransformOrigin="0.5,0.323"/>
+                        </ui:Button>
+                        <ui:Button x:Name="btnInit" Background="blue" Height="36" Width="83" Margin="96,44,0,0" VerticalAlignment="Top" IsEnabled="True">
+                            <ui:TextBlock Text="Init" FontSize="20" HorizontalAlignment="Center"/>
+                        </ui:Button>
+                    </Grid>
+
+                    <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />
+                    <!-- 로그 -->
+                    <Grid Grid.Column="1" ShowGridLines="True">
+                        <Viewbox>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0">
+                                <controls:LoadingControl x:Name="LogLoadingControl" Visibility="Visible" Height="67" Width="124"/>
+                            </StackPanel>
+                        </Viewbox>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Viewbox>
+</Page>

@@ -70,3 +70,86 @@ C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\o
 C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Windows\MainWindow.baml
 C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Menus\LoadPortMenu.g.cs
 C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Menus\LoadPortMenu.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.csproj.AssemblyReference.cache
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\App.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Controls\LoadingControl.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Menus\LoadPortMenu.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LoadPort1_Page.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LoadPort2_Page.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LogPage.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\MainPage.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Windows\MainWindow.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment_Content.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment_MarkupCompile.cache
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment_MarkupCompile.lref
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\SemiConductor Equipment.exe
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\SemiConductor Equipment.deps.json
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\SemiConductor Equipment.runtimeconfig.json
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\SemiConductor Equipment.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\SemiConductor Equipment.pdb
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Humanizer.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Relational.Design.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.CommandLine.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.Json.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.UserSecrets.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyModel.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Diagnostics.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Hosting.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Configuration.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Console.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Debug.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.EventLog.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.EventSource.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Options.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Microsoft.Extensions.Primitives.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Mono.TextTemplating.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Npgsql.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\System.Diagnostics.EventLog.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Wpf.Ui.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Wpf.Ui.Abstractions.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\Wpf.Ui.DependencyInjection.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\bin\Debug\net9.0-windows\runtimes\win\lib\net9.0\System.Diagnostics.EventLog.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Controls\LoadingControl.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Menus\LoadPortMenu.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LoadPort1_Page.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LoadPort2_Page.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\LogPage.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Pages\MainPage.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\Views\Windows\MainWindow.baml
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.g.resources
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.AssemblyInfoInputs.cache
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.AssemblyInfo.cs
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.csproj.CoreCompileInputs.cache
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiCond.2046AF5A.Up2Date
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\refint\SemiConductor Equipment.dll
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.pdb
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\SemiConductor Equipment.genruntimeconfig.cache
+C:\Users\36175\OneDrive\문서\Project\2-2\SemiConductor Equipment\obj\Debug\net9.0-windows\ref\SemiConductor Equipment.dll

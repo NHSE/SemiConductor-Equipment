@@ -18,7 +18,7 @@ namespace SemiConductor_Equipment.Services
             _serviceProvider = serviceProvider;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace SemiConductor_Equipment.Services
                 var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow 인스턴스 생성 성공");
                 Application.Current.MainWindow = mainWindow; // WPF의 MainWindow 속성도 설정
-                mainWindow.ShowWindow();
+                mainWindow.Show();
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow.Show() 호출 완료");
             }
             catch (Exception ex)
@@ -34,10 +34,10 @@ namespace SemiConductor_Equipment.Services
                 System.Diagnostics.Debug.WriteLine("ApplicationHostService: 예외 발생: " + ex.ToString());
                 System.Windows.MessageBox.Show(ex.ToString(), "예외 발생");
             }
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        => Task.CompletedTask;
+        public async Task StopAsync(CancellationToken cancellationToken)
+        => await Task.CompletedTask;
     }
 }

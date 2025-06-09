@@ -1,0 +1,73 @@
+﻿<Page x:Class="SemiConductor_Equipment.Views.Pages.Chamber3_Page"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:controls="clr-namespace:SemiConductor_Equipment.Controls"
+        xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Pages"
+        d:DataContext="{d:DesignInstance local:Chamber3_Page, IsDesignTimeCreatable=False}"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800"
+        Title="Chamber3_Page"
+        Loaded="Page_Loaded"
+        Background="#232C39">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단 바: 정보 + 뒤로가기 버튼 -->
+        <Border Grid.Row="0" Background="#263043" CornerRadius="8" Margin="12,12,12,8" Padding="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <ui:TextBlock Text="Chamber 3" FontWeight="Bold" FontSize="18" Foreground="White"/>
+                    <ui:TextBlock x:Name="tbkChamberStatus" Text="{Binding ViewModel.StatusText, StringFormat='상태 : {0}'}" Foreground="LightGreen" FontSize="13"/>
+                </StackPanel>
+                <ui:Button x:Name="btnBack"
+                   Grid.Column="1"
+                   Click="btnBack_Click"
+                   MouseOverBackground="LightGray"
+                   Height="34"
+                   Width="44"
+                   Margin="0,10,14,10"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right">
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="Backspace24" Foreground="Black"/>
+                    </ui:Button.Icon>
+                </ui:Button>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
+
+            </Border>
+
+            <!-- 하단: 웨이퍼 상세 목록 -->
+            <Border Grid.Column="1" Background="#263043" CornerRadius="8" Margin="12" Padding="12">
+                <Grid>
+                    <TextBox 
+                        x:Name="tblog"
+                        Text="{Binding ViewModel.LogText}" 
+                        TextWrapping="Wrap"
+                        IsReadOnly="True"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

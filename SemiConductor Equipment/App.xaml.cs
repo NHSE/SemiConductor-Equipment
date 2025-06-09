@@ -10,6 +10,10 @@ using Wpf.Ui.DependencyInjection;
 using SemiConductor_Equipment.Views.Windows;
 using SemiConductor_Equipment.ViewModels.Windows;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment
 {
@@ -29,13 +33,40 @@ namespace SemiConductor_Equipment
             .ConfigureServices((context, services) =>
             {
                 services.AddHostedService<ApplicationHostService>();
+
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
-                services.AddSingleton<IThemeService, ThemeService>();
+                services.AddSingleton<MainPage>();
+                services.AddSingleton<MainPageViewModel>();
 
+                services.AddSingleton<LogPage>();
+                services.AddSingleton<LogPageViewModel>();
+
+                services.AddTransient<Buffer_ViewModel>();
+                services.AddSingleton<Buffer1_Page>();
+                services.AddSingleton<Buffer2_Page>();
+                services.AddSingleton<Buffer3_Page>();
+                services.AddSingleton<Buffer4_Page>();
+
+                services.AddTransient<IChamberService, ChamberService>();
+                services.AddTransient<Chamber_ViewModel>();
+                services.AddSingleton<Chamber1_Page>();
+                services.AddSingleton<IDatabase<ChamberStatus>, ChamberStatusService>();
+
+                services.AddSingleton<IMessageBox, MessageBoxService>();
+                services.AddSingleton<ILogManager, LogService>();
+                services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
+                services.AddSingleton<IDateTime, DateTimeService>();
+                services.AddSingleton<IThemeService, ThemeService>();
                 // TaskBar manipulation
                 services.AddSingleton<ITaskBarService, TaskBarService>();
+
+                services.AddTransient<LoadPort_ViewModel>();
+                services.AddSingleton<LoadPort1_Page>();
+                services.AddSingleton<LoadPort2_Page>();
+
+                services.AddDbContext<LogDatabaseContext>();
             }).Build();
 
         /// <summary>

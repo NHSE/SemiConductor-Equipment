@@ -11,7 +11,21 @@ namespace SemiConductor_Equipment.ViewModels.Windows
 {
     public partial class MainWindowViewModel : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         [ObservableProperty]
         private string _applicationTitle = "SemiConductor Equipment";
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }
