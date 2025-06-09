@@ -15,6 +15,8 @@ public partial class LogDatabaseContext : DbContext
     {
     }
 
+    public virtual DbSet<ChamberStatus> ChamberStatuses { get; set; }
+
     public virtual DbSet<Chamberlogtable> Chamberlogtables { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,6 +25,32 @@ public partial class LogDatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChamberStatus>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("chamber_status");
+
+            entity.Property(e => e.Ch1)
+                .HasColumnType("character varying")
+                .HasColumnName("ch1");
+            entity.Property(e => e.Ch2)
+                .HasColumnType("character varying")
+                .HasColumnName("ch2");
+            entity.Property(e => e.Ch3)
+                .HasColumnType("character varying")
+                .HasColumnName("ch3");
+            entity.Property(e => e.Ch4)
+                .HasColumnType("character varying")
+                .HasColumnName("ch4");
+            entity.Property(e => e.Ch5)
+                .HasColumnType("character varying")
+                .HasColumnName("ch5");
+            entity.Property(e => e.Ch6)
+                .HasColumnType("character varying")
+                .HasColumnName("ch6");
+        });
+
         modelBuilder.Entity<Chamberlogtable>(entity =>
         {
             entity

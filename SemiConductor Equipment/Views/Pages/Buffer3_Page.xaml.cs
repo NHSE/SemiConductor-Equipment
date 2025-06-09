@@ -26,7 +26,7 @@ namespace SemiConductor_Equipment.Views.Pages
     public partial class Buffer3_Page : Page
     {
         #region FIELDS
-        public Buffer3_ViewModel ViewModel { get; set; }
+        public Buffer_ViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
@@ -42,7 +42,7 @@ namespace SemiConductor_Equipment.Views.Pages
         public Buffer3_Page()
         {
             InitializeComponent();
-            ViewModel = new Buffer3_ViewModel(new LogtableService(new LogDatabaseContext()));
+            ViewModel = new Buffer_ViewModel(new LogtableService(new LogDatabaseContext()));
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -61,7 +61,7 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.OnNavigatedToAsync();
+            await ViewModel.OnNavigatedToAsync(3);
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

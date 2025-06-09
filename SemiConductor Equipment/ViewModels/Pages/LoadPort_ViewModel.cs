@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
-    class LoadPort1_ViewModel : ObservableObject
+    class LoadPort_ViewModel : ObservableObject
     {
         #region FIELDS
         #endregion

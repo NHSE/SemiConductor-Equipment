@@ -33,20 +33,20 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region CONSTRUCTOR
+        public MainPageViewModel ViewModel { get; }
+        public MainPage()
+        {
+            InitializeComponent();
+            ViewModel = new MainPageViewModel(new DateTimeService(), new LogService(@"C:\Logs"));
+            DataContext = this;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
         #endregion
 
         #region COMMAND
         #endregion
 
         #region METHOD
-        public MainPageViewModel ViewModel { get; }
-        public MainPage()
-        {
-            InitializeComponent();
-            ViewModel = new MainPageViewModel(new DateTimeService());
-            DataContext = this;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-        }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -99,7 +99,6 @@ namespace SemiConductor_Equipment.Views.Pages
                     break;
             }
         }
-        #endregion
 
         private void SubMenu_Log_Click(object sender, RoutedEventArgs e)
         {
@@ -145,5 +144,60 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Source = new Uri("../Pages/Buffer4_Page.xaml", UriKind.Relative);
             }
         }
+
+        private void Chamber1_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber1_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Chamber2_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber2_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Chamber3_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber3_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Chamber4_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber4_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Chamber5_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber5_Page.xaml", UriKind.Relative);
+            }
+        }
+
+        private void Chamber6_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber6_Page.xaml", UriKind.Relative);
+            }
+        }
+        #endregion
     }
 }

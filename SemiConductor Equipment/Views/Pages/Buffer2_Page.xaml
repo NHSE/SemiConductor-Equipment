@@ -54,7 +54,7 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
-
+                <Image Source="/Resources/Buffer.png"/>
             </Border>
 
             <!-- 하단: 웨이퍼 상세 목록 -->

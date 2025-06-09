@@ -43,21 +43,30 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<LogPage>();
                 services.AddSingleton<LogPageViewModel>();
 
-                services.AddSingleton<LoadPort1_Page>();
-                services.AddSingleton<LoadPort1_ViewModel>();
+                services.AddTransient<Buffer_ViewModel>();
+                services.AddSingleton<Buffer1_Page>();
+                services.AddSingleton<Buffer2_Page>();
+                services.AddSingleton<Buffer3_Page>();
+                services.AddSingleton<Buffer4_Page>();
 
-                services.AddSingleton<LoadPort2_Page>();
-                services.AddSingleton<LoadPort2_ViewModel>();
+                services.AddTransient<IChamberService, ChamberService>();
+                services.AddTransient<Chamber_ViewModel>();
+                services.AddSingleton<Chamber1_Page>();
+                services.AddSingleton<IDatabase<ChamberStatus>, ChamberStatusService>();
 
-                services.AddDbContext<LogDatabaseContext>();
-
+                services.AddSingleton<IMessageBox, MessageBoxService>();
+                services.AddSingleton<ILogManager, LogService>();
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
-
                 services.AddSingleton<IThemeService, ThemeService>();
-
                 // TaskBar manipulation
                 services.AddSingleton<ITaskBarService, TaskBarService>();
+
+                services.AddTransient<LoadPort_ViewModel>();
+                services.AddSingleton<LoadPort1_Page>();
+                services.AddSingleton<LoadPort2_Page>();
+
+                services.AddDbContext<LogDatabaseContext>();
             }).Build();
 
         /// <summary>

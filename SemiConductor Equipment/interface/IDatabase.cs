@@ -22,5 +22,7 @@ namespace SemiConductor_Equipment.interfaces
 
         // 테이블에 특정 Data 삭제
         List<T>? Search(string? chamberName, DateTime? logTime=null);
+
+        List<string>? SearchChamberField(string chamberFieldName);
     }
 }

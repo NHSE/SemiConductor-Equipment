@@ -52,5 +52,10 @@ namespace SemiConductor_Equipment.Services
         {
             throw new NotImplementedException();
         }
+
+        List<string>? IDatabase<Chamberlogtable>.SearchChamberField(string chamberFieldName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
