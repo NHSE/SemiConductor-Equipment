@@ -35,6 +35,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        public LogPageViewModel(IDatabase<Chamberlogtable> database)
+        {
+            this._database = database;
+            this.Chambername = new List<string> { "ALL", "LP1", "LP2", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "B1", "B2", "B3", "B4" };
+        }
         #endregion
 
         #region COMMAND
@@ -57,12 +62,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-
-        public LogPageViewModel(IDatabase<Chamberlogtable> database)
-        {
-            this._database = database;
-            this.Chambername = new List<string>{ "ALL", "LP1", "LP2", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "B1", "B2", "B3", "B4"};
-        }
 
         public async Task OnNavigatedToAsync()
         {

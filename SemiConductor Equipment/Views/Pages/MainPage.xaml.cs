@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
@@ -34,12 +37,20 @@ namespace SemiConductor_Equipment.Views.Pages
 
         #region CONSTRUCTOR
         public MainPageViewModel ViewModel { get; }
-        public MainPage()
+        public MainPage(MainPageViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new MainPageViewModel(new DateTimeService(), new LogService(@"C:\Logs"));
+            ViewModel = viewModel;
             DataContext = this;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            ViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Secsdatalog))
+                {
+                    tbxLogText.ScrollToEnd();
+                }
+            };
+
         }
         #endregion
 
@@ -50,6 +61,26 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            var logmanager = App.Services.GetRequiredService<ILogManager>();
+            var messageHandler = App.Services.GetRequiredService<MessageHandlerService>();
+            SecsGemServer.Initialize(AppendLog, messageHandler);
+        }
+
+        public void AppendLog(string text)
+        {
+            if (tbxLogText.Dispatcher.CheckAccess())
+            {
+                tbxLogText.AppendText($"{text}\n");
+                tbxLogText.ScrollToEnd();
+            }
+            else
+            {
+                tbxLogText.Dispatcher.Invoke(() =>
+                {
+                    tbxLogText.AppendText($"{text}\n");
+                    tbxLogText.ScrollToEnd();
+                });
+            }
         }
 
         private void OpenContextMenu()
@@ -78,7 +109,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/LoadPort1_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<LoadPort1_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
         private void LoadPort2_Click(object sender, RoutedEventArgs e)
@@ -86,17 +118,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/LoadPort2_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "Logtables": // 이벤트로 온 데이터가 View Model에 ObservableProperty로 선언된 무엇이냐
-                    this.LogLoadingControl.Visibility = Visibility.Collapsed;
-                    break;
+                var Change_Page = App.Services.GetRequiredService<LoadPort2_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -114,7 +137,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer1_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Buffer1_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -123,7 +147,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer2_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Buffer2_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -132,7 +157,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer3_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Buffer3_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -141,7 +167,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer4_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Buffer4_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -150,7 +177,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber1_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber1_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -159,7 +187,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber2_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber2_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -168,7 +197,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber3_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber3_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -177,7 +207,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber4_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber4_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -186,7 +217,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber5_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber5_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
 
@@ -195,7 +227,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber6_Page.xaml", UriKind.Relative);
+                var Change_Page = App.Services.GetRequiredService<Chamber6_Page>();
+                mainWindow.MainFrame.Navigate(Change_Page);
             }
         }
         #endregion

@@ -13,39 +13,30 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
-using SemiConductor_Equipment.Models;
-using SemiConductor_Equipment.Services;
-using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.ViewModels.Menus;
+using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
 
-namespace SemiConductor_Equipment.Views.Pages
+namespace SemiConductor_Equipment.Views.Menus
 {
     /// <summary>
-    /// Chamber5_Page.xaml에 대한 상호 작용 논리
+    /// IpSettingMenu.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class Chamber5_Page : Page
+    public partial class IpSettingMenu : Page
     {
         #region FIELDS
-        public Chamber5_ViewModel ViewModel { get; set; }
+        public IpSettingViewModel ViewModels { get; set; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber5_Page(Chamber5_ViewModel viewModel)
+        public IpSettingMenu(IpSettingViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = viewModel;
+            ViewModels = viewModel;
             DataContext = this;
-
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.LogText))
-                {
-                    tblog.ScrollToEnd();
-                }
-            };
         }
         #endregion
 
@@ -53,7 +44,6 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
-
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
@@ -62,11 +52,6 @@ namespace SemiConductor_Equipment.Views.Pages
                 var mainPage = App.Services.GetRequiredService<MainPage>();
                 mainWindow.MainFrame.Navigate(mainPage);
             }
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.OnNavigatedToAsync(5);
         }
         #endregion
     }

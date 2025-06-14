@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
@@ -27,17 +28,17 @@ namespace SemiConductor_Equipment.Views.Pages
     public partial class Chamber1_Page : Page
     {
         #region FIELDS
-        public Chamber_ViewModel ViewModel { get; set; }
+        public Chamber1_ViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber1_Page()
+        public Chamber1_Page(Chamber1_ViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new Chamber_ViewModel(new ChamberStatusService(new LogDatabaseContext()), new LogService(@"C:\Logs"), new ChamberService(), new MessageBoxService(), 1);
+            ViewModel = viewModel;
             DataContext = this;
 
             ViewModel.PropertyChanged += (s, e) =>
@@ -60,7 +61,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
             }
         }
 

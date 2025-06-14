@@ -13,6 +13,7 @@
       Title="Page1"
       Background="#232C39"
       Loaded="Page_Loaded"
+      KeepAlive="True"
     >
 
     <Page.Resources>
@@ -156,11 +157,8 @@
                     <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />
                     <!-- 로그 -->
                     <Grid Grid.Column="1" ShowGridLines="True">
-                        <Viewbox>
-                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0">
-                                <controls:LoadingControl x:Name="LogLoadingControl" Visibility="Visible" Height="67" Width="124"/>
-                            </StackPanel>
-                        </Viewbox>
+                        <TextBox x:Name="tbxLogText" Text="{Binding ViewModel.Secsdatalog}" VerticalScrollBarVisibility="Auto"
+                                    IsReadOnly="True" TextWrapping="Wrap" Foreground="White" Margin="10,0,10,0"/>
                     </Grid>
                 </Grid>
             </Border>

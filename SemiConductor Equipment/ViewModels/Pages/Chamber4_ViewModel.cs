@@ -16,13 +16,14 @@ using System.Data;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
-    public partial class Chamber_ViewModel : ObservableObject
+    public partial class Chamber4_ViewModel : ObservableObject
     {
         #region FIELDS
         private readonly ILogManager _logManager;
         private readonly IChamberService _service;
         private readonly IMessageBox _messageBox;
         private readonly IDatabase<ChamberStatus>? _database;
+        private FileSystemWatcher _logFileWatcher;
         #endregion
 
         #region PROPERTIES
@@ -43,19 +44,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber_ViewModel(IDatabase<ChamberStatus> database, LogService logService, IChamberService service, IMessageBox messageBox, int number)
+        public Chamber4_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IChamberService service, IMessageBox messageBox)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
-            this._logManager.Subscribe($"Chamber{number}", OnLogUpdated);
+            this._logManager.Subscribe($"Chamber4", OnLogUpdated);
 
-            // 최초 진입 시 오늘 로그 파일이 있으면 바로 읽어오기
-            var todayLogPath = System.IO.Path.Combine(
-                @"C:\Logs", $"Chamber{number}_{System.DateTime.Now:yyyyMMdd}.log");
-            if (System.IO.File.Exists(todayLogPath))
-            {
-                this.LogText = System.IO.File.ReadAllText(todayLogPath);
-            }
+            LoadInitialLogs();
+            SetupLogFileWatcher();
 
             this._database = database;
 
@@ -73,6 +69,39 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
+        private void SetupLogFileWatcher()
+        {
+            var logDirectory = @"C:\Logs";
+            var logFileName = $"Chamber4_{DateTime.Now:yyyyMMdd}.log";
+
+            _logFileWatcher = new FileSystemWatcher
+            {
+                Path = logDirectory,
+                Filter = logFileName,
+                NotifyFilter = NotifyFilters.LastWrite
+            };
+
+            _logFileWatcher.Changed += OnLogFileChanged;
+            _logFileWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnLogFileChanged(object sender, FileSystemEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                LogText = File.ReadAllText(e.FullPath);
+            });
+        }
+
+        private void LoadInitialLogs()
+        {
+            var logPath = Path.Combine(@"C:\Logs", $"Chamber4_{DateTime.Now:yyyyMMdd}.log");
+            if (File.Exists(logPath))
+            {
+                LogText = File.ReadAllText(logPath);
+            }
+        }
+
         private void OnLogUpdated(string newLog)
         {
             // UI 스레드에서 속성 갱신

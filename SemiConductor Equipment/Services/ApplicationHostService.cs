@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.Services
@@ -22,12 +24,12 @@ namespace SemiConductor_Equipment.Services
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("ApplicationHostService: StartAsync 진입");
                 var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-                System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow 인스턴스 생성 성공");
+                var loadPortViewModelFactory = _serviceProvider.GetRequiredService<Func<byte, ILoadPortViewModel>>();
+                var vm1 = loadPortViewModelFactory(1); // LoadPort1_ViewModel
+                var vm2 = loadPortViewModelFactory(2); // LoadPort2_ViewModel
                 Application.Current.MainWindow = mainWindow; // WPF의 MainWindow 속성도 설정
                 mainWindow.Show();
-                System.Diagnostics.Debug.WriteLine("ApplicationHostService: MainWindow.Show() 호출 완료");
             }
             catch (Exception ex)
             {

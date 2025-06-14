@@ -17,23 +17,24 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         private readonly IDateTime _iDateTime;
         private readonly DispatcherTimer _timer;
-        private readonly LogService _logService;
         #endregion
 
         #region PROPERTIES
         [ObservableProperty]
         private string? _currenttime;
+        [ObservableProperty]
+        private string? _secsdatalog;
 
-        public Chamber_ViewModel Chamber1 { get; }
-        public Chamber_ViewModel Chamber2 { get; }
-        public Chamber_ViewModel Chamber3 { get; }
-        public Chamber_ViewModel Chamber4 { get; }
-        public Chamber_ViewModel Chamber5 { get; }
-        public Chamber_ViewModel Chamber6 { get; }
+        public Chamber1_ViewModel Chamber1 { get; }
+        public Chamber2_ViewModel Chamber2 { get; }
+        public Chamber3_ViewModel Chamber3 { get; }
+        public Chamber4_ViewModel Chamber4 { get; }
+        public Chamber5_ViewModel Chamber5 { get; }
+        public Chamber6_ViewModel Chamber6 { get; }
         #endregion
 
         #region CONSTRUCTOR
-        public MainPageViewModel(IDateTime iDateTime, LogService logService)
+        public MainPageViewModel(IDateTime iDateTime)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -45,21 +46,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _timer.Tick += (s, e) => this.Currenttime = _iDateTime.GetCurrentTime()?.ToString();
             _timer.Start();
 
-            _logService = logService;
-
-            //뷰모델 등록
-            var chamberService = App.Services.GetService<IChamberService>();
-            var messageBox = App.Services.GetService<IMessageBox>();
-
-            var db = new LogDatabaseContext(); // 실제 DB 컨텍스트
-            IDatabase<ChamberStatus> database = new ChamberStatusService(db);
-
-            Chamber1 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 1);
-            Chamber2 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 2);
-            Chamber3 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 3);
-            Chamber4 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 4);
-            Chamber5 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 5);
-            Chamber6 = new Chamber_ViewModel(database, logService, chamberService, messageBox, 6);
+            Chamber1 = App.Services.GetService<Chamber1_ViewModel>();
+            Chamber2 = App.Services.GetService<Chamber2_ViewModel>();
+            Chamber3 = App.Services.GetService<Chamber3_ViewModel>();
+            Chamber4 = App.Services.GetService<Chamber4_ViewModel>();
+            Chamber5 = App.Services.GetService<Chamber5_ViewModel>();
+            Chamber6 = App.Services.GetService<Chamber6_ViewModel>();
         }
         #endregion
 
@@ -72,7 +64,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHODS
-
+        public void AppendLog(string text)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Secsdatalog += ($"{text}") + "\n";
+            });
+        }
         #endregion
     }
 }

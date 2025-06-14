@@ -7,7 +7,7 @@ using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    internal class MessageBoxService : IMessageBox
+    public partial class MessageBoxService : IMessageBox
     {
         public void Show(string message)
         {

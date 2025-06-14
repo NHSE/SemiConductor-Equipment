@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
@@ -39,10 +40,10 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
-        public Buffer4_Page()
+        public Buffer4_Page(Buffer_ViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new Buffer_ViewModel(new LogtableService(new LogDatabaseContext()));
+            ViewModel = viewModel;
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -55,7 +56,8 @@ namespace SemiConductor_Equipment.Views.Pages
             {
                 this.searchDataLoadingControl.Visibility = Visibility.Visible;
                 this.dtgLogViewer.Visibility = Visibility.Collapsed;
-                mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
             }
         }
 

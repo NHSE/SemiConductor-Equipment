@@ -24,11 +24,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    <PackageReference Include="Secs4Net" Version="2.4.4" />
     <PackageReference Include="WPF-UI" Version="4.0.2" />
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 " />
   </ItemGroup>
 
@@ -48,11 +50,6 @@
     <Resource Include="Resources\Carrier_in_wafer.png" />
     <Resource Include="Resources\Carrier_nothing.png" />
     <Resource Include="Resources\LoadPort.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\Menus\" />
-    <Folder Include="Views\Menus\" />
   </ItemGroup>
 
 </Project>

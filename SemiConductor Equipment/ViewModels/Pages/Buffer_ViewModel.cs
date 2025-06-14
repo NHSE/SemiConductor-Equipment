@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -13,11 +14,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         private bool _isInitialized = false;
         private readonly IDatabase<Chamberlogtable>? _database;
+        private bool _a = false;
         #endregion
 
         #region PROPERTIES
         [ObservableProperty]
         private IEnumerable<Chamberlogtable>? _logpagetable;
+        [ObservableProperty]
+        private string? _imagepath;
+
         #endregion
 
         #region CONSTRUCTOR

@@ -11,6 +11,7 @@
         d:DesignHeight="450" d:DesignWidth="800"
         Title="Chamber3_Page"
         Loaded="Page_Loaded"
+        KeepAlive="True"
         Background="#232C39">
 
     <Grid>
