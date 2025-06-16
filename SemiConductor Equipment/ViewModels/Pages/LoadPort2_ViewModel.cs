@@ -15,7 +15,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly WaferService _waferService;
-        private Wafer _wafer;
         public byte LoadPortId => 2;
         #endregion
 
@@ -55,38 +54,45 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-        public bool Update_Carrier_info(string? carrierId)
+        public bool Update_Carrier_info(Wafer newWaferData)
         {
-            this.CarrierId = carrierId;
-            foreach(int slot in SelectedSlots)
+            foreach (int slot in SelectedSlots)
             {
-                var existingWafer = this.Waferinfo.FirstOrDefault(w => w.LoadportId == this.LoadPortId && w.Wafer_Num == slot);
+                var existingWafer = this.Waferinfo.FirstOrDefault(w =>
+                    w.LoadportId == this.LoadPortId && w.Wafer_Num == slot);
 
                 if (existingWafer != null)
                 {
-                    // 기존 객체가 있으면 값 덮어쓰기
-                    existingWafer.CarrierId = carrierId;
-                    existingWafer.PJId = "";
-                    existingWafer.CJId = "";
-                    existingWafer.SlotId = "";
-                    existingWafer.LotId = "";
+                    // 필요한 값만 갱신
+                    if (!string.IsNullOrEmpty(newWaferData.CarrierId))
+                        existingWafer.CarrierId = newWaferData.CarrierId;
+                    if (!string.IsNullOrEmpty(newWaferData.PJId))
+                        existingWafer.PJId = newWaferData.PJId;
+                    if (!string.IsNullOrEmpty(newWaferData.CJId))
+                        existingWafer.CJId = newWaferData.CJId;
+                    if (!string.IsNullOrEmpty(newWaferData.SlotId))
+                        existingWafer.SlotId = newWaferData.SlotId;
+                    if (!string.IsNullOrEmpty(newWaferData.LotId))
+                        existingWafer.LotId = newWaferData.LotId;
                 }
                 else
                 {
-                    // 없으면 새 객체 추가
+                    // 새 Wafer 추가: 이 경우는 그대로 복사
                     this.Waferinfo.Add(new Wafer
                     {
                         LoadportId = this.LoadPortId,
                         Wafer_Num = slot,
-                        CarrierId = carrierId,
-                        PJId = "",
-                        CJId = "",
-                        SlotId = "",
-                        LotId = ""
+                        CarrierId = newWaferData.CarrierId ?? "",
+                        PJId = newWaferData.PJId ?? "",
+                        CJId = newWaferData.CJId ?? "",
+                        SlotId = newWaferData.SlotId ?? "",
+                        LotId = newWaferData.LotId ?? ""
                     });
                 }
             }
-            return this.CarrierId == carrierId;
+
+            // CarrierId는 Wafer 단위로 관리하므로, 여기서 비교할 필요 없으면 생략 가능
+            return true;
         }
 
         partial void OnSelectedSlotsChanged(List<int> oldValue, List<int> newValue)
@@ -105,13 +111,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     CarrierId = carrierId,
                     PJId = "",
                     CJId = "",
-                    SlotId = "",
+                    SlotId = slot.ToString("D2"),
                     LotId = ""
                 });
             }
         }
 
-        public void HandlePJCommand(string PJjobId)
+        public void HandlePJCommand(string PJjobId, List<int> SlotId)
         {
             this.Waferinfo.Clear();
 
@@ -128,6 +134,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     LotId = $"Lot_{CarrierId}_{slot}"
                 });
             }
+        }
+
+        public string GetCarrierId()
+        {
+            return this.CarrierId;
         }
         #endregion
     }

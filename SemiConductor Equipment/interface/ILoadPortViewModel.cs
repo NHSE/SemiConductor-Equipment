@@ -10,8 +10,11 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface ILoadPortViewModel
     {
-        bool Update_Carrier_info(string? carrierId);
-        void HandlePJCommand(string PJjobId);
+        bool Update_Carrier_info(Wafer newWaferData);
+
+        void HandlePJCommand(string PJjobId, List<int> SlotId);
+
+        public string GetCarrierId();
 
         byte LoadPortId { get; }  // 로드포트 ID 추가
     }

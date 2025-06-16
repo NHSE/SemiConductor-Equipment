@@ -24,6 +24,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private string? _currenttime;
         [ObservableProperty]
         private string? _secsdatalog;
+        [ObservableProperty]
+        private string? _loadport1imagepath;
+        [ObservableProperty]
+        private string? _loadport2imagepath;
+
 
         public Chamber1_ViewModel Chamber1 { get; }
         public Chamber2_ViewModel Chamber2 { get; }

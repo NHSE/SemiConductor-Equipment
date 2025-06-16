@@ -140,18 +140,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0" ShowGridLines="True">
-                        <ui:Button x:Name="btnRun" Command="{Binding ViewModel.RunCommand}" Background="ForestGreen" Height="38" Width="82" VerticalAlignment="Top" IsEnabled="True" Margin="6,1,0,0">
-                            <ui:TextBlock Text="Run" FontSize="20" HorizontalAlignment="Center"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnStop" Background="Red" Height="37" Width="83" Margin="96,2,0,0" VerticalAlignment="Top" IsEnabled="False">
-                            <ui:TextBlock Text="Stop" FontSize="20" Width="42" HorizontalAlignment="Center"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnPause" Background="DarkViolet" Height="36" Width="82" Margin="6,44,0,0" VerticalAlignment="Top" IsEnabled="False">
-                            <ui:TextBlock Text="Pause" FontSize="20" Width="56" HorizontalAlignment="Center" Height="26" RenderTransformOrigin="0.5,0.323"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnInit" Background="blue" Height="36" Width="83" Margin="96,44,0,0" VerticalAlignment="Top" IsEnabled="True">
-                            <ui:TextBlock Text="Init" FontSize="20" HorizontalAlignment="Center"/>
-                        </ui:Button>
+                        
                     </Grid>
 
                     <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />

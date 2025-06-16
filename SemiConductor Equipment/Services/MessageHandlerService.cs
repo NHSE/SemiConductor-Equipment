@@ -97,16 +97,21 @@ namespace SemiConductor_Equipment.Services
                     byte loadportId = msg.SecsItem[3].FirstValue<byte>();
                     bool success = false;
 
+                    var waferData = new Wafer
+                    {
+                        CarrierId = carrierId
+                    };
+
                     var viewModel = _loadPortFactory(loadportId);
                     if (viewModel != null)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            success = viewModel.Update_Carrier_info(carrierId);
+                            success = viewModel.Update_Carrier_info(waferData);
                         });
                     }
 
-                    if (success)
+                    if (success && msg.ReplyExpected)
                     {
                         // S3F18 응답 (ACK)
                         var reply = new SecsMessage(3, 18)
@@ -126,7 +131,7 @@ namespace SemiConductor_Equipment.Services
                         _logManager.WriteLog("SECS", "RECV", recv_logMessage);
                         _logAction?.Invoke(recv_logMessage);
                     }
-                    else
+                    else if(msg.ReplyExpected && !success)
                     {
                         var reply = new SecsMessage(3, 18)
                         {
@@ -166,18 +171,57 @@ namespace SemiConductor_Equipment.Services
             else if (msg.S == 16 && msg.F == 11)
             {
                 // S3F17: 웨이퍼 정보 수신
-                string? cmd = msg?.SecsItem?[1].GetString();
+                string? pjId = msg?.SecsItem?[1].GetString();
+                string? carrierId = msg?.SecsItem?[3][0][0].GetString();
+                //var list = msg?.SecsItem?[3][0][1];
 
-                string? carrierId = msg?.SecsItem?[2].GetString();
-                byte loadportId = msg.SecsItem[3].FirstValue<byte>();
+                bool success = false;
 
-                var waferService = App.Services.GetRequiredService<WaferService>();
-
-                // S3F18 응답 (ACK)
-                var reply = new SecsMessage(16, 12)
+                for (byte loadportId = 1; loadportId <= 2; loadportId++)
                 {
-                    Name = "ProceedWithCarrier",
-                    SecsItem = L(
+                    var viewModel = _loadPortFactory(loadportId);
+                    if (viewModel != null)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (carrierId == viewModel.GetCarrierId())
+                            {
+                                var waferData = new Wafer
+                                {
+                                    PJId = pjId
+                                };
+                                success = viewModel.Update_Carrier_info(waferData);
+                            }
+                        });
+                    }
+                }
+
+                if (success && msg.ReplyExpected)
+                {
+                    // S3F18 응답 (ACK)
+                    var reply = new SecsMessage(16, 12)
+                    {
+                        Name = "ProceedWithCarrier",
+                        SecsItem = L(
+                                        U1(0),
+                                        L(
+                                            L(
+                                                U4(0),
+                                                A("no error")
+                                              )
+                                          )
+                                     )
+                    };
+                    await wrapper.TryReplyAsync(reply);
+                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    _logAction?.Invoke(recv_logMessage);
+                }
+                else if (msg.ReplyExpected && !success)
+                {
+                    var reply = new SecsMessage(16, 12)
+                    {
+                        Name = "test",
+                        SecsItem = L(
                                     U1(0),
                                     L(
                                         L(
@@ -186,16 +230,15 @@ namespace SemiConductor_Equipment.Services
                                           )
                                       )
                                  )
-                };
-                await wrapper.TryReplyAsync(reply);
-            }
+                    };
+                    await wrapper.TryReplyAsync(reply);
+                }
 
+            }
 
             // W-bit 응답
             if (msg.ReplyExpected)
             {
-                var ack = new SecsMessage(msg.S, (byte)(msg.F + 1), true);
-                await wrapper.TryReplyAsync(ack);
                 _logManager.WriteLog("SECS", "SEND", send_logMessage);
                 _logAction?.Invoke(send_logMessage);
 
