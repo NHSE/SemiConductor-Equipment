@@ -20,7 +20,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly ILogManager _logManager;
-        private readonly IChamberService _service;
         private readonly IMessageBox _messageBox;
         private readonly IDatabase<ChamberStatus>? _database;
         private FileSystemWatcher _logFileWatcher;
@@ -44,7 +43,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber4_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IChamberService service, IMessageBox messageBox)
+        public Chamber4_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IMessageBox messageBox)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -55,9 +54,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             this._database = database;
 
-            this._service = service;
             this._messageBox = messageBox;
-            this._service.ErrorOccurred += OnErrorOccurred;
 
             this.IsReadyToRun = false;
             this.HasWafer = false;
@@ -106,39 +103,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             // UI 스레드에서 속성 갱신
             App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
-        }
-
-        private void OnErrorOccurred(string message)
-        {
-            this._messageBox.Show(message);
-        }
-
-        public void PrepareRun(int number)
-        {
-            IsReadyToRun = true;
-            TryStartRun(number);
-        }
-
-        // 외부(센서/SECS 등)에서 웨이퍼 감지 시 호출
-        public void OnWaferInserted(int number)
-        {
-            HasWafer = true;
-            TryStartRun(number);
-        }
-
-        private void TryStartRun(int number)
-        {
-            if (IsReadyToRun && HasWafer)
-            {
-                StartRun(number);
-                IsReadyToRun = false; // 1회성 실행이라면 해제
-            }
-        }
-
-        private void StartRun(int number)
-        {
-            // 실제 챔버 동작 로직
-            this._service.RunChamber(number);
         }
 
         public async Task OnNavigatedToAsync(int? number)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace SemiConductor_Equipment.Views.Pages
     {
         #region FIELDS
         public LoadPort1_ViewModel ViewModel { get; }
+        private Dictionary<int, Line> _slotLines = new();
         #endregion
 
         #region PROPERTIES
@@ -71,19 +73,47 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var line in mainCanvas.Children.OfType<Line>().ToList())
+            mainCanvas.Children.Clear();
+        }
+
+        private void Remove_WaferLine(int slot)
+        {
+            if (_slotLines.TryGetValue(slot, out var line))
             {
                 mainCanvas.Children.Remove(line);
+                _slotLines.Remove(slot);
             }
+        }
+
+        private void Add_WaferLine(int slot)
+        {
+            double TopY = 90;
+            double BottomY = 350;
+            double XStart = 50;
+            double XEnd = 270;
+            int SlotCount = 25;
+            double GapY = (BottomY - TopY) / (SlotCount - 1);
+
+            if (slot < 0 || slot >= SlotCount) return;
+
+            double y = BottomY - slot * GapY;
+            var line = new Line
+            {
+                X1 = XStart,
+                X2 = XEnd,
+                Y1 = y,
+                Y2 = y,
+                Stroke = Brushes.Green,
+                StrokeThickness = 6
+            };
+
+            _slotLines[slot] = line;
+            mainCanvas.Children.Add(line);
         }
 
         private void DrawLinesBasedOnSelectedSlots(List<int> selectedSlots)
         {
-            // 기존 라인 모두 제거
-            foreach (var line in mainCanvas.Children.OfType<Line>().ToList())
-            {
-                mainCanvas.Children.Remove(line);
-            }
+            mainCanvas.Children.Clear();
 
             // 선택된 슬롯에 따라 라인 추가
             double TopY = 90;
@@ -107,6 +137,8 @@ namespace SemiConductor_Equipment.Views.Pages
                     Stroke = Brushes.White,
                     StrokeThickness = 6
                 };
+
+                _slotLines[slotIndex] = line;
                 mainCanvas.Children.Add(line);
             }
         }

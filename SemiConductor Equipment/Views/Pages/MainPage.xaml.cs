@@ -43,15 +43,12 @@ namespace SemiConductor_Equipment.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
 
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.Secsdatalog))
-                {
-                    tbxLogText.ScrollToEnd();
-                }
-            };
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
+            this.imgLp1.Source = new BitmapImage(new Uri("/Resources/Carrier_nothing.png", UriKind.Relative));
+            this.imgLp2.Source = new BitmapImage(new Uri("/Resources/Carrier_nothing.png", UriKind.Relative));
         }
+
         #endregion
 
         #region COMMAND
@@ -59,25 +56,43 @@ namespace SemiConductor_Equipment.Views.Pages
 
         #region METHOD
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var logmanager = App.Services.GetRequiredService<ILogManager>();
-            var messageHandler = App.Services.GetRequiredService<MessageHandlerService>();
-            SecsGemServer.Initialize(AppendLog, messageHandler);
+            if (e.PropertyName == "Secsdatalog")
+            {
+                this.tbxLogText.ScrollToEnd();
+            }
+            else if(e.PropertyName == "Loadport1imagepath")
+            {
+                this.imgLp1.Source = new BitmapImage(new Uri(ViewModel.Loadport1imagepath, UriKind.Relative));
+            }
+            else if (e.PropertyName == "Loadport2imagepath")
+            {
+                this.imgLp2.Source = new BitmapImage(new Uri(ViewModel.Loadport2imagepath, UriKind.Relative));
+            }
+            else if(e.PropertyName == "Equipment_state")
+            {
+                this.elpsstate.Fill = ViewModel.Equipment_color;
+                this.tbkstate.Foreground = ViewModel.Equipment_color;
+                this.tbkstate.Text = ViewModel.Equipment_state;
+            }
         }
 
-        public void AppendLog(string text)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void Scroll()
         {
             if (tbxLogText.Dispatcher.CheckAccess())
             {
-                tbxLogText.AppendText($"{text}\n");
                 tbxLogText.ScrollToEnd();
             }
             else
             {
                 tbxLogText.Dispatcher.Invoke(() =>
                 {
-                    tbxLogText.AppendText($"{text}\n");
                     tbxLogText.ScrollToEnd();
                 });
             }

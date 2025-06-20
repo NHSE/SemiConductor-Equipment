@@ -47,13 +47,14 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IpSettingMenu>();
                 services.AddSingleton<IpSettingViewModel>();
 
+                services.AddSingleton<BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
                 services.AddSingleton<Buffer1_Page>();
                 services.AddSingleton<Buffer2_Page>();
                 services.AddSingleton<Buffer3_Page>();
                 services.AddSingleton<Buffer4_Page>();
 
-                services.AddSingleton<IChamberService, ChamberService>();
+                services.AddSingleton<ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();
                 services.AddSingleton<Chamber2_ViewModel>();
                 services.AddSingleton<Chamber3_ViewModel>();
@@ -101,6 +102,10 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<MessageHandlerService>();
                 services.AddSingleton<SecsGemServer>();
                 services.AddSingleton<WaferService>();
+                services.AddSingleton<WaferProcessCoordinatorService>();
+                services.AddSingleton<LoadPortService>();
+                services.AddSingleton<RobotArmService>();
+                services.AddSingleton<RunningStateService>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);

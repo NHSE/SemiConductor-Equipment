@@ -20,11 +20,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly ILogManager _logManager;
-        private readonly IChamberService _service;
         private readonly IMessageBox _messageBox;
         private readonly IDatabase<ChamberStatus>? _database;
+        private readonly ChamberService _service;
         private FileSystemWatcher _logFileWatcher;
-        private bool a;
+        private long lastLogPosition = 0;
         #endregion
 
         #region PROPERTIES
@@ -42,10 +42,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private List<string>? _logpagetable;
+
+        [ObservableProperty]
+        private bool _isWafer;
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber1_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IChamberService service, IMessageBox messageBox)
+        public Chamber1_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IMessageBox messageBox, ChamberService service)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -56,12 +59,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             this._database = database;
 
-            this._service = service;
             this._messageBox = messageBox;
-            this._service.ErrorOccurred += OnErrorOccurred;
 
             this.IsReadyToRun = false;
             this.HasWafer = false;
+            this._service = service;
+
+            this._service.DataEnqueued += OnDataEnqueued;
 
         }
         #endregion
@@ -91,7 +95,26 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                LogText = File.ReadAllText(e.FullPath);
+                try
+                {
+                    using (var fs = new FileStream(e.FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        fs.Seek(lastLogPosition, SeekOrigin.Begin);
+                        using (var reader = new StreamReader(fs))
+                        {
+                            string newText = reader.ReadToEnd();
+                            if (!string.IsNullOrEmpty(newText))
+                            {
+                                LogText += newText;
+                            }
+                            lastLogPosition = fs.Position;
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    // 파일이 잠겨있을 수 있으니 예외 무시 또는 재시도 로직 추가 가능
+                }
             });
         }
 
@@ -108,39 +131,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             // UI 스레드에서 속성 갱신
             App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
-        }
-
-        private void OnErrorOccurred(string message)
-        {
-            this._messageBox.Show(message);
-        }
-
-        public void PrepareRun(int number)
-        {
-            this.IsReadyToRun = true;
-            TryStartRun(number);
-        }
-
-        // 외부(센서/SECS 등)에서 웨이퍼 감지 시 호출
-        public void OnWaferInserted(int number)
-        {
-            this.HasWafer = true;
-            TryStartRun(number);
-        }
-
-        private void TryStartRun(int number)
-        {
-            if (this.IsReadyToRun && this.HasWafer)
-            {
-                StartRun(number);
-                this.IsReadyToRun = false; // 1회성 실행이라면 해제
-            }
-        }
-
-        private void StartRun(int number)
-        {
-            // 실제 챔버 동작 로직
-            this._service.RunChamber(number);
         }
 
         public async Task OnNavigatedToAsync(int? number)
@@ -160,6 +150,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 throw new Exception();
             }
+        }
+
+        private void OnDataEnqueued(object sender, string chambername)
+        {
+            // 큐에 데이터가 들어왔을 때 실행할 코드
+            // 필요하다면 _service에서 직접 큐 상태를 조회할 수 있음
+            //이벤트 넘겨줄때 챔버 네임 넘겨서 받아야함
+            //그 이후 각 뷰모델에서 자기 이름과 같으면 bool 반전
+            if(chambername == "Chamber1")
+                this.IsWafer = !this.IsWafer;
         }
         #endregion
     }

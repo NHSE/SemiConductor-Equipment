@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SemiConductor_Equipment.Enums
 {
-    public enum ChamberStatusEnum
+    public enum EquipmentStatusEnum
     {
-        Idle,       // 대기 중
+        Ready,       // 대기 중
         Running,    // 동작 중
-        Error,      // 에러
-        Completed   // 작업 완료
+        Completed,   // 작업 완료
+        Error
     }
 }

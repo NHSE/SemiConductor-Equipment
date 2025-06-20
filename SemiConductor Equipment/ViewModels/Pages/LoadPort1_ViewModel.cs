@@ -7,7 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Navigation;
+using CommunityToolkit.Mvvm.Messaging;
 using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
 
@@ -41,6 +43,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public LoadPort1_ViewModel(WaferService waferService)
         {
             _waferService = waferService;
+            PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "IsSetupEnabled")
+            {
+                if(!this.IsSetupEnabled)
+                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
+                else
+                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
+            }
         }
         #endregion
 
@@ -50,14 +64,19 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             this.Waferinfo.Clear();
             this.SelectedSlots?.Clear();
-            IsSetupEnabled = true;    // Setup 활성
-            IsCancelEnabled = false;
+            this.IsSetupEnabled = true;    // Setup 활성
+            this.IsCancelEnabled = false;
         }
         #endregion
 
         #region METHOD
         public bool Update_Carrier_info(Wafer newWaferData)
         {
+            if(SelectedSlots.Count == 0)
+            {
+                return false;
+            }
+
             foreach (int slot in SelectedSlots)
             {
                 var existingWafer = this.Waferinfo.FirstOrDefault(w =>
@@ -122,28 +141,23 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        public void HandlePJCommand(string PJjobId, List<int> SlotId)
-        {
-            this.Waferinfo.Clear();
-
-            foreach (int slot in SlotId.OrderBy(x => x))
-            {
-                this.Waferinfo.Add(new Wafer
-                {
-                    LoadportId = this.LoadPortId,
-                    CarrierId = CarrierId ?? "UNKNOWN",
-                    Wafer_Num = slot,
-                    PJId = PJjobId,
-                    CJId = "",
-                    SlotId = PJjobId + "." + slot,
-                    LotId = $"Lot_{CarrierId}_{slot}"
-                });
-            }
-        }
-
         public string GetCarrierId()
         {
             return this.CarrierId;
+        }
+
+        public List<Wafer> GetAllWaferInfo(string pjid)
+        {
+            // 필요하다면 LoadPortId로 필터링
+            return this.Waferinfo
+                .Where(w => w.PJId == pjid)
+                .ToList();
+        }
+
+        public string GetPJId(byte loadportId)
+        {
+            string pjid = this.Waferinfo[loadportId].PJId;
+            return pjid;
         }
         #endregion
     }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
@@ -17,6 +19,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         private readonly IDateTime _iDateTime;
         private readonly DispatcherTimer _timer;
+        private readonly ILogManager _logmanager;
+        private readonly MessageHandlerService _messageHandler;
+        private readonly RunningStateService _runningStateService;
         #endregion
 
         #region PROPERTIES
@@ -28,18 +33,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private string? _loadport1imagepath;
         [ObservableProperty]
         private string? _loadport2imagepath;
+        [ObservableProperty]
+        private Brush? _equipment_color;
+        [ObservableProperty]
+        private string? _equipment_state;
 
-
-        public Chamber1_ViewModel Chamber1 { get; }
-        public Chamber2_ViewModel Chamber2 { get; }
-        public Chamber3_ViewModel Chamber3 { get; }
-        public Chamber4_ViewModel Chamber4 { get; }
-        public Chamber5_ViewModel Chamber5 { get; }
-        public Chamber6_ViewModel Chamber6 { get; }
         #endregion
 
         #region CONSTRUCTOR
-        public MainPageViewModel(IDateTime iDateTime)
+        public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, MessageHandlerService messageHandler, RunningStateService runningStateService)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -51,12 +53,36 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _timer.Tick += (s, e) => this.Currenttime = _iDateTime.GetCurrentTime()?.ToString();
             _timer.Start();
 
-            Chamber1 = App.Services.GetService<Chamber1_ViewModel>();
-            Chamber2 = App.Services.GetService<Chamber2_ViewModel>();
-            Chamber3 = App.Services.GetService<Chamber3_ViewModel>();
-            Chamber4 = App.Services.GetService<Chamber4_ViewModel>();
-            Chamber5 = App.Services.GetService<Chamber5_ViewModel>();
-            Chamber6 = App.Services.GetService<Chamber6_ViewModel>();
+            this._runningStateService = runningStateService;
+            this._runningStateService.DataChange += OnEquipment_State_Change;
+
+            this._logmanager = logmanager;
+            this._messageHandler = messageHandler;
+
+            this.Equipment_color = Brushes.LightBlue;
+            this.Equipment_state = "Ready";
+
+            SecsGemServer.Initialize(AppendLog, messageHandler);
+
+            WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
+            {
+                switch (m.Content)
+                {
+                    case "LoadPort1_in_wafer":
+                        this.Loadport1imagepath = "/Resources/Carrier_in_wafer.png";
+                        break;
+                    case "LoadPort1":
+                        this.Loadport1imagepath = "/Resources/Carrier_nothing.png";
+                        break;
+                    case "LoadPort2_in_wafer":
+                        this.Loadport2imagepath = "/Resources/Carrier_in_wafer.png";
+                        break;
+                    case "LoadPort2":
+                        this.Loadport2imagepath = "/Resources/Carrier_nothing.png";
+                        break;
+                        // 추가 분기 가능
+                }
+            });
         }
         #endregion
 
@@ -64,11 +90,35 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Run()
         {
-            Chamber1.PrepareRun(1);
+            
         }
         #endregion
 
         #region METHODS
+        private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
+        {
+            if (state == EquipmentStatusEnum.Running)
+            {
+                this.Equipment_color = Brushes.Orange;
+                this.Equipment_state = "Running";
+            }
+            else if(state == EquipmentStatusEnum.Completed)
+            {
+                this.Equipment_color = Brushes.LimeGreen;
+                this.Equipment_state = "Completed";
+            }
+            else if(state == EquipmentStatusEnum.Error)
+            {
+                this.Equipment_color = Brushes.Red;
+                this.Equipment_state = "Error";
+            }
+            else
+            {
+                this.Equipment_color = Brushes.LightBlue;
+                this.Equipment_state = "Ready";
+            }
+        }
+
         public void AppendLog(string text)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -76,6 +126,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 Secsdatalog += ($"{text}") + "\n";
             });
         }
+
         #endregion
     }
 }

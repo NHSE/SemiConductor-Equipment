@@ -41,10 +41,9 @@
                 <TextBlock Text="Etcher-3000" FontSize="20" Foreground="White" 
                        Margin="16,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0,0,16,0">
-                    <Ellipse Width="16" Height="16" Fill="LimeGreen" Margin="8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="NORMAL" Foreground="LimeGreen" VerticalAlignment="Center"/>
+                    <Ellipse x:Name="elpsstate" Width="16" Height="16" Fill="{Binding ViewModel.Equipment_color}" Margin="8,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="tbkstate" Text="{Binding ViewModel.Equipment_state}" Foreground="{Binding ViewModel.Equipment_color}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ViewModel.Currenttime}" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Operator: John" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
                     <ui:Button x:Name="bMenu" Width="60" Height="30"
                     Click="Menu_Click" MouseRightButtonUp="bMenu_MouseRightButtonUp"
                     MouseOverBackground="LightGray">
@@ -76,10 +75,10 @@
                         <TextBlock Text="LOAD PORT" Foreground="#B0B7C3" FontWeight="Bold" Margin="0 0 0 12"/>
                         <UniformGrid Rows="2" Columns="1" Width="100">
                             <ui:Button Width="100" Height="80" Click="LoadPort1_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Image Source="/Resources/Carrier_nothing.png"/>
+                                <Image x:Name="imgLp1" Source="{Binding ViewModel.Loadport1imagepath}"/>
                             </ui:Button>
                             <ui:Button Width="100" Height="80" Click="LoadPort2_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Image Source="/Resources/Carrier_nothing.png"/>
+                                <Image x:Name="imgLp2" Source="{Binding ViewModel.Loadport2imagepath}"/>
                             </ui:Button>
                         </UniformGrid>
                     </StackPanel>

@@ -41,13 +41,9 @@ namespace SemiConductor_Equipment.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
 
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.LogText))
-                {
-                    tblog.ScrollToEnd();
-                }
-            };
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            this.imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
         }
         #endregion
 
@@ -55,6 +51,17 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LogText")
+            {
+                tblog.ScrollToEnd();
+            }
+            else if (e.PropertyName == "IsWafer")
+            {
+                Change_Image(ViewModel.IsWafer);
+            }
+        }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -69,6 +76,18 @@ namespace SemiConductor_Equipment.Views.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.OnNavigatedToAsync(1);
+        }
+
+        private void Change_Image(bool isChecked)
+        {
+            if (isChecked)
+            {
+                imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer_in_wafer.png", UriKind.Relative));
+            }
+            else
+            {
+                imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
+            }
         }
 
         #endregion

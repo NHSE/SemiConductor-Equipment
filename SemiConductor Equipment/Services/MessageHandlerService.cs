@@ -9,6 +9,8 @@ using SemiConductor_Equipment.interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.Models;
+using System.Threading;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -18,17 +20,35 @@ namespace SemiConductor_Equipment.Services
         private readonly ILogManager _logManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
+        private readonly WaferService _waferService;
+        private readonly WaferProcessCoordinatorService _coordinator;
+        private readonly LoadPortService _loadPortService;
+        private readonly RunningStateService _runningStateService;
+
+        string? cmd;
+        string? cjId;
+        string? carrier_cmd;
+        string? carrierId;
+        string? pj_cmd;
+        string? pjId;
+        string? auto_start;
+        bool auto_start_flag;
+        byte loadportId;
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory)
+        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
+            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService)
         {
             _logManager = logManager;
             _logAction = logAction;
             _loadPortFactory = loadPortFactory;
+            _waferService = waferService;
+            _coordinator = coordinator;
+            _loadPortService = loadPortService;
         }
         #endregion
 
@@ -70,31 +90,24 @@ namespace SemiConductor_Equipment.Services
                 _logAction?.Invoke(recv_logMessage);
             }
 
-            // S2F21 처리 (FDC 요청)
-            else if (msg.S == 2 && msg.F == 21)
-            {
-                Item cmd = msg.SecsItem;
-
-                // Remote Command 수락 응답 (S2F22)
-                var reply = new SecsMessage(2, 22, false);
-                await wrapper.TryReplyAsync(reply);
-                //여기서 데이터 파싱 후
-                //S9F1로 설정된 타임마다 데이터 전송
-
-
-                // TODO: FDC 데이터 전송 로직은 여기에 추가
-                _logManager.WriteLog("SECS", "RECV", $"{recv_logMessage} → RemoteCommand: {cmd}");
-                _logAction?.Invoke($"{recv_logMessage} → RemoteCommand: {cmd}");
-            }
-
             else if (msg.S == 3 && msg.F == 17)
             {
                 // S3F17: 웨이퍼 정보 수신
-                string? cmd = msg?.SecsItem?[1].GetString();
+                if (msg?.SecsItem?[1] != null)
+                    cmd = msg?.SecsItem?[1].GetString();
+                else
+                    return;
                 if (cmd == "ProceedWithCarrier")
                 {
-                    string? carrierId = msg?.SecsItem?[2].GetString();
-                    byte loadportId = msg.SecsItem[3].FirstValue<byte>();
+                    if(msg.SecsItem[2] != null)
+                        carrierId = msg?.SecsItem?[2].GetString();
+                    else
+                        return;
+                    if (msg?.SecsItem[3] != null)
+                        loadportId = msg.SecsItem[3].FirstValue<byte>();
+                    else
+                        return;
+
                     bool success = false;
 
                     var waferData = new Wafer
@@ -131,7 +144,7 @@ namespace SemiConductor_Equipment.Services
                         _logManager.WriteLog("SECS", "RECV", recv_logMessage);
                         _logAction?.Invoke(recv_logMessage);
                     }
-                    else if(msg.ReplyExpected && !success)
+                    else if (msg.ReplyExpected && !success)
                     {
                         var reply = new SecsMessage(3, 18)
                         {
@@ -171,11 +184,18 @@ namespace SemiConductor_Equipment.Services
             else if (msg.S == 16 && msg.F == 11)
             {
                 // S3F17: 웨이퍼 정보 수신
-                string? pjId = msg?.SecsItem?[1].GetString();
-                string? carrierId = msg?.SecsItem?[3][0][0].GetString();
-                //var list = msg?.SecsItem?[3][0][1];
+                if (msg.SecsItem[1] != null)
+                    pjId = msg?.SecsItem?[1].GetString();
+                else
+                    return;
 
-                bool success = false;
+                if (msg?.SecsItem?[3][0][0] != null)
+                    carrierId = msg?.SecsItem?[3][0][0].GetString();
+                else
+                    return;
+                    //var list = msg?.SecsItem?[3][0][1];
+
+                    bool success = false;
 
                 for (byte loadportId = 1; loadportId <= 2; loadportId++)
                 {
@@ -201,7 +221,7 @@ namespace SemiConductor_Equipment.Services
                     // S3F18 응답 (ACK)
                     var reply = new SecsMessage(16, 12)
                     {
-                        Name = "ProceedWithCarrier",
+                        Name = "PJCreate",
                         SecsItem = L(
                                         U1(0),
                                         L(
@@ -226,7 +246,7 @@ namespace SemiConductor_Equipment.Services
                                     L(
                                         L(
                                             U4(0),
-                                            A("no error")
+                                            A("error")
                                           )
                                       )
                                  )
@@ -235,6 +255,91 @@ namespace SemiConductor_Equipment.Services
                 }
 
             }
+            else if (msg.S == 14 && msg.F == 9)// CJ Create //수정 필
+            {
+                string? cmd;
+                string? cjId;
+                string? carrier_cmd;
+                string? carrierId;
+                string? pj_cmd;
+                string? pjId;
+                string? auto_start;
+                bool auto_start_flag;
+
+                if (msg.SecsItem[1] != null)
+                    cmd = msg?.SecsItem?[1].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][0][1] != null)
+                    cjId = msg?.SecsItem?[2][0][1].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][1][0] != null)
+                    carrier_cmd = msg?.SecsItem?[2][1][0].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][1][1][0] != null)
+                    carrierId = msg?.SecsItem?[2][1][1][0].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][3][0] != null)
+                    pj_cmd = msg?.SecsItem?[2][3][0].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][3][1][0][0] != null)
+                    pjId = msg?.SecsItem?[2][3][1][0][0].GetString();
+                else goto error_msg;
+
+                if (msg.SecsItem[2][4][0] != null)
+                    auto_start = msg?.SecsItem?[2][4][0].GetString();
+                else goto error_msg;
+
+                //bool auto_start_flag = msg?.SecsItem?[2][1][4][1].FirstValue<bool>;
+
+                if(cmd != "ControlJob")
+                {
+                    goto error_msg;
+                }
+
+                for (byte loadportId = 1; loadportId <= 2; loadportId++)
+                {
+                    var viewModel = _loadPortFactory(loadportId);
+                    if (viewModel != null)
+                    {
+                        // Dispatcher.InvokeAsync를 사용하여 비동기 처리
+                        await Application.Current.Dispatcher.InvokeAsync(async () =>
+                        {
+                            if (viewModel.GetPJId(loadportId) == pjId)
+                            {
+                                var waferData = new Wafer
+                                {
+                                    CJId = cjId
+                                };
+                                viewModel.Update_Carrier_info(waferData);
+                                // pjId로 해당 웨이퍼 리스트를 가져옴
+                                var wafers = viewModel.GetAllWaferInfo(pjId);
+
+                                // wafers가 null 또는 비어있는지 체크
+                                if (wafers == null || wafers.Count == 0)
+                                    return;
+
+                                // LoadPortId로 초기화
+                                _loadPortService.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
+
+                                // 각 웨이퍼를 큐에 등록
+                                foreach (var wafer_info in wafers)
+                                {
+                                    _waferService.Enqueue(wafer_info);
+                                }
+                                var cts = new CancellationTokenSource();
+                                var cancellationToken = cts.Token;
+                                await _coordinator.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
+                            }
+                        });
+                    }
+                }
+            }
+
 
             // W-bit 응답
             if (msg.ReplyExpected)
@@ -243,6 +348,23 @@ namespace SemiConductor_Equipment.Services
                 _logAction?.Invoke(send_logMessage);
 
             }
+
+
+        error_msg:
+            var errormsg = new SecsMessage(14, 10)
+            {
+                Name = "ControlJob",
+                SecsItem = L(
+                   U1(0),
+                   L(
+                       L(
+                           U4(0),
+                           A("unknown object")
+                         )
+                     )
+                )
+            };
+            await wrapper.TryReplyAsync(errormsg);
         }
         #endregion
     }

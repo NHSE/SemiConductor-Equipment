@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -26,33 +27,14 @@ namespace SemiConductor_Equipment.Services
             return _waferQueue.Count > 0 ? _waferQueue.Dequeue() : null;
         }
 
+        public Queue<Wafer> GetQueue()
+        {
+            return _waferQueue;
+        }
+
         public void Clear()
         {
             _waferQueue.Clear();
         }
-    }
-
-    public partial class Wafer : ObservableObject
-    {
-        [ObservableProperty]
-        private int loadportId;
-
-        [ObservableProperty]
-        private int wafer_Num;
-
-        [ObservableProperty]
-        private string carrierId = "";
-
-        [ObservableProperty]
-        private string slotId = "";
-
-        [ObservableProperty]
-        private string lotId = "";
-
-        [ObservableProperty]
-        private string pJId = "";
-
-        [ObservableProperty]
-        private string cJId = "";
     }
 }
