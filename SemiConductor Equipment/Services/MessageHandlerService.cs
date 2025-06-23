@@ -99,85 +99,7 @@ namespace SemiConductor_Equipment.Services
                     return;
                 if (cmd == "ProceedWithCarrier")
                 {
-                    if(msg.SecsItem[2] != null)
-                        carrierId = msg?.SecsItem?[2].GetString();
-                    else
-                        return;
-                    if (msg?.SecsItem[3] != null)
-                        loadportId = msg.SecsItem[3].FirstValue<byte>();
-                    else
-                        return;
-
-                    bool success = false;
-
-                    var waferData = new Wafer
-                    {
-                        CarrierId = carrierId
-                    };
-
-                    var viewModel = _loadPortFactory(loadportId);
-                    if (viewModel != null)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            success = viewModel.Update_Carrier_info(waferData);
-                        });
-                    }
-
-                    if (success && msg.ReplyExpected)
-                    {
-                        // S3F18 응답 (ACK)
-                        var reply = new SecsMessage(3, 18)
-                        {
-                            Name = "ProceedWithCarrier",
-                            SecsItem = L(
-                                            U1(0),
-                                            L(
-                                                L(
-                                                    U4(0),
-                                                    A("no error")
-                                                  )
-                                              )
-                                         )
-                        };
-                        await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
-                        _logAction?.Invoke(recv_logMessage);
-                    }
-                    else if (msg.ReplyExpected && !success)
-                    {
-                        var reply = new SecsMessage(3, 18)
-                        {
-                            Name = "Nothing",
-                            SecsItem = L(
-                                        U1(0),
-                                        L(
-                                            L(
-                                                U4(1),
-                                                A("unknown object")
-                                              )
-                                          )
-                                     )
-                        };
-                        await wrapper.TryReplyAsync(reply);
-                    }
-                }
-                else
-                {
-                    var reply = new SecsMessage(3, 18)
-                    {
-                        Name = "Nothing",
-                        SecsItem = L(
-                                        U1(0),
-                                        L(
-                                            L(
-                                                U4(1),
-                                                A("unknown object")
-                                              )
-                                          )
-                                     )
-                    };
-                    await wrapper.TryReplyAsync(reply);
+                    await HandleProceedWithCarrier(msg, wrapper, recv_logMessage);
                 }
             }
 
@@ -257,15 +179,6 @@ namespace SemiConductor_Equipment.Services
             }
             else if (msg.S == 14 && msg.F == 9)// CJ Create //수정 필
             {
-                string? cmd;
-                string? cjId;
-                string? carrier_cmd;
-                string? carrierId;
-                string? pj_cmd;
-                string? pjId;
-                string? auto_start;
-                bool auto_start_flag;
-
                 if (msg.SecsItem[1] != null)
                     cmd = msg?.SecsItem?[1].GetString();
                 else goto error_msg;
@@ -365,6 +278,50 @@ namespace SemiConductor_Equipment.Services
                 )
             };
             await wrapper.TryReplyAsync(errormsg);
+        }
+
+        private async Task HandleProceedWithCarrier(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        {
+            string? carrierId = msg?.SecsItem?[2]?.GetString();
+            if (string.IsNullOrEmpty(carrierId))
+                return;
+
+            if (msg?.SecsItem?[3] == null)
+                return;
+
+            byte loadportId = msg.SecsItem[3].FirstValue<byte>();
+            bool success = false;
+
+            var waferData = new Wafer { CarrierId = carrierId };
+            var viewModel = _loadPortFactory(loadportId);
+            if (viewModel != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    success = viewModel.Update_Carrier_info(waferData);
+                });
+            }
+
+            if (msg.ReplyExpected)
+            {
+                var reply = new SecsMessage(3, 18)
+                {
+                    Name = success ? "ProceedWithCarrier" : "Nothing",
+                    SecsItem = L(
+                        U1(0),
+                        L(
+                            L(
+                                U4((uint)(success ? 0 : 1)),
+                                A(success ? "no error" : "unknown object")
+                            )
+                        )
+                    )
+                };
+
+                await wrapper.TryReplyAsync(reply);
+                _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                _logAction?.Invoke(recv_logMessage);
+            }
         }
         #endregion
     }

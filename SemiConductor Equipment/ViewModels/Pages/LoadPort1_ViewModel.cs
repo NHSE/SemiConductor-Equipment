@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.Messaging;
+using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
@@ -18,7 +20,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     public partial class LoadPort1_ViewModel : ObservableObject, ILoadPortViewModel
     {
         #region FIELDS
-        private readonly WaferService _waferService;
+        public event EventHandler<Wafer> RemoveRequested;
+        public event EventHandler<Wafer> AddRequested;
+        private readonly RobotArmService _robotArmService;
+        private readonly RunningStateService _runningStateService;
         public byte LoadPortId => 1;
         #endregion
 
@@ -37,12 +42,21 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private bool _isCancelEnabled = false;
+
+        [ObservableProperty]
+        private string? _lPState = "Ready";
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort1_ViewModel(WaferService waferService)
+        public LoadPort1_ViewModel(RobotArmService robotArmService, RunningStateService runningStateService)
         {
-            _waferService = waferService;
+            this._robotArmService = robotArmService;
+            this._runningStateService = runningStateService;
+
+            this._robotArmService.RobotArmWaferEnqueue += OnWaferOut;
+            this._robotArmService.RobotArmWaferDequeue += OnWaferIn;
+            this._runningStateService.DataChange += OnEquipment_State_Change;
+
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -136,7 +150,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     PJId = "",
                     CJId = "",
                     SlotId = slot.ToString("D2"),
-                    LotId = ""
+                    LotId = "",
+                    CurrentLocation = $"LoadPort{this.LoadPortId}"
                 });
             }
         }
@@ -158,6 +173,34 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             string pjid = this.Waferinfo[loadportId].PJId;
             return pjid;
+        }
+
+        private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
+        {
+            if (state == EquipmentStatusEnum.Running)
+            {
+                this.LPState = "Running";
+            }
+            else if (state == EquipmentStatusEnum.Completed)
+            {
+                this.LPState = "Completed";
+            }
+        }
+
+        private void OnWaferIn(object? sender, Wafer e)
+        {
+            if (e.LoadportId == this.LoadPortId)
+            {
+                AddRequested?.Invoke(this, e);
+            }
+        }
+
+        private void OnWaferOut(object? sender, Wafer e)
+        {
+            if (e.LoadportId == this.LoadPortId)
+            {
+                RemoveRequested?.Invoke(this, e);
+            }
         }
         #endregion
     }

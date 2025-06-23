@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
     public class BufferService
     {
+        private readonly DbLogHelper _logHelper;
+        private readonly RobotArmService _robotArmService;
         private readonly object _lock = new();
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _bufferSlots = new()
         {
@@ -15,6 +18,12 @@ namespace SemiConductor_Equipment.Services
             ["Buffer3"] = (null, false),
             ["Buffer4"] = (null, false),
         };
+
+        public BufferService(DbLogHelper logHelper, RobotArmService robotArmService)
+        {
+            this._logHelper = logHelper;
+            this._robotArmService = robotArmService;
+        }
 
         public string? FindEmptySlot()
         {
@@ -40,6 +49,7 @@ namespace SemiConductor_Equipment.Services
             {
                 // 웨이퍼 넣기 + 처리중 상태 표시
                 _bufferSlots[buffername] = (wafer, false);
+                this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "IN");
             }
 
             // 프로세스 시뮬레이션 (예: 3초)
@@ -49,9 +59,12 @@ namespace SemiConductor_Equipment.Services
             {
                 // 처리 완료 상태로 변경 (processing = false)
                 _bufferSlots[buffername] = (wafer, true);
+                //wafer.TargetLocation = "LoadPort";
+                //this._robotArmService.EnqueueWafer(wafer);
             }
 
-            Console.WriteLine($"[Chamber] {wafer.SlotId} process done in {buffername}");
+            Console.WriteLine($"[Buffer] {wafer.SlotId} process done in {buffername}");
+            this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "DONE");
         }
 
         public (string Buffername, Wafer Wafer)? FindCompletedWafer()
@@ -72,6 +85,7 @@ namespace SemiConductor_Equipment.Services
             {
                 if (_bufferSlots.ContainsKey(buffername))
                 {
+                    this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "OUT");
                     _bufferSlots[buffername] = (null, false);
                 }
             }

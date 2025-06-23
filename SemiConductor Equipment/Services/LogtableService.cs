@@ -19,7 +19,8 @@ namespace SemiConductor_Equipment.Services
         }
         public void Create(Chamberlogtable entity)
         {
-            throw new NotImplementedException();
+            this._logDatabaseContext.Chamberlogtables.Add(entity);
+            this._logDatabaseContext.SaveChanges();
         }
 
         public void Delete(int? id)

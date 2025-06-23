@@ -9,6 +9,8 @@ namespace SemiConductor_Equipment.Services
     public class RobotArmService
     {
         private readonly Queue<Wafer> _moveQueue = new();
+        public event EventHandler<Wafer> RobotArmWaferEnqueue;
+        public event EventHandler<Wafer> RobotArmWaferDequeue;
 
         private bool _isMoving = false;
 
@@ -18,7 +20,22 @@ namespace SemiConductor_Equipment.Services
             {
                 _moveQueue.Enqueue(wafer);
             }
+            RobotArmWaferEnqueue?.Invoke(this, wafer);
             ProcessQueueAsync();
+        }
+
+        public Wafer PeekWaferQueue()
+        {
+            var wafer = _moveQueue.Peek();
+            return wafer;
+        }
+
+        public Wafer DequeueWafer()
+        {
+            lock (_moveQueue)
+            {
+                return _moveQueue.Dequeue();
+            }
         }
 
         private async Task ProcessQueueAsync()
@@ -42,6 +59,10 @@ namespace SemiConductor_Equipment.Services
                 // 실제 이동 처리
                 Console.WriteLine($"RobotArm 이동: {wafer.Wafer_Num} → {wafer.TargetLocation}");
                 await Task.Delay(100); // 모션 시뮬레이션
+                if (wafer.TargetLocation == $"LoadPort{wafer.LoadportId}")
+                {
+                    RobotArmWaferDequeue?.Invoke(this, wafer);
+                }
 
                 wafer.CurrentLocation = wafer.TargetLocation;
             }

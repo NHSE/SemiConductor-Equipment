@@ -16,6 +16,7 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Views.Menus;
 using SemiConductor_Equipment.ViewModels.Menus;
+using SemiConductor_Equipment.Helpers;
 
 namespace SemiConductor_Equipment
 {
@@ -106,6 +107,7 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<LoadPortService>();
                 services.AddSingleton<RobotArmService>();
                 services.AddSingleton<RunningStateService>();
+                services.AddSingleton<DbLogHelper>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);

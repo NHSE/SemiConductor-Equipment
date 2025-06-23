@@ -48,7 +48,7 @@ namespace SemiConductor_Equipment.Services
 
                         if (wafer.Processing) { isError = true; break; }
 
-                        if (wafer.CurrentLocation == "LoadPort")
+                        if (wafer.CurrentLocation == $"LoadPort{wafer.LoadportId}")
                         {
                             waferQueue.Dequeue(); // 이제 꺼내도 됨
 

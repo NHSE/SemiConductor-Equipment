@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using System.Windows.Threading;
+using SemiConductor_Equipment.Dtos;
 
-namespace SemiConductor_Equipment.ViewModels.Pages
+namespace SemiConductor_Equipment.ViewModels.Menus
 {
     public partial class LogPageViewModel : ObservableObject
     {
@@ -18,7 +19,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         #region PROPERTIES
         [ObservableProperty]
-        private IEnumerable<Chamberlogtable>? _logpagetable;
+        private IEnumerable<ChamberlogDisplayDto>? _logpagetable;
 
         [ObservableProperty]
         private List<string>? _chambername;
@@ -38,7 +39,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public LogPageViewModel(IDatabase<Chamberlogtable> database)
         {
             this._database = database;
-            this.Chambername = new List<string> { "ALL", "LP1", "LP2", "CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "B1", "B2", "B3", "B4" };
+            this.Chambername = new List<string> { "ALL", "Loadport1", "Loadport2", "Chamber1", "Chamber2", "Chamber3", 
+                                                "Chamber4", "Chamber5", "Chamber6", "Buffer1", "Buffer2", "Buffer3", "Buffer4" };
         }
         #endregion
 
@@ -49,9 +51,19 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             if (this.SelectChamberName != null)
             {
                 var data = this._database?.Search(this.SelectChamberName);
-                if(data != null)
+                if (data != null)
                 {
-                    this.Logpagetable = data;
+                    this.Logpagetable = data.Select(d => new ChamberlogDisplayDto
+                    {
+                        ChamberName = d.ChamberName,
+                        Time = d.Time,
+                        WaferId = d.WaferId,
+                        Slot = d.Slot,
+                        Logdata = d.Logdata,
+                        LotId = d.LotId,
+                        State = d.State,
+                        
+                    });
                 }
                 else
                 {
@@ -74,12 +86,26 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             try
             {
-                this.Logpagetable = await Task.Run(() => _database.Get());
+                var logList = await Task.Run(() => _database.Get());
+
+                // DTO로 변환
+                this.Logpagetable = logList.Select(log => new ChamberlogDisplayDto
+                {
+                    ChamberName = log.ChamberName,
+                    Time = log.Time,
+                    WaferId = log.WaferId,
+                    Slot = log.Slot,
+                    Logdata = log.Logdata,
+                    LotId = log.LotId,
+                    State = log.State,
+                    // 필요한 필드 계속 매핑
+                }).ToList();
+
                 _isInitialized = true;
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                throw new Exception("로그 초기화 실패", ex);
             }
         }
         #endregion

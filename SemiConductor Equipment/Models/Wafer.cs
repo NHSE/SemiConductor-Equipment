@@ -30,12 +30,15 @@ namespace SemiConductor_Equipment.Models
         private string cJId = "";
 
         [ObservableProperty]
-        public string currentLocation = "LoadPort";
+        public string currentLocation = "";
 
         [ObservableProperty]
         public string targetLocation = "";
 
         [ObservableProperty]
         public bool processing = false;
+
+        [ObservableProperty]
+        public string? status = "Ready";
     }
 }

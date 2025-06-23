@@ -37,7 +37,7 @@
                             <ui:TextBlock Text="{Binding CarrierId}" Foreground="#FFB86C" FontSize="13"/>
                         </StackPanel>
                     </Grid>
-                    <ui:TextBlock Text="상태: Ready" Foreground="LightGreen" FontSize="13"/>
+                    <ui:TextBlock Text="{Binding LPState, StringFormat='상태: {0}'}" Foreground="LightGreen" FontSize="13"/>
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
                            Grid.Column="1"

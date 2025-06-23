@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using SemiConductor_Equipment.Helpers;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -11,6 +12,8 @@ namespace SemiConductor_Equipment.Services
     {
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
+        private readonly DbLogHelper _logHelper;
+        private readonly RobotArmService _robotArmService;
         public event EventHandler<string> DataEnqueued;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
@@ -23,16 +26,18 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = (null, false)
         };
 
-        public ChamberService(ILogManager logManager)
+        public ChamberService(ILogManager logManager, DbLogHelper logHelper, RobotArmService robotArmService)
         {
             this._logManager = logManager;
+            this._logHelper = logHelper;
+            this._robotArmService = robotArmService;
         }
 
         public string? FindEmptyChamber()
         {
             lock (_lock)
             {
-                return _chambers.FirstOrDefault(x => x.Value.wafer == null && x.Value.isProcessing == false).Key;
+                return this._chambers.FirstOrDefault(x => x.Value.wafer == null && x.Value.isProcessing == false).Key;
             }
         }
 
@@ -40,7 +45,7 @@ namespace SemiConductor_Equipment.Services
         {
             lock (_lock)
             {
-                var completed = _chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing != false);
+                var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing != false);
                 if (completed.Value.wafer == null) return null;
                 return (completed.Key, completed.Value.wafer);
             }
@@ -52,8 +57,10 @@ namespace SemiConductor_Equipment.Services
             {
                 if (_chambers.ContainsKey(chamberName))
                 {
-                    _logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
-                    _chambers[chamberName] = (null, false);
+                    this._logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
+                    this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
+
+                    this._chambers[chamberName] = (null, false);
                     DataEnqueued?.Invoke(this, chamberName);
                 }
             }
@@ -61,35 +68,54 @@ namespace SemiConductor_Equipment.Services
 
         public async Task StartProcessingAsync(string chamberName, Wafer wafer)
         {
-            lock (_lock)
+            try
             {
-                // 웨이퍼 넣기 + 처리중 상태 표시
-                _chambers[chamberName] = (wafer, false);
-                DataEnqueued?.Invoke(this, chamberName);
+                lock (_lock)
+                {
+                    // 웨이퍼 넣기 + 처리중 상태 표시
+                    this._chambers[chamberName] = (wafer, false);
+                    DataEnqueued?.Invoke(this, chamberName);
+                }
+
+                this._logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");
+                this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
+
+                // 프로세스 시뮬레이션 (예: 3초)
+                await Task.Delay(10000);
+                //Wafer 프로세싱 성공, 실패 로직
+                if (wafer.Wafer_Num % 2 == 0)
+                {
+                    wafer.Status = "Error";
+                }
+                else wafer.Status = "Completed";
+
+                lock (_lock)
+                {
+                    // 처리 완료 상태로 변경 (processing = false)
+                    this._chambers[chamberName] = (wafer, true);
+                    //wafer.TargetLocation = "Buffer";
+                    //this._robotArmService.EnqueueWafer(wafer);
+                }
+
+                //Console.WriteLine($"[Chamber] {wafer.SlotId} process done in {chamberName}");
+                this._logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
+                this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
             }
-
-            _logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");
-            // 프로세스 시뮬레이션 (예: 3초)
-            await Task.Delay(10000);
-
-            lock (_lock)
+            catch (Exception ex)
             {
-                // 처리 완료 상태로 변경 (processing = false)
-                _chambers[chamberName] = (wafer, true);
+                Console.WriteLine("StartProcessingAsync 예외: " + ex);
+                throw;
             }
-
-            //Console.WriteLine($"[Chamber] {wafer.SlotId} process done in {chamberName}");
-            _logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
         }
 
         public (string ChamberName, Wafer Wafer)? FindCompletedWafer()
         {
             lock (_lock)
             {
-                var completed = _chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing == false);
+                var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing == false);
                 if (completed.Value.wafer == null) return null;
 
-                _chambers[completed.Key] = (null, false);
+                this._chambers[completed.Key] = (null, false);
                 return (completed.Key, completed.Value.wafer);
             }
         }
@@ -98,9 +124,9 @@ namespace SemiConductor_Equipment.Services
         {
             lock (_lock)
             {
-                if (_chambers.ContainsKey(chamberName) && _chambers[chamberName].wafer == null)
+                if (this._chambers.ContainsKey(chamberName) && this._chambers[chamberName].wafer == null)
                 {
-                    _chambers[chamberName] = (wafer, false);
+                    this._chambers[chamberName] = (wafer, false);
                     return true;
                 }
                 return false;
@@ -110,7 +136,7 @@ namespace SemiConductor_Equipment.Services
         public bool IsAllChamberEmpty()
         {
             // 모든 챔버에 Wafer가 없으면 true
-            return _chambers.Values.All(chamber => chamber.wafer == null);
+            return this._chambers.Values.All(chamber => chamber.wafer == null);
         }
     }
 }

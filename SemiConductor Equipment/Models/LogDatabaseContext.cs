@@ -53,10 +53,11 @@ public partial class LogDatabaseContext : DbContext
 
         modelBuilder.Entity<Chamberlogtable>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("chamberlogtable");
+            entity.HasKey(e => e.Id).HasName("chamberlogtable_pkey");
 
+            entity.ToTable("chamberlogtable");
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ChamberName)
                 .HasColumnType("character varying")
                 .HasColumnName("chamber_name");
@@ -70,7 +71,9 @@ public partial class LogDatabaseContext : DbContext
             entity.Property(e => e.State)
                 .HasColumnType("character varying")
                 .HasColumnName("state");
-            entity.Property(e => e.Time).HasColumnName("time");
+            entity.Property(e => e.Time)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("time");
             entity.Property(e => e.WaferId)
                 .HasColumnType("character varying")
                 .HasColumnName("wafer_id");

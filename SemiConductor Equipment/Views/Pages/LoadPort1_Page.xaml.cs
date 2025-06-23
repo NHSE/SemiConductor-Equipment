@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Models;
+using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.Views.Windows;
 
@@ -44,6 +46,8 @@ namespace SemiConductor_Equipment.Views.Pages
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = viewModel;
+            viewModel.RemoveRequested += Remove_WaferLine;
+            viewModel.AddRequested += Add_WaferLine;
         }
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -76,16 +80,16 @@ namespace SemiConductor_Equipment.Views.Pages
             mainCanvas.Children.Clear();
         }
 
-        private void Remove_WaferLine(int slot)
+        private void Remove_WaferLine(object sender, Wafer wafer)
         {
-            if (_slotLines.TryGetValue(slot, out var line))
+            if (_slotLines.TryGetValue(wafer.Wafer_Num, out var line))
             {
                 mainCanvas.Children.Remove(line);
-                _slotLines.Remove(slot);
+                _slotLines.Remove(wafer.Wafer_Num);
             }
         }
 
-        private void Add_WaferLine(int slot)
+        private void Add_WaferLine(object sender, Wafer wafer)
         {
             double TopY = 90;
             double BottomY = 350;
@@ -94,20 +98,27 @@ namespace SemiConductor_Equipment.Views.Pages
             int SlotCount = 25;
             double GapY = (BottomY - TopY) / (SlotCount - 1);
 
-            if (slot < 0 || slot >= SlotCount) return;
+            if (wafer.Wafer_Num < 0 || wafer.Wafer_Num >= SlotCount) return;
 
-            double y = BottomY - slot * GapY;
+            double y = BottomY - wafer.Wafer_Num * GapY;
+
+            Brush brush = Brushes.Green;
+            if (wafer.Status == "Error")
+            {
+                brush = Brushes.Red;
+            }
+            
             var line = new Line
             {
                 X1 = XStart,
                 X2 = XEnd,
                 Y1 = y,
                 Y2 = y,
-                Stroke = Brushes.Green,
+                Stroke = brush,
                 StrokeThickness = 6
             };
 
-            _slotLines[slot] = line;
+            _slotLines[wafer.Wafer_Num] = line;
             mainCanvas.Children.Add(line);
         }
 

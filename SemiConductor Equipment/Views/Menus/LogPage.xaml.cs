@@ -1,13 +1,14 @@
 ﻿using System.Windows.Controls;
-using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.ViewModels.Menus;
 using System.ComponentModel;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Views.Pages;
 
-namespace SemiConductor_Equipment.Views.Pages
+namespace SemiConductor_Equipment.Views.Menus
 {
     /// <summary>
     /// LogPage.xaml에 대한 상호 작용 논리
