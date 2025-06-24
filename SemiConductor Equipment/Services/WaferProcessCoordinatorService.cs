@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using SemiConductor_Equipment.Commands;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -30,6 +32,7 @@ namespace SemiConductor_Equipment.Services
             bool isError = false;
             try
             {
+                this._runningStateService.Change_State(EquipmentStatusEnum.Wait);
                 while (!token.IsCancellationRequested)
                 {
                     bool isAllDone = waferQueue.Count == 0
@@ -52,55 +55,78 @@ namespace SemiConductor_Equipment.Services
                         {
                             waferQueue.Dequeue(); // 이제 꺼내도 됨
 
-                            wafer.TargetLocation = "RobotArm";
-                            _robotArmService.EnqueueWafer(wafer);
-
-                            wafer.TargetLocation = emptyChamber;
-                            _robotArmService.EnqueueWafer(wafer);
-
-                            _chamberService.StartProcessingAsync(emptyChamber, wafer);
                             if (this._runningStateService.Get_State() != EquipmentStatusEnum.Running)
                             {
                                 this._runningStateService.Change_State(EquipmentStatusEnum.Running);
                             }
+
+                            _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                            {
+                                CommandType = RobotCommandType.Place,
+                                Wafer = wafer,
+                                Location = emptyChamber
+                            });
+
+                            await _robotArmService.ProcessCommandQueueAsync();
+                            wafer.TargetLocation = emptyChamber;
+                            _chamberService.StartProcessingAsync(emptyChamber, wafer);
                         }
                     }
 
                     // 2. 챔버 완료 → 버퍼
-                    var completedInChamber = _chamberService.PeekCompletedWafer();
-                    if (completedInChamber != null)
+                    if (_robotArmService.CommandSize_Chamber() > 0)
                     {
-                        string? emptyBuffer = _bufferService.FindEmptySlot();
-                        if (emptyBuffer != null)
+                        while (true)
                         {
-                            var wafer = completedInChamber.Value.Wafer;
+                            if (_robotArmService.CommandSize_Chamber() == 0) break;
 
-                            wafer.TargetLocation = "RobotArm";
-                            _robotArmService.EnqueueWafer(wafer);
+                            string? emptyBuffer = _bufferService.FindEmptySlot();
+                            if (emptyBuffer != null)
+                            {
+                                var Command = _robotArmService.DequeueCommand_Chamber();
+                                var completedInChamber = Command.Location;
 
-                            wafer.TargetLocation = emptyBuffer;
-                            _robotArmService.EnqueueWafer(wafer);
+                                Command.Wafer.TargetLocation = emptyBuffer;
+                                _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                                {
+                                    CommandType = RobotCommandType.Place,
+                                    Wafer = Command.Wafer,
+                                    Location = Command.Wafer.TargetLocation,
+                                });
 
-                            _chamberService.RemoveWaferFromChamber(completedInChamber.Value.ChamberName);
+                                _chamberService.RemoveWaferFromChamber(completedInChamber);
+                                await _robotArmService.ProcessCommandQueueAsync();
+                                _bufferService.StartProcessingAsync(emptyBuffer, Command.Wafer);
 
-                            _bufferService.StartProcessingAsync(emptyBuffer, wafer);
+                                await Task.Delay(300);
+                            }
+                            else break;
                         }
                     }
 
-                    // 3. 버퍼 완료 → 로드포트
-                    var completedInBuffer = _bufferService.PeekCompletedWafer();
-                    if (completedInBuffer != null)
+                    //버퍼 -> 로드포트
+                    if (_robotArmService.CommandSize_Buffer() > 0)
                     {
-                        var wafer = completedInBuffer.Value.Wafer;
+                        while (true)
+                        {
+                            if (_robotArmService.CommandSize_Buffer() == 0) break;
 
-                        wafer.TargetLocation = "RobotArm";
-                        _robotArmService.EnqueueWafer(wafer);
+                            var Command = _robotArmService.DequeueCommand_Buffer();
+                            var completedInBuffer = Command.Location;
 
-                        wafer.TargetLocation = $"LoadPort{wafer.LoadportId}";
-                        _robotArmService.EnqueueWafer(wafer);
+                            Command.Wafer.TargetLocation = $"LoadPort{Command.Wafer.LoadportId}";
+                            _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                            {
+                                CommandType = RobotCommandType.Place,
+                                Wafer = Command.Wafer,
+                                Location = Command.Wafer.TargetLocation,
+                            });
 
-                        _bufferService.RemoveWaferFromBuffer(completedInBuffer.Value.BufferName);
-                        wafer.Processing = true;
+                            await _robotArmService.ProcessCommandQueueAsync();
+                            _bufferService.RemoveWaferFromBuffer(completedInBuffer);
+
+                            await Task.Delay(300);
+                        }
                     }
 
                     await Task.Delay(300);

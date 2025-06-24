@@ -3,70 +3,117 @@ using System.Threading.Tasks;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Messages;
 using CommunityToolkit.Mvvm.Messaging;
+using SemiConductor_Equipment.Commands;
+using SemiConductor_Equipment.Enums;
 
 namespace SemiConductor_Equipment.Services
 {
     public class RobotArmService
     {
-        private readonly Queue<Wafer> _moveQueue = new();
-        public event EventHandler<Wafer> RobotArmWaferEnqueue;
-        public event EventHandler<Wafer> RobotArmWaferDequeue;
+        private readonly Queue<RobotCommand> _EndChambercommandQueue = new();
+        private readonly Queue<RobotCommand> _EndBuffercommandQueue = new();
+        private readonly Queue<RobotCommand> _RobotArmcommandQueue = new();
+        public event EventHandler<Wafer> CommandStarted;
+        public event EventHandler<Wafer> CommandCompleted;
 
-        private bool _isMoving = false;
+        private bool _isProcessing = false;
 
-        public void EnqueueWafer(Wafer wafer)
+        public void EnqueueCommand_Chamber(RobotCommand command)
         {
-            lock (_moveQueue)
+            _EndChambercommandQueue.Enqueue(command);
+        }
+
+        public void EnqueueCommand_Buffer(RobotCommand command)
+        {
+            _EndBuffercommandQueue.Enqueue(command);
+        }
+
+        public void EnqueueCommand_RobotArm(RobotCommand command)
+        {
+            _RobotArmcommandQueue.Enqueue(command);
+        }
+
+        public RobotCommand DequeueCommand_Chamber()
+        {
+            return _EndChambercommandQueue.Dequeue();
+        }
+
+        public RobotCommand DequeueCommand_Buffer()
+        {
+            return _EndBuffercommandQueue.Dequeue();
+        }
+
+        public int CommandSize_Chamber()
+        {
+            return _EndChambercommandQueue.Count;
+        }
+
+        public int CommandSize_Buffer()
+        {
+            return _EndBuffercommandQueue.Count;
+        }
+
+        public RobotCommand CommandPeek_Chamber => _EndChambercommandQueue.Peek();
+
+        public RobotCommand CommandPeek_Buffer => _EndBuffercommandQueue.Peek();
+
+        public async Task WaitForBufferCommandAsync(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
             {
-                _moveQueue.Enqueue(wafer);
+                // 1. 커맨드 큐에 명령이 있는지 확인
+                if (CommandSize_Buffer() > 0)
+                {
+                    // 2. 명령 있음 → 반환
+                    return;
+                }
+
+                // 3. 아직 없음 → 일정 시간 대기
+                await Task.Delay(100, token); // 100ms 폴링
             }
-            RobotArmWaferEnqueue?.Invoke(this, wafer);
-            ProcessQueueAsync();
+
+            // 4. 종료 요청됨
+            throw new OperationCanceledException();
         }
 
-        public Wafer PeekWaferQueue()
+        public async Task ProcessCommandQueueAsync()
         {
-            var wafer = _moveQueue.Peek();
-            return wafer;
-        }
-
-        public Wafer DequeueWafer()
-        {
-            lock (_moveQueue)
-            {
-                return _moveQueue.Dequeue();
-            }
-        }
-
-        private async Task ProcessQueueAsync()
-        {
-            if (_isMoving)
+            if (_isProcessing)
                 return;
 
-            _isMoving = true;
+            _isProcessing = true;
+
             while (true)
             {
-                Wafer? wafer = null;
-                lock (_moveQueue)
+                RobotCommand? command = null;
+
+                if (_RobotArmcommandQueue.Count > 0)
                 {
-                    if (_moveQueue.Count > 0)
-                        wafer = _moveQueue.Dequeue();
+                    command = _RobotArmcommandQueue.Dequeue();
+                    CommandStarted?.Invoke(this, command.Wafer);
                 }
 
-                if (wafer == null)
+                if (command == null)
                     break;
 
-                // 실제 이동 처리
-                Console.WriteLine($"RobotArm 이동: {wafer.Wafer_Num} → {wafer.TargetLocation}");
-                await Task.Delay(100); // 모션 시뮬레이션
-                if (wafer.TargetLocation == $"LoadPort{wafer.LoadportId}")
+                if(command.Location == $"LoadPort{command.Wafer.LoadportId}")
                 {
-                    RobotArmWaferDequeue?.Invoke(this, wafer);
+                    CommandCompleted?.Invoke(this, command.Wafer);
                 }
 
-                wafer.CurrentLocation = wafer.TargetLocation;
+                Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
+
+                await Task.Delay(300); // 모션 처리 시간 시뮬레이션
+
+                // 이동 완료 후 현재 위치 갱신
+                if (command.CommandType == RobotCommandType.Place)
+                {
+                    command.Wafer.CurrentLocation = command.Location;
+                }
             }
-            _isMoving = false;
+            _isProcessing = false;
         }
+
+        public bool IsBusy => _isProcessing;
     }
 }

@@ -29,6 +29,11 @@ namespace SemiConductor_Equipment.Services
                 this._state = EquipmentStatusEnum.Error;
                 DataChange?.Invoke(this, EquipmentStatusEnum.Error);
             }
+            else if (state == EquipmentStatusEnum.Wait)
+            {
+                this._state = EquipmentStatusEnum.Wait;
+                DataChange?.Invoke(this, EquipmentStatusEnum.Wait);
+            }
         }
 
         public EquipmentStatusEnum Get_State()

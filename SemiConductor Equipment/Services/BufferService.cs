@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.Commands;
+using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.Models;
 
@@ -59,9 +61,14 @@ namespace SemiConductor_Equipment.Services
             {
                 // 처리 완료 상태로 변경 (processing = false)
                 _bufferSlots[buffername] = (wafer, true);
-                //wafer.TargetLocation = "LoadPort";
-                //this._robotArmService.EnqueueWafer(wafer);
             }
+
+            this._robotArmService.EnqueueCommand_Buffer(new RobotCommand
+            {
+                CommandType = RobotCommandType.MoveTo,
+                Wafer = wafer,
+                Location = wafer.TargetLocation
+            });
 
             Console.WriteLine($"[Buffer] {wafer.SlotId} process done in {buffername}");
             this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "DONE");

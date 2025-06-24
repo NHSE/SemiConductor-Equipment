@@ -53,8 +53,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._robotArmService = robotArmService;
             this._runningStateService = runningStateService;
 
-            this._robotArmService.RobotArmWaferEnqueue += OnWaferOut;
-            this._robotArmService.RobotArmWaferDequeue += OnWaferIn;
+            this._robotArmService.CommandStarted += OnWaferOut;
+            this._robotArmService.CommandCompleted += OnWaferIn;
             this._runningStateService.DataChange += OnEquipment_State_Change;
 
             PropertyChanged += OnPropertyChanged;
@@ -80,6 +80,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.SelectedSlots?.Clear();
             this.IsSetupEnabled = true;    // Setup 활성
             this.IsCancelEnabled = false;
+            this.LPState = "Ready";
         }
         #endregion
 
@@ -184,6 +185,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             else if (state == EquipmentStatusEnum.Completed)
             {
                 this.LPState = "Completed";
+                this.IsCancelEnabled = true;
+            }
+            else if (state == EquipmentStatusEnum.Wait)
+            {
+                this.LPState = "Wait";
+                this.IsCancelEnabled = false;
             }
         }
 

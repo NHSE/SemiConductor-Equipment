@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Helpers;
+using SemiConductor_Equipment.Commands;
+using SemiConductor_Equipment.Enums;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -93,11 +95,15 @@ namespace SemiConductor_Equipment.Services
                 {
                     // 처리 완료 상태로 변경 (processing = false)
                     this._chambers[chamberName] = (wafer, true);
-                    //wafer.TargetLocation = "Buffer";
-                    //this._robotArmService.EnqueueWafer(wafer);
                 }
 
-                //Console.WriteLine($"[Chamber] {wafer.SlotId} process done in {chamberName}");
+                this._robotArmService.EnqueueCommand_Chamber(new RobotCommand
+                {
+                    CommandType = RobotCommandType.MoveTo,
+                    Wafer = wafer,
+                    Location = wafer.TargetLocation
+                });
+
                 this._logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
                 this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
             }
