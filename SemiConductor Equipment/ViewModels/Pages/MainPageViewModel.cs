@@ -10,6 +10,9 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.Views.Windows;
 using Wpf.Ui;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
@@ -18,8 +21,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly IDateTime _iDateTime;
-        private readonly DispatcherTimer _timer;
         private readonly ILogManager _logmanager;
+        private readonly IConfigManager _configManager;
+        private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
         #endregion
@@ -37,11 +41,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private Brush? _equipment_color;
         [ObservableProperty]
         private string? _equipment_state;
+        [ObservableProperty]
+        private bool? _isConnected;
 
         #endregion
 
         #region CONSTRUCTOR
-        public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, MessageHandlerService messageHandler, RunningStateService runningStateService)
+        public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager, MessageHandlerService messageHandler, RunningStateService runningStateService)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -58,11 +64,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             this._logmanager = logmanager;
             this._messageHandler = messageHandler;
+            this._configManager = configManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
 
-            SecsGemServer.Initialize(AppendLog, messageHandler);
+            SecsGemServer.Initialize(AppendLog, messageHandler, _configManager.IP, _configManager.Port, _configManager.DeviceID);
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
@@ -88,13 +95,57 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         #region COMMANDS
         [RelayCommand]
-        private void Run()
+        private void LoadPort1() => NavigateToPage<LoadPort1_Page>();
+
+        [RelayCommand]
+        private void LoadPort2() => NavigateToPage<LoadPort2_Page>();
+
+        [RelayCommand]
+        private void Buffer1() => NavigateToPage<Buffer1_Page>();
+        [RelayCommand]
+        private void Buffer2() => NavigateToPage<Buffer2_Page>();
+        [RelayCommand]
+        private void Buffer3() => NavigateToPage<Buffer3_Page>();
+        [RelayCommand]
+        private void Buffer4() => NavigateToPage<Buffer4_Page>();
+
+        [RelayCommand]
+        private void Chamber1() => NavigateToPage<Chamber1_Page>();
+        [RelayCommand]
+        private void Chamber2() => NavigateToPage<Chamber2_Page>();
+        [RelayCommand]
+        private void Chamber3() => NavigateToPage<Chamber3_Page>();
+        [RelayCommand]
+        private void Chamber4() => NavigateToPage<Chamber4_Page>();
+        [RelayCommand]
+        private void Chamber5() => NavigateToPage<Chamber5_Page>();
+        [RelayCommand]
+        private void Chamber6() => NavigateToPage<Chamber6_Page>();
+
+        [RelayCommand]
+        private void SubMenuLog()
         {
-            
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.MainFrame.Source = new Uri("../Menus/LogPage.xaml", UriKind.Relative);
+            }
+        }
+
+        [RelayCommand]
+        private void SubMenuIPSetting()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var ipSettingPage = App.Services.GetRequiredService<IpSettingMenu>(); // DI로 생성된 인스턴스 사용
+                mainWindow.MainFrame.Navigate(ipSettingPage);
+            }
         }
         #endregion
 
         #region METHODS
+
         private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
         {
             if (state == EquipmentStatusEnum.Running)
@@ -116,6 +167,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 this.Equipment_color = Brushes.LightBlue;
                 this.Equipment_state = "Ready";
+            }
+        }
+
+        private void NavigateToPage<TPage>() where TPage : class
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var page = App.Services.GetRequiredService<TPage>();
+                mainWindow.MainFrame.Navigate(page);
             }
         }
 

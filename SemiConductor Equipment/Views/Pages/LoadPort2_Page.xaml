@@ -89,8 +89,16 @@
 
             <!-- 하단: 웨이퍼 상세 목록 -->
             <Border Grid.Column="1" Background="#263043" CornerRadius="8" Margin="12" Padding="12">
-                <ui:DataGrid ItemsSource="{Binding Waferinfo}" RowHeight="32" FontSize="13"
-              Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None">
+                <ui:DataGrid ItemsSource="{Binding Waferinfo}" RowHeight="32" FontSize="13" AutoGenerateColumns="False"
+                Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Slot ID" Binding="{Binding SlotId}" />
+                        <DataGridTextColumn Header="PJ ID" Binding="{Binding PJId}" />
+                        <DataGridTextColumn Header="CJ ID" Binding="{Binding CJId}" />
+                        <DataGridTextColumn Header="Current Location" Binding="{Binding CurrentLocation}" />
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                        <!-- 나머지 속성은 숨김 -->
+                    </DataGrid.Columns>
                 </ui:DataGrid>
             </Border>
         </Grid>

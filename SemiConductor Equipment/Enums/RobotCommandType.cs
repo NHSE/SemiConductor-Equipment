@@ -9,6 +9,7 @@ namespace SemiConductor_Equipment.Enums
     public enum RobotCommandType
     {
         MoveTo,
+        Error,
         Place
     }
 }

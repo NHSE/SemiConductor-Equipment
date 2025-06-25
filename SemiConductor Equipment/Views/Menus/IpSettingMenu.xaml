@@ -6,12 +6,19 @@
         xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Menus"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:controls="clr-namespace:SemiConductor_Equipment.Controls"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         d:DataContext="{d:DesignInstance local:IpSettingMenu, IsDesignTimeCreatable=False}"
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800"
         Title="IP_Setting"
         KeepAlive="True"
         Background="#232C39">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding ViewModels.InitCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -23,23 +30,7 @@
             <DockPanel LastChildFill="False" VerticalAlignment="Center">
                 <!-- 왼쪽: Chamber 선택, 검색 -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <ui:TextBlock Text="Chamber Name :" Height="21" FontFamily="Calibri" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="cbxChamber"
-                  IsEditable="True"
-                  Text="{Binding ViewModel.SelectChamberName}"
-                  SelectedItem="{Binding ViewModel.SelectChamberName, Mode=TwoWay}"
-                  ItemsSource="{Binding ViewModel.Chambername, Mode=OneWay}"
-                  Width="140"
-                  Margin="0,0,8,0"
-                  VerticalAlignment="Center"/>
-                    <ui:Button x:Name="btnLogsearch"
-                   Content="Search"
-                   Command="{Binding ViewModel.SearchCommand}"
-                   Margin="0,0,8,0"
-                   Foreground="White"
-                   Height="30"
-                   Padding="18,0"
-                   VerticalAlignment="Center"/>
+                    <ui:TextBlock Text="IP Setting" Height="21" FontSize="20" FontFamily="Calibri" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- 오른쪽: 뒤로가기 버튼 -->
@@ -61,31 +52,49 @@
         <!-- 본문 카드 -->
         <Border Grid.Row="1" Background="#1A2233" CornerRadius="12" Margin="18" Padding="18" Effect="{DynamicResource DropShadow}">
             <Grid>
-                <Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                    </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ui:TextBlock Text="IP" Foreground="White" HorizontalAlignment="Center"/>
-                        <ui:TextBlock Text="{Binding ViewModels.IP, Mode=TwoWay}" HorizontalAlignment="Center" Width="209"/>
-                    </StackPanel>
+                    <Grid Grid.Column="0">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ui:TextBlock Text="IP" Foreground="White" HorizontalAlignment="Center"/>
+                            <ui:TextBox Text="{Binding ViewModels.IP, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ui:TextBlock Text="Port" Foreground="White" HorizontalAlignment="Center"/>
+                            <ui:TextBox Text="{Binding ViewModels.Port, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Column="2">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ui:TextBlock Text="Device ID" Foreground="White" HorizontalAlignment="Center"/>
+                            <ui:TextBox Text="{Binding ViewModels.DeviceID, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
-
-                <Grid Grid.Column="1">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ui:TextBlock Text="Port" Foreground="White" HorizontalAlignment="Center"/>
-                        <ui:TextBlock Text="{Binding ViewModels.Port, Mode=TwoWay}" HorizontalAlignment="Center" Width="209"/>
-                    </StackPanel>
-                </Grid>
-
-                <Grid Grid.Column="2">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ui:TextBlock Text="Device ID" Foreground="White" HorizontalAlignment="Center"/>
-                        <ui:TextBlock Text="{Binding ViewModels.DeviceID, Mode=TwoWay}" HorizontalAlignment="Center" Width="209"/>
-                    </StackPanel>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <ui:Button Content="Initalize" Command="{Binding ViewModels.InitCommand}" HorizontalAlignment="Center" Height="29" Width="236" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <ui:Button Content="Save" Command="{Binding ViewModels.SaveCommand}" HorizontalAlignment="Center" Height="29" Width="236" />
+                    </Grid>
                 </Grid>
             </Grid>
         </Border>

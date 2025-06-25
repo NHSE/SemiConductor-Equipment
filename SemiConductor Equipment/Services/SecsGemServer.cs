@@ -22,7 +22,7 @@ namespace SemiConductor_Equipment.Services
 
         public static SecsGemServer Instance { get; private set; }
 
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler)
+        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, string ipAddress, int port, ushort deviceId)
         {
             _log = logger;
             _messageHandler = messageHandler;
@@ -30,9 +30,9 @@ namespace SemiConductor_Equipment.Services
             // 1) SecsGemOptions 생성 (receiveBufferSize 역할을 하는 옵션 추가)
             var secsGemOptions = Options.Create(new SecsGemOptions
             {
-                IpAddress = "127.0.0.1", // 서버 IP
-                Port = 5000,                 // 시뮬레이터에서 사용하는 포트
-                DeviceId = 1,
+                IpAddress = ipAddress, // 서버 IP
+                Port = port,                 // 시뮬레이터에서 사용하는 포트
+                DeviceId = deviceId,
                 T3 = 5000,
                 EncodeBufferInitialSize = 4096,
                 SocketReceiveBufferSize = 16384,
@@ -52,11 +52,11 @@ namespace SemiConductor_Equipment.Services
             this._hsmsConnector.ConnectionChanged += OnConnectionChanged;
         }
 
-        public static void Initialize(Action<string> logger, MessageHandlerService messageHandler)
+        public static void Initialize(Action<string> logger, MessageHandlerService messageHandler, string ipAddress, int port, ushort deviceId)
         {
             if (Instance == null)
             {
-                Instance = new SecsGemServer(logger, messageHandler);
+                Instance = new SecsGemServer(logger, messageHandler, ipAddress, port, deviceId);
                 Instance.Start();
             }
         }

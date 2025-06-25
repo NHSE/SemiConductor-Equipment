@@ -45,8 +45,12 @@ namespace SemiConductor_Equipment
 
                 services.AddSingleton<LogPage>();
                 services.AddSingleton<LogPageViewModel>();
+                services.AddSingleton<ILogManager>(provider =>
+                                    new LogService(@"C:\Logs"));
+
                 services.AddSingleton<IpSettingMenu>();
                 services.AddSingleton<IpSettingViewModel>();
+                services.AddTransient<IConfigManager>(provider => new IPSettingService(@"C:\Configs"));
 
                 services.AddSingleton<BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
@@ -72,8 +76,6 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IDatabase<ChamberStatus>, ChamberStatusService>();
 
                 services.AddSingleton<IMessageBox, MessageBoxService>();
-                services.AddSingleton<ILogManager>(provider =>
-                                    new LogService(@"C:\Logs"));
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
                 services.AddSingleton<IThemeService, ThemeService>();

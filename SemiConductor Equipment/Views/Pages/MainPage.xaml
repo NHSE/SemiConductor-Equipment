@@ -49,10 +49,10 @@
                     MouseOverBackground="LightGray">
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
-                                <MenuItem Header="LOG" Click="SubMenu_Log_Click"/>
+                                <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
                                 <MenuItem Header="Equipment Setting"/>
                                 <MenuItem Header="CEID Setting"/>
-                                <MenuItem Header="IP Setting"/>
+                                <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
                             </ContextMenu>
                         </ui:Button.ContextMenu>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -74,10 +74,10 @@
                     <StackPanel>
                         <TextBlock Text="LOAD PORT" Foreground="#B0B7C3" FontWeight="Bold" Margin="0 0 0 12"/>
                         <UniformGrid Rows="2" Columns="1" Width="100">
-                            <ui:Button Width="100" Height="80" Click="LoadPort1_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
+                            <ui:Button Width="100" Height="80" Command="{Binding ViewModel.LoadPort1Command}" HorizontalAlignment="Center" Margin="0 0 0 10">
                                 <Image x:Name="imgLp1" Source="{Binding ViewModel.Loadport1imagepath}"/>
                             </ui:Button>
-                            <ui:Button Width="100" Height="80" Click="LoadPort2_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
+                            <ui:Button Width="100" Height="80" Command="{Binding ViewModel.LoadPort2Command}" HorizontalAlignment="Center" Margin="0 0 0 10">
                                 <Image x:Name="imgLp2" Source="{Binding ViewModel.Loadport2imagepath}"/>
                             </ui:Button>
                         </UniformGrid>
@@ -96,10 +96,10 @@
                         <StackPanel>
                             <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
-                                <ui:Button Content="B1" Background="#5D4037" Click="Buffer1_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B2" Background="#5D4037" Click="Buffer2_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B3" Background="#5D4037" Click="Buffer3_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B4" Background="#5D4037" Click="Buffer4_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B1" Background="#5D4037" Command="{Binding ViewModel.Buffer1Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B2" Background="#5D4037" Command="{Binding ViewModel.Buffer2Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B3" Background="#5D4037" Command="{Binding ViewModel.Buffer3Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Content="B4" Background="#5D4037" Command="{Binding ViewModel.Buffer4Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
                             </UniformGrid>
                         </StackPanel>
                     </Border>
@@ -118,12 +118,12 @@
                     <StackPanel>
                         <TextBlock Text="PROCESS CHAMBER" Foreground="#B0B7C3" FontWeight="Bold"/>
                         <UniformGrid Rows="4" Columns="2" Margin="0 12 0 0">
-                            <ui:Button Content="CH1" Click="Chamber1_Click" Background="#1565C0" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH2" Click="Chamber2_Click" Background="#607D8B" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH3" Click="Chamber3_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH4" Click="Chamber4_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH5" Click="Chamber5_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH6" Click="Chamber6_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH1" Command="{Binding ViewModel.Chamber1Command}" Background="#1565C0" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH2" Command="{Binding ViewModel.Chamber2Command}" Background="#607D8B" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH3" Command="{Binding ViewModel.Chamber3Command}" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH4" Command="{Binding ViewModel.Chamber4Command}" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH5" Command="{Binding ViewModel.Chamber5Command}" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                            <ui:Button Content="CH6" Command="{Binding ViewModel.Chamber6Command}" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
                         </UniformGrid>
                     </StackPanel>
                 </Border>
@@ -139,7 +139,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0" ShowGridLines="True">
-                        
+                        <!-- 통신 상태 -->
                     </Grid>
 
                     <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />

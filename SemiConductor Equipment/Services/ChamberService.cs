@@ -97,12 +97,24 @@ namespace SemiConductor_Equipment.Services
                     this._chambers[chamberName] = (wafer, true);
                 }
 
-                this._robotArmService.EnqueueCommand_Chamber(new RobotCommand
+                if (wafer.Status == "Completed")
                 {
-                    CommandType = RobotCommandType.MoveTo,
-                    Wafer = wafer,
-                    Location = wafer.TargetLocation
-                });
+                    this._robotArmService.EnqueueCommand_Chamber(new RobotCommand
+                    {
+                        CommandType = RobotCommandType.MoveTo,
+                        Wafer = wafer,
+                        Location = wafer.TargetLocation
+                    });
+                }
+                else if (wafer.Status == "Error")
+                {
+                    this._robotArmService.EnqueueCommand_Buffer(new RobotCommand
+                    {
+                        CommandType = RobotCommandType.Error,
+                        Wafer = wafer,
+                        Location = wafer.TargetLocation
+                    });
+                }
 
                 this._logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
                 this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");

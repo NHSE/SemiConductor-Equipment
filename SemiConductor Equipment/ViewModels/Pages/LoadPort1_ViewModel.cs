@@ -59,17 +59,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             PropertyChanged += OnPropertyChanged;
         }
-
-        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if(e.PropertyName == "IsSetupEnabled")
-            {
-                if(!this.IsSetupEnabled)
-                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
-                else
-                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
-            }
-        }
         #endregion
 
         #region COMMAND
@@ -85,6 +74,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
+
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsSetupEnabled")
+            {
+                if (!this.IsSetupEnabled)
+                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
+                else
+                    WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
+            }
+        }
+
         public bool Update_Carrier_info(Wafer newWaferData)
         {
             if(SelectedSlots.Count == 0)

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
@@ -17,7 +18,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     public partial class LoadPort2_ViewModel : ObservableObject, ILoadPortViewModel
     {
         #region FIELDS
-        private readonly WaferService _waferService;
+        public event EventHandler<Wafer> RemoveRequested;
+        public event EventHandler<Wafer> AddRequested;
+        private readonly RobotArmService _robotArmService;
+        private readonly RunningStateService _runningStateService;
         public byte LoadPortId => 2;
         #endregion
 
@@ -36,12 +40,21 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private bool _isCancelEnabled = false;
+
+        [ObservableProperty]
+        private string? _lPState = "Ready";
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort2_ViewModel(WaferService waferService)
+        public LoadPort2_ViewModel(RobotArmService robotArmService, RunningStateService runningStateService)
         {
-            _waferService = waferService;
+            this._robotArmService = robotArmService;
+            this._runningStateService = runningStateService;
+
+            this._robotArmService.CommandStarted += OnWaferOut;
+            this._robotArmService.CommandCompleted += OnWaferIn;
+            this._runningStateService.DataChange += OnEquipment_State_Change;
+
             PropertyChanged += OnPropertyChanged;
         }
         #endregion
@@ -54,6 +67,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.SelectedSlots?.Clear();
             IsSetupEnabled = true;    // Setup 활성
             IsCancelEnabled = false;
+            this.LPState = "Ready";
         }
         #endregion
 
@@ -72,6 +86,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Update_Carrier_info(Wafer newWaferData)
         {
+            if (SelectedSlots.Count == 0)
+            {
+                return false;
+            }
+
             foreach (int slot in SelectedSlots)
             {
                 var existingWafer = this.Waferinfo.FirstOrDefault(w =>
@@ -131,7 +150,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     PJId = "",
                     CJId = "",
                     SlotId = slot.ToString("D2"),
-                    LotId = ""
+                    LotId = "",
+                    CurrentLocation = $"LoadPort{this.LoadPortId}"
                 });
             }
         }
@@ -153,6 +173,40 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             string pjid = this.Waferinfo[loadportId].PJId;
             return pjid;
+        }
+
+        private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
+        {
+            if (state == EquipmentStatusEnum.Running)
+            {
+                this.LPState = "Running";
+            }
+            else if (state == EquipmentStatusEnum.Completed)
+            {
+                this.LPState = "Completed";
+                this.IsCancelEnabled = true;
+            }
+            else if (state == EquipmentStatusEnum.Wait)
+            {
+                this.LPState = "Wait";
+                this.IsCancelEnabled = false;
+            }
+        }
+
+        private void OnWaferIn(object? sender, Wafer e)
+        {
+            if (e.LoadportId == this.LoadPortId)
+            {
+                AddRequested?.Invoke(this, e);
+            }
+        }
+
+        private void OnWaferOut(object? sender, Wafer e)
+        {
+            if (e.LoadportId == this.LoadPortId)
+            {
+                RemoveRequested?.Invoke(this, e);
+            }
         }
         #endregion
     }

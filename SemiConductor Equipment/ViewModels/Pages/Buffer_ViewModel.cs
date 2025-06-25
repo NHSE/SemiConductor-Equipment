@@ -14,7 +14,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         private bool _isInitialized = false;
         private readonly IDatabase<Chamberlogtable>? _database;
-        private bool _a = false;
         #endregion
 
         #region PROPERTIES
@@ -48,7 +47,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             try
             {
-                this.Logpagetable = await Task.Run(() => this._database?.Search($"B{number}"));
+                this.Logpagetable = await Task.Run(() => this._database?.Search($"Buffer{number}"));
             }
             catch (Exception ex)
             {

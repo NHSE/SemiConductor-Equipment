@@ -54,6 +54,7 @@ namespace SemiConductor_Equipment.Services
                         if (wafer.CurrentLocation == $"LoadPort{wafer.LoadportId}")
                         {
                             waferQueue.Dequeue(); // 이제 꺼내도 됨
+                            wafer.Status = "Running";
 
                             if (this._runningStateService.Get_State() != EquipmentStatusEnum.Running)
                             {
@@ -112,7 +113,6 @@ namespace SemiConductor_Equipment.Services
                             if (_robotArmService.CommandSize_Buffer() == 0) break;
 
                             var Command = _robotArmService.DequeueCommand_Buffer();
-                            var completedInBuffer = Command.Location;
 
                             Command.Wafer.TargetLocation = $"LoadPort{Command.Wafer.LoadportId}";
                             _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
@@ -123,9 +123,18 @@ namespace SemiConductor_Equipment.Services
                             });
 
                             await _robotArmService.ProcessCommandQueueAsync();
-                            _bufferService.RemoveWaferFromBuffer(completedInBuffer);
+                            if (Command.CommandType != RobotCommandType.Error)
+                            {
+                                var completedInBuffer = Command.Location;
+                                _bufferService.RemoveWaferFromBuffer(completedInBuffer);
+                            }
+                            else
+                            {
+                                var completedInChamber = Command.Location;
+                                _chamberService.RemoveWaferFromChamber(completedInChamber);
+                            }
 
-                            await Task.Delay(300);
+                                await Task.Delay(300);
                         }
                     }
 
