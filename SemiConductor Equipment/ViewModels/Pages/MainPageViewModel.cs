@@ -23,6 +23,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IDateTime _iDateTime;
         private readonly ILogManager _logmanager;
         private readonly IConfigManager _configManager;
+        private readonly ISecsGemServer _secsGemServer;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
@@ -42,12 +43,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [ObservableProperty]
         private string? _equipment_state;
         [ObservableProperty]
-        private bool? _isConnected;
+        private bool? _isConnected = false;
+        [ObservableProperty]
+        private bool? _isDisconnected = false;
 
         #endregion
 
         #region CONSTRUCTOR
-        public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager, MessageHandlerService messageHandler, RunningStateService runningStateService)
+        public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager, ISecsGemServer secsGemServer,MessageHandlerService messageHandler, RunningStateService runningStateService)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -65,11 +68,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._logmanager = logmanager;
             this._messageHandler = messageHandler;
             this._configManager = configManager;
+            this._secsGemServer = secsGemServer;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
 
-            SecsGemServer.Initialize(AppendLog, messageHandler, _configManager.IP, _configManager.Port, _configManager.DeviceID);
+            if(this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
+            {
+                this.IsDisconnected = true;
+            }
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
@@ -94,6 +101,25 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region COMMANDS
+
+        [RelayCommand]
+        private void DisConnect()
+        {
+            var configManager = App.Services.GetRequiredService<IConfigManager>();
+            this._secsGemServer.Initialize(AppendLog, this._messageHandler, configManager);
+            this.IsConnected = true;
+            this.IsDisconnected = false;
+        }
+
+        [RelayCommand]
+        private void Connect()
+        {
+            var configManager = App.Services.GetRequiredService<IConfigManager>();
+            this._secsGemServer.Initialize(AppendLog, this._messageHandler, configManager);
+            this.IsConnected = false;
+            this.IsDisconnected = true;
+        }
+
         [RelayCommand]
         private void LoadPort1() => NavigateToPage<LoadPort1_Page>();
 
@@ -133,15 +159,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         }
 
         [RelayCommand]
-        private void SubMenuIPSetting()
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var ipSettingPage = App.Services.GetRequiredService<IpSettingMenu>(); // DI로 생성된 인스턴스 사용
-                mainWindow.MainFrame.Navigate(ipSettingPage);
-            }
-        }
+        private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
         #endregion
 
         #region METHODS

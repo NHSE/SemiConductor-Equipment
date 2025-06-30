@@ -17,6 +17,7 @@ using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Views.Menus;
 using SemiConductor_Equipment.ViewModels.Menus;
 using SemiConductor_Equipment.Helpers;
+using System.Configuration;
 
 namespace SemiConductor_Equipment
 {
@@ -103,7 +104,7 @@ namespace SemiConductor_Equipment
 
                 services.AddSingleton<Action<string>>(provider => AppendLog);
                 services.AddSingleton<MessageHandlerService>();
-                services.AddSingleton<SecsGemServer>();
+                services.AddSingleton<ISecsGemServer, SecsGemServer>();
                 services.AddSingleton<WaferService>();
                 services.AddSingleton<WaferProcessCoordinatorService>();
                 services.AddSingleton<LoadPortService>();

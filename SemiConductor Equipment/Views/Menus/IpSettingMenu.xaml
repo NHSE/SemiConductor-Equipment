@@ -26,77 +26,117 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#263043" CornerRadius="9" Margin="18,18,18,8" Padding="12" Effect="{DynamicResource DropShadow}">
-            <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                <!-- 왼쪽: Chamber 선택, 검색 -->
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <ui:TextBlock Text="IP Setting" Height="21" FontSize="20" FontFamily="Calibri" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <!-- 오른쪽: 뒤로가기 버튼 -->
+        <!-- 상단 타이틀 바 -->
+        <Border Grid.Row="0" Background="#263043" CornerRadius="12" Margin="24,24,24,12" Padding="18" >
+            <DockPanel>
+                <TextBlock Text="IP Setting"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
                 <ui:Button x:Name="btnBack"
-               DockPanel.Dock="Right"
-               Click="btnBack_Click"
-               MouseOverBackground="LightGray"
-               Height="32"
-               Width="42"
-               HorizontalAlignment="Right"
-               Margin="0,0,0,0"
-               VerticalAlignment="Center">
-                    <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Backspace24" Foreground="Black"/>
-                    </ui:Button.Icon>
+                   Grid.Column="1"
+                   Click="btnBack_Click"
+                   MouseOverBackground="LightGray"
+                   Height="34"
+                   Width="44"
+                   Margin="0,10,14,10"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right">
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Backspace24" Foreground="Black"/>
+                        </ui:Button.Icon>
                 </ui:Button>
             </DockPanel>
         </Border>
+
         <!-- 본문 카드 -->
-        <Border Grid.Row="1" Background="#1A2233" CornerRadius="12" Margin="18" Padding="18" Effect="{DynamicResource DropShadow}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid Grid.Column="0">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <ui:TextBlock Text="IP" Foreground="White" HorizontalAlignment="Center"/>
-                            <ui:TextBox Text="{Binding ViewModels.IP, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid Grid.Column="1">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <ui:TextBlock Text="Port" Foreground="White" HorizontalAlignment="Center"/>
-                            <ui:TextBox Text="{Binding ViewModels.Port, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid Grid.Column="2">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <ui:TextBlock Text="Device ID" Foreground="White" HorizontalAlignment="Center"/>
-                            <ui:TextBox Text="{Binding ViewModels.DeviceID, Mode=TwoWay}" FontSize="30" Background="DarkGray" HorizontalAlignment="Center" Width="209"/>
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <ui:Button Content="Initalize" Command="{Binding ViewModels.InitCommand}" HorizontalAlignment="Center" Height="29" Width="236" />
-                    </Grid>
-                    <Grid Grid.Column="1">
-                        <ui:Button Content="Save" Command="{Binding ViewModels.SaveCommand}" HorizontalAlignment="Center" Height="29" Width="236" />
-                    </Grid>
-                </Grid>
-            </Grid>
+        <Border Grid.Row="1" Background="#1A2233" CornerRadius="18" Margin="24" Padding="32" >
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="네트워크 정보 입력" 
+                               FontSize="22" 
+                               FontWeight="SemiBold" 
+                               Foreground="#B0C4DE"
+                               HorizontalAlignment="Center" Margin="0,0,0,24"/>
+                <UniformGrid Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,24">
+                    <!-- IP -->
+                    <StackPanel>
+                        <TextBlock Text="IP" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                        <TextBox Text="{Binding ViewModels.IP, Mode=TwoWay}"
+                                     FontSize="24"
+                                     FontWeight="Bold"
+                                     Background="#2E3B4E"
+                                     Foreground="White"
+                                     BorderBrush="#3A88FE"
+                                     BorderThickness="2"
+                                     Padding="12,6"
+                                     Width="180"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     CaretBrush="#3A88FE"
+                                     />
+                    </StackPanel>
+                    <!-- Port -->
+                    <StackPanel>
+                        <TextBlock Text="Port" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                        <TextBox Text="{Binding ViewModels.Port, Mode=TwoWay}"
+                                     FontSize="24"
+                                     FontWeight="Bold"
+                                     Background="#2E3B4E"
+                                     Foreground="White"
+                                     BorderBrush="#3A88FE"
+                                     BorderThickness="2"
+                                     Padding="12,6"
+                                     Width="180"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     CaretBrush="#3A88FE"
+                                     />
+                    </StackPanel>
+                    <!-- Device ID -->
+                    <StackPanel>
+                        <TextBlock Text="Device ID" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                        <TextBox Text="{Binding ViewModels.DeviceID, Mode=TwoWay}"
+                                     FontSize="24"
+                                     FontWeight="Bold"
+                                     Background="#2E3B4E"
+                                     Foreground="White"
+                                     BorderBrush="#3A88FE"
+                                     BorderThickness="2"
+                                     Padding="12,6"
+                                     Width="180"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     CaretBrush="#3A88FE"
+                                     />
+                    </StackPanel>
+                </UniformGrid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <Button Content="초기화"
+                                Command="{Binding ViewModels.InitCommand}"
+                                Width="140"
+                                Height="40"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Background="#263043"
+                                Foreground="White"
+                                BorderBrush="#3A88FE"
+                                BorderThickness="2"
+                                Cursor="Hand"
+                                Margin="0,0,8,0"/>
+                    <Button Content="저장"
+                                Command="{Binding ViewModels.SaveCommand}"
+                                Width="140"
+                                Height="40"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Background="#3A88FE"
+                                Foreground="White"
+                                BorderBrush="#3A88FE"
+                                BorderThickness="2"
+                                Cursor="Hand"/>
+                </StackPanel>
+            </StackPanel>
         </Border>
     </Grid>
 </Page>

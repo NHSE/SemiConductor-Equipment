@@ -129,7 +129,6 @@
                 </Border>
             </Grid>
 
-            <!-- 하단 장비 Run 패널 -->
             <Border Background="#1A2233" CornerRadius="12" Margin="24" Height="120"
                 VerticalAlignment="Bottom" Effect="{StaticResource DropShadow}">
                 <Grid Margin="18">
@@ -138,8 +137,93 @@
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0" ShowGridLines="True">
-                        <!-- 통신 상태 -->
+                    <Grid Grid.Column="0">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                            <!-- 통신 시작 버튼 -->
+                            <Button Content="⏺ Connect"
+                                x:Name="btnconnect"
+                                Width="120"
+                                Height="36"
+                                Margin="0,0,0,10"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Background="#3A88FE"
+                                BorderThickness="0"
+                                IsEnabled="{Binding ViewModel.IsConnected}"
+                                Command="{Binding ViewModel.ConnectCommand}"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="#FFC0C0C0"/>
+                                                <Setter Property="Foreground" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- 통신 종료 버튼 -->
+                            <Button Content="■ Disconnect"
+                                x:Name="btndisconnect"
+                                Width="120"
+                                Height="36"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Background="#FF4B5C"
+                                BorderThickness="0"
+                                IsEnabled="{Binding ViewModel.IsDisconnected}"
+                                Command="{Binding ViewModel.DisConnectCommand}"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                                <Setter Property="Background" Value="#FF888888"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="#FFC0C0C0"/>
+                                                <Setter Property="Foreground" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                        </StackPanel>
                     </Grid>
 
                     <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />
