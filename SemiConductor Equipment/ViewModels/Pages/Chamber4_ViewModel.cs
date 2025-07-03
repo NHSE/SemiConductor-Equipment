@@ -20,9 +20,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly ILogManager _logManager;
-        private readonly IMessageBox _messageBox;
-        private readonly IDatabase<ChamberStatus>? _database;
+        private readonly IChamberManager _chamberManager;
         private FileSystemWatcher _logFileWatcher;
+        private long lastLogPosition = 0;
         #endregion
 
         #region PROPERTIES
@@ -40,10 +40,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private List<string>? _logpagetable;
+
+        [ObservableProperty]
+        private bool _isWafer;
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber4_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IMessageBox messageBox)
+        public Chamber4_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -52,12 +55,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             LoadInitialLogs();
             SetupLogFileWatcher();
 
-            this._database = database;
-
-            this._messageBox = messageBox;
-
             this.IsReadyToRun = false;
             this.HasWafer = false;
+            this._chamberManager = chamberManager;
+
+            this._chamberManager.DataEnqueued += OnDataEnqueued;
 
         }
         #endregion
@@ -86,7 +88,26 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                LogText = File.ReadAllText(e.FullPath);
+                try
+                {
+                    using (var fs = new FileStream(e.FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        fs.Seek(lastLogPosition, SeekOrigin.Begin);
+                        using (var reader = new StreamReader(fs))
+                        {
+                            string newText = reader.ReadToEnd();
+                            if (!string.IsNullOrEmpty(newText))
+                            {
+                                LogText += newText;
+                            }
+                            lastLogPosition = fs.Position;
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    // 파일이 잠겨있을 수 있으니 예외 무시 또는 재시도 로직 추가 가능
+                }
             });
         }
 
@@ -105,22 +126,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
         }
 
-        public async Task OnNavigatedToAsync(int? number)
+        private void OnDataEnqueued(object sender, ChamberStatus chamber)
         {
-               await InitializeViewModelAsync((number.ToString()));
-        }
-
-        public Task OnNavigatedFromAsync() => Task.CompletedTask;
-        private async Task InitializeViewModelAsync(string? number)
-        {
-            try
+            // 큐에 데이터가 들어왔을 때 실행할 코드
+            // 필요하다면 _service에서 직접 큐 상태를 조회할 수 있음
+            //이벤트 넘겨줄때 챔버 네임 넘겨서 받아야함
+            //그 이후 각 뷰모델에서 자기 이름과 같으면 bool 반전
+            if (chamber.ChamberName == "Chamber4")
             {
-                this.Logpagetable = await Task.Run(() => this._database?.SearchChamberField($"ch{number}"));
-                this.StatusText = this.Logpagetable?.FirstOrDefault() ?? string.Empty;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception();
+                this.IsWafer = !this.IsWafer;
+                this.StatusText = chamber.State;
             }
         }
         #endregion

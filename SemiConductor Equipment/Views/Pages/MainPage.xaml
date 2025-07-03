@@ -96,10 +96,42 @@
                         <StackPanel>
                             <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
-                                <ui:Button Content="B1" Background="#5D4037" Command="{Binding ViewModel.Buffer1Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B2" Background="#5D4037" Command="{Binding ViewModel.Buffer2Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B3" Background="#5D4037" Command="{Binding ViewModel.Buffer3Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B4" Background="#5D4037" Command="{Binding ViewModel.Buffer4Command}" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer1Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer1_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer1_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer2Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer2_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer2_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer3Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer3_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer3_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer4Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer4_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer4_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
                             </UniformGrid>
                         </StackPanel>
                     </Border>
@@ -114,16 +146,58 @@
                 </Grid>
 
                 <!-- 우측: 챔버 -->
-                <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="310" Padding="18" Effect="{StaticResource DropShadow}">
+                <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="300" Padding="12" Effect="{StaticResource DropShadow}">
                     <StackPanel>
-                        <TextBlock Text="PROCESS CHAMBER" Foreground="#B0B7C3" FontWeight="Bold"/>
-                        <UniformGrid Rows="4" Columns="2" Margin="0 12 0 0">
-                            <ui:Button Content="CH1" Command="{Binding ViewModel.Chamber1Command}" Background="#1565C0" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH2" Command="{Binding ViewModel.Chamber2Command}" Background="#607D8B" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH3" Command="{Binding ViewModel.Chamber3Command}" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH4" Command="{Binding ViewModel.Chamber4Command}" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH5" Command="{Binding ViewModel.Chamber5Command}" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH6" Command="{Binding ViewModel.Chamber6Command}" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                        <TextBlock Text="PROCESS CHAMBER"
+                   Foreground="#B0B7C3"
+                   FontWeight="Bold"
+                   FontSize="14"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+                        <UniformGrid Rows="3" Columns="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ui:Button Command="{Binding ViewModel.Chamber1Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber1_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber1_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber2Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber2_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber2_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber3Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber3_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber3_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber4Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber4_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber4_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber5Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH5" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber5_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber5_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber6Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH6" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber6_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber6_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
                         </UniformGrid>
                     </StackPanel>
                 </Border>

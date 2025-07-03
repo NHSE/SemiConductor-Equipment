@@ -3,17 +3,14 @@ using System.Collections.Generic;
 
 namespace SemiConductor_Equipment.Models;
 
-public partial class ChamberStatus
+public partial class ChamberStatus : EventArgs
 {
-    public string? Ch1 { get; set; }
+    public string ChamberName { get; }
+    public string State { get; }
 
-    public string? Ch2 { get; set; }
-
-    public string? Ch3 { get; set; }
-
-    public string? Ch4 { get; set; }
-
-    public string? Ch5 { get; set; }
-
-    public string? Ch6 { get; set; }
+    public ChamberStatus(string value1, string value2)
+    {
+        ChamberName = value1;
+        State = value2;
+    }
 }

@@ -10,7 +10,6 @@
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800"
         Title="Chamber2_Page"
-        Loaded="Page_Loaded"
         KeepAlive="True"
         Background="#232C39">
 

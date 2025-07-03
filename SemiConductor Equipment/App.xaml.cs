@@ -53,14 +53,14 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IpSettingViewModel>();
                 services.AddTransient<IConfigManager>(provider => new IPSettingService(@"C:\Configs"));
 
-                services.AddSingleton<BufferService>();
+                services.AddSingleton<IBufferManager, BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
                 services.AddSingleton<Buffer1_Page>();
                 services.AddSingleton<Buffer2_Page>();
                 services.AddSingleton<Buffer3_Page>();
                 services.AddSingleton<Buffer4_Page>();
 
-                services.AddSingleton<ChamberService>();
+                services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();
                 services.AddSingleton<Chamber2_ViewModel>();
                 services.AddSingleton<Chamber3_ViewModel>();
@@ -74,7 +74,7 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<Chamber4_Page>();
                 services.AddSingleton<Chamber5_Page>();
                 services.AddSingleton<Chamber6_Page>();
-                services.AddSingleton<IDatabase<ChamberStatus>, ChamberStatusService>();
+                services.AddSingleton<ChamberStatus>();
 
                 services.AddSingleton<IMessageBox, MessageBoxService>();
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();

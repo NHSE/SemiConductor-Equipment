@@ -10,13 +10,12 @@ using SemiConductor_Equipment.Enums;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class ChamberService
+    public class ChamberService : IChamberManager
     {
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly DbLogHelper _logHelper;
         private readonly RobotArmService _robotArmService;
-        public event EventHandler<string> DataEnqueued;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -26,6 +25,18 @@ namespace SemiConductor_Equipment.Services
             ["Chamber4"] = (null, false),
             ["Chamber5"] = (null, false),
             ["Chamber6"] = (null, false)
+        };
+
+        public event EventHandler<ChamberStatus> DataEnqueued;
+
+        public IDictionary<string, string> Chamber_State { get; set; } = new Dictionary<string, string>()
+        {
+            ["Chamber1"] = "IDLE",
+            ["Chamber2"] = "IDLE",
+            ["Chamber3"] = "IDLE",
+            ["Chamber4"] = "IDLE",
+            ["Chamber5"] = "IDLE",
+            ["Chamber6"] = "IDLE"
         };
 
         public ChamberService(ILogManager logManager, DbLogHelper logHelper, RobotArmService robotArmService)
@@ -63,7 +74,8 @@ namespace SemiConductor_Equipment.Services
                     this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
 
                     this._chambers[chamberName] = (null, false);
-                    DataEnqueued?.Invoke(this, chamberName);
+                    this.Chamber_State[chamberName] = "IDLE";
+                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName]));
                 }
             }
         }
@@ -76,7 +88,8 @@ namespace SemiConductor_Equipment.Services
                 {
                     // 웨이퍼 넣기 + 처리중 상태 표시
                     this._chambers[chamberName] = (wafer, false);
-                    DataEnqueued?.Invoke(this, chamberName);
+                    this.Chamber_State[chamberName] = "Running";
+                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName]));
                 }
 
                 this._logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");

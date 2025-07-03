@@ -63,11 +63,6 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Navigate(mainPage);
             }
         }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            await ViewModel.OnNavigatedToAsync(6);
-        }
         #endregion
     }
 }

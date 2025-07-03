@@ -9,20 +9,21 @@ using SemiConductor_Equipment.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using SemiConductor_Equipment.Commands;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
     public class WaferProcessCoordinatorService
     {
-        private readonly ChamberService _chamberService;
-        private readonly BufferService _bufferService;
+        private readonly IChamberManager _chamberManager;
+        private readonly IBufferManager _bufferManager;
         private readonly RobotArmService _robotArmService;
         private readonly RunningStateService _runningStateService;
 
-        public WaferProcessCoordinatorService(ChamberService chamberService, BufferService bufferService, RobotArmService robotArmService, RunningStateService runningStateService)
+        public WaferProcessCoordinatorService(IChamberManager chamberManager, IBufferManager bufferManager, RobotArmService robotArmService, RunningStateService runningStateService)
         {
-            _chamberService = chamberService;
-            _bufferService = bufferService;
+            _chamberManager = chamberManager;
+            _bufferManager = bufferManager;
             _robotArmService = robotArmService;
             _runningStateService = runningStateService;
         }
@@ -36,14 +37,14 @@ namespace SemiConductor_Equipment.Services
                 while (!token.IsCancellationRequested)
                 {
                     bool isAllDone = waferQueue.Count == 0
-                     && _chamberService.IsAllChamberEmpty()
-                     && _bufferService.IsAllBufferEmpty();
+                     && _chamberManager.IsAllChamberEmpty()
+                     && _bufferManager.IsAllBufferEmpty();
 
                     if (isAllDone)
                         break;
 
                     // 1. 챔버에 빈 자리가 있는지 확인
-                    string? emptyChamber = _chamberService.FindEmptyChamber();
+                    string? emptyChamber = _chamberManager.FindEmptyChamber();
 
                     if (emptyChamber != null && waferQueue.Count > 0)
                     {
@@ -70,7 +71,7 @@ namespace SemiConductor_Equipment.Services
 
                             await _robotArmService.ProcessCommandQueueAsync();
                             wafer.TargetLocation = emptyChamber;
-                            _chamberService.StartProcessingAsync(emptyChamber, wafer);
+                            _chamberManager.StartProcessingAsync(emptyChamber, wafer);
                         }
                     }
 
@@ -81,7 +82,7 @@ namespace SemiConductor_Equipment.Services
                         {
                             if (_robotArmService.CommandSize_Chamber() == 0) break;
 
-                            string? emptyBuffer = _bufferService.FindEmptySlot();
+                            string? emptyBuffer = _bufferManager.FindEmptySlot();
                             if (emptyBuffer != null)
                             {
                                 var Command = _robotArmService.DequeueCommand_Chamber();
@@ -95,9 +96,9 @@ namespace SemiConductor_Equipment.Services
                                     Location = Command.Wafer.TargetLocation,
                                 });
 
-                                _chamberService.RemoveWaferFromChamber(completedInChamber);
+                                _chamberManager.RemoveWaferFromChamber(completedInChamber);
                                 await _robotArmService.ProcessCommandQueueAsync();
-                                _bufferService.StartProcessingAsync(emptyBuffer, Command.Wafer);
+                                _bufferManager.StartProcessingAsync(emptyBuffer, Command.Wafer);
 
                                 await Task.Delay(300);
                             }
@@ -126,12 +127,12 @@ namespace SemiConductor_Equipment.Services
                             if (Command.CommandType != RobotCommandType.Error)
                             {
                                 var completedInBuffer = Command.Location;
-                                _bufferService.RemoveWaferFromBuffer(completedInBuffer);
+                                _bufferManager.RemoveWaferFromBuffer(completedInBuffer);
                             }
                             else
                             {
                                 var completedInChamber = Command.Location;
-                                _chamberService.RemoveWaferFromChamber(completedInChamber);
+                                _chamberManager.RemoveWaferFromChamber(completedInChamber);
                             }
 
                                 await Task.Delay(300);

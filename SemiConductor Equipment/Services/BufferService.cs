@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.Helpers;
+using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class BufferService
+    public class BufferService : IBufferManager
     {
         private readonly DbLogHelper _logHelper;
         private readonly RobotArmService _robotArmService;
@@ -19,6 +20,16 @@ namespace SemiConductor_Equipment.Services
             ["Buffer2"] = (null, false),
             ["Buffer3"] = (null, false),
             ["Buffer4"] = (null, false),
+        };
+
+        public event EventHandler<BufferStatus> DataEnqueued;
+
+        public IDictionary<string, string> Buffer_State { get; set; } = new Dictionary<string, string>()
+        {
+            ["Buffer1"] = "UN USE",
+            ["Buffer2"] = "UN USE",
+            ["Buffer3"] = "UN USE",
+            ["Buffer4"] = "UN USE"
         };
 
         public BufferService(DbLogHelper logHelper, RobotArmService robotArmService)
@@ -50,6 +61,8 @@ namespace SemiConductor_Equipment.Services
             lock (_lock)
             {
                 // 웨이퍼 넣기 + 처리중 상태 표시
+                this.Buffer_State[buffername] = "IN USE";
+                DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
                 _bufferSlots[buffername] = (wafer, false);
                 this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "IN");
             }
@@ -93,6 +106,8 @@ namespace SemiConductor_Equipment.Services
                 if (_bufferSlots.ContainsKey(buffername))
                 {
                     this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "OUT");
+                    this.Buffer_State[buffername] = "UN USE";
+                    DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
                     _bufferSlots[buffername] = (null, false);
                 }
             }
