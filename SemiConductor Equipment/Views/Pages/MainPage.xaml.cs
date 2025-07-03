@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
@@ -34,13 +37,18 @@ namespace SemiConductor_Equipment.Views.Pages
 
         #region CONSTRUCTOR
         public MainPageViewModel ViewModel { get; }
-        public MainPage()
+        public MainPage(MainPageViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new MainPageViewModel(new DateTimeService(), new LogService(@"C:\Logs"));
+            ViewModel = viewModel;
             DataContext = this;
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            this.imgLp1.Source = new BitmapImage(new Uri("/Resources/Carrier_nothing.png", UriKind.Relative));
+            this.imgLp2.Source = new BitmapImage(new Uri("/Resources/Carrier_nothing.png", UriKind.Relative));
         }
+
         #endregion
 
         #region COMMAND
@@ -48,8 +56,46 @@ namespace SemiConductor_Equipment.Views.Pages
 
         #region METHOD
 
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Secsdatalog")
+            {
+                this.tbxLogText.ScrollToEnd();
+            }
+            else if(e.PropertyName == "Loadport1imagepath")
+            {
+                this.imgLp1.Source = new BitmapImage(new Uri(ViewModel.Loadport1imagepath, UriKind.Relative));
+            }
+            else if (e.PropertyName == "Loadport2imagepath")
+            {
+                this.imgLp2.Source = new BitmapImage(new Uri(ViewModel.Loadport2imagepath, UriKind.Relative));
+            }
+            else if(e.PropertyName == "Equipment_state")
+            {
+                this.elpsstate.Fill = ViewModel.Equipment_color;
+                this.tbkstate.Foreground = ViewModel.Equipment_color;
+                this.tbkstate.Text = ViewModel.Equipment_state;
+            }
+        }
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        public void Scroll()
+        {
+            if (tbxLogText.Dispatcher.CheckAccess())
+            {
+                tbxLogText.ScrollToEnd();
+            }
+            else
+            {
+                tbxLogText.Dispatcher.Invoke(() =>
+                {
+                    tbxLogText.ScrollToEnd();
+                });
+            }
         }
 
         private void OpenContextMenu()
@@ -71,132 +117,6 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             OpenContextMenu();
             e.Handled = true; // 이벤트가 더 이상 전파되지 않게 막음 (선택)
-        }
-
-        private void LoadPort1_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/LoadPort1_Page.xaml", UriKind.Relative);
-            }
-        }
-        private void LoadPort2_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/LoadPort2_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "Logtables": // 이벤트로 온 데이터가 View Model에 ObservableProperty로 선언된 무엇이냐
-                    this.LogLoadingControl.Visibility = Visibility.Collapsed;
-                    break;
-            }
-        }
-
-        private void SubMenu_Log_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/LogPage.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Buffer1_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer1_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Buffer2_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer2_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Buffer3_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer3_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Buffer4_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Buffer4_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber1_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber1_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber2_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber2_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber3_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber3_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber4_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber4_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber5_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber5_Page.xaml", UriKind.Relative);
-            }
-        }
-
-        private void Chamber6_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Pages/Chamber6_Page.xaml", UriKind.Relative);
-            }
         }
         #endregion
     }

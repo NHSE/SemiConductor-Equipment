@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.ViewModels.Windows;
 using SemiConductor_Equipment.Views.Pages;
 using Wpf.Ui;
@@ -47,7 +48,12 @@ namespace SemiConductor_Equipment.Views.Windows
                 ViewModel = viewModel;
                 DataContext = this;
                 InitializeComponent();
-                MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null)
+                {
+                    var mainPage = App.Services.GetRequiredService<MainPage>();
+                    mainWindow.MainFrame.Navigate(mainPage);
+                }
             }
             catch (Exception ex)
             {

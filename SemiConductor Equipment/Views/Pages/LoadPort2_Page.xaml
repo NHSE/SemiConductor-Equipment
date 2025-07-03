@@ -3,11 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Pages"
+      xmlns:local="clr-namespace:SemiConductor_Equipment.ViewModels.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
+      d:DataContext="{d:DesignInstance local:LoadPort2_ViewModel, IsDesignTimeCreatable=False}"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LoadPort2_Page"
+      KeepAlive="True"
       Background="#232C39">
 
     <Grid>
@@ -25,18 +27,27 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="16,0,0,0">
                     <ui:TextBlock Text="LP02" FontWeight="Bold" FontSize="18" Foreground="White"/>
-                    <ui:TextBlock Text="Lot ID: LOT20250602" Foreground="#FFB86C" FontSize="13"/>
-                    <ui:TextBlock Text="상태: Ready" Foreground="LightGreen" FontSize="13"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:TextBlock Text="Carrier ID: " Foreground="#FFB86C" FontSize="13"/>
+                            <ui:TextBlock Text="{Binding CarrierId}" Foreground="#FFB86C" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+                    <ui:TextBlock Text="{Binding LPState, StringFormat='상태: {0}'}" Foreground="LightGreen" FontSize="13"/>
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
-                       Grid.Column="1"
-                       Click="btnBack_Click"
-                       MouseOverBackground="LightGray"
-                       Height="34"
-                       Width="44"
-                       Margin="0,10,14,10"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right">
+                           Grid.Column="1"
+                           Click="btnBack_Click"
+                           MouseOverBackground="LightGray"
+                           Height="34"
+                           Width="44"
+                           Margin="0,10,14,10"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right">
                     <ui:Button.Icon>
                         <ui:SymbolIcon Symbol="Backspace24" Foreground="Black"/>
                     </ui:Button.Icon>
@@ -51,19 +62,43 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
-                <Image Source="/Resources/LoadPort.png"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <Canvas x:Name="mainCanvas"/>
+                        <Image Source="/Resources/LoadPort.png" 
+                            Stretch="Uniform"/>
+                    </StackPanel>
+                    <Grid Grid.Row="1" Height="46">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <ui:Button x:Name="btnsetup"  Content="Setup" Click="btnSetup_Click" IsEnabled="{Binding IsSetupEnabled}" Foreground="White" HorizontalAlignment="Center" Height="46" Width="103"/>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <ui:Button x:Name="btncancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsCancelEnabled}" Content="Cancel" Click="btnCancel_Click" Foreground="White" HorizontalAlignment="Center" Height="46" Width="103"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Border>
 
             <!-- 하단: 웨이퍼 상세 목록 -->
             <Border Grid.Column="1" Background="#263043" CornerRadius="8" Margin="12" Padding="12">
-                <ui:DataGrid ItemsSource="{Binding WaferList}" AutoGenerateColumns="False" RowHeight="32" FontSize="13"
-          Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None">
-                    <ui:DataGrid.Columns>
-                        <DataGridTextColumn Header="슬롯" Binding="{Binding SlotNo}" Width="70"/>
-                        <DataGridTextColumn Header="웨이퍼 ID" Binding="{Binding WaferId}" Width="*"/>
-                        <DataGridTextColumn Header="Lot ID" Binding="{Binding LotId}" Width="*"/>
-                        <DataGridTextColumn Header="상태" Binding="{Binding Status}" Width="80"/>
-                    </ui:DataGrid.Columns>
+                <ui:DataGrid ItemsSource="{Binding Waferinfo}" RowHeight="32" FontSize="13" AutoGenerateColumns="False"
+                Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Slot ID" Binding="{Binding SlotId}" />
+                        <DataGridTextColumn Header="PJ ID" Binding="{Binding PJId}" />
+                        <DataGridTextColumn Header="CJ ID" Binding="{Binding CJId}" />
+                        <DataGridTextColumn Header="Current Location" Binding="{Binding CurrentLocation}" />
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                        <!-- 나머지 속성은 숨김 -->
+                    </DataGrid.Columns>
                 </ui:DataGrid>
             </Border>
         </Grid>

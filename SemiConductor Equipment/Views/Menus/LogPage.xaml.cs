@@ -1,12 +1,14 @@
 ﻿using System.Windows.Controls;
-using SemiConductor_Equipment.ViewModels.Pages;
+using SemiConductor_Equipment.ViewModels.Menus;
 using System.ComponentModel;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Views.Pages;
 
-namespace SemiConductor_Equipment.Views.Pages
+namespace SemiConductor_Equipment.Views.Menus
 {
     /// <summary>
     /// LogPage.xaml에 대한 상호 작용 논리
@@ -57,7 +59,8 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
             }
         }
         #endregion

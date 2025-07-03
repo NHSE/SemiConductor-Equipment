@@ -18,4 +18,6 @@ public partial class Chamberlogtable
     public string? State { get; set; }
 
     public string? Logdata { get; set; }
+
+    public int Id { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>wpfui-icon.ico</ApplicationIcon>
@@ -24,11 +24,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    <PackageReference Include="Secs4Net" Version="2.4.4" />
+    <PackageReference Include="Secs4Net.Sml" Version="2.4.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
     <PackageReference Include="WPF-UI" Version="4.0.2" />
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 " />
   </ItemGroup>
 
@@ -36,6 +41,7 @@
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
     <None Remove="Resources\Buffer.png" />
+    <None Remove="Resources\Buffer_in_wafer.png" />
     <None Remove="Resources\Carrier_in_wafer.png" />
     <None Remove="Resources\Carrier_nothing.png" />
     <None Remove="Resources\LoadPort.png" />
@@ -45,14 +51,10 @@
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
     <Resource Include="Resources\Buffer.png" />
+    <Resource Include="Resources\Buffer_in_wafer.png" />
     <Resource Include="Resources\Carrier_in_wafer.png" />
     <Resource Include="Resources\Carrier_nothing.png" />
     <Resource Include="Resources\LoadPort.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\Menus\" />
-    <Folder Include="Views\Menus\" />
   </ItemGroup>
 
 </Project>

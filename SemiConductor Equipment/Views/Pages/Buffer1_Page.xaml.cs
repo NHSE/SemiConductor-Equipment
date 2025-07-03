@@ -5,6 +5,7 @@ using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SemiConductor_Equipment.Views.Pages
 {
@@ -27,10 +28,10 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
-        public Buffer1_Page()
+        public Buffer1_Page(Buffer_ViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new Buffer_ViewModel(new LogtableService(new LogDatabaseContext()));
+            ViewModel = viewModel;
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -43,7 +44,8 @@ namespace SemiConductor_Equipment.Views.Pages
             {
                 this.searchDataLoadingControl.Visibility = Visibility.Visible;
                 this.dtgLogViewer.Visibility = Visibility.Collapsed;
-                mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
             }
         }
 

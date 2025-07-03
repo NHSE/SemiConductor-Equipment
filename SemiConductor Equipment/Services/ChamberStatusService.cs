@@ -4,13 +4,19 @@ using System.Linq;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 
-public class ChamberStatusService : IDatabase<ChamberStatus>
+public class ChamberStatusService //: IDatabase<ChamberStatus>
 {
+    /*
     private readonly LogDatabaseContext _db; // 실제 DB 컨텍스트
+    public Dictionary<int, ChamberStatus> ChamberStates { get; } = new();
 
     public ChamberStatusService(LogDatabaseContext db)
     {
         this._db = db;
+        for (int i = 1; i <= 6; i++)
+        {
+            ChamberStates.Add(i, new ChamberStatus());
+        }
     }
 
     public void Create(ChamberStatus entity)
@@ -79,5 +85,5 @@ public class ChamberStatusService : IDatabase<ChamberStatus>
     {
         this._db.ChamberStatuses.Update(entity);
         this._db.SaveChanges();
-    }
+    }*/
 }

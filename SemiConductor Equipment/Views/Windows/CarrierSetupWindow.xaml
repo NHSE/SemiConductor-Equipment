@@ -1,0 +1,28 @@
+﻿<Window x:Class="SemiConductor_Equipment.Views.Windows.CarrierSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Wafer Loader" Height="444" Width="353" Background="#232C39">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="179*"/>
+            <RowDefinition Height="35*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Canvas x:Name="ImageCanvas"
+                MouseLeftButtonDown="ImageCanvas_MouseLeftButtonDown"
+                MouseRightButtonDown="ImageCanvas_MouseRightButtonDown">
+                <Image Source="/Resources/LoadPort.png" 
+                   Stretch="Uniform" 
+                   Width="261" 
+                   Height="323"
+                   Canvas.Left="48" Canvas.Top="18" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            </Canvas>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid>
+                <ui:Button x:Name="btnset" Click="btnset_Click" Content="Set" HorizontalAlignment="Center" Height="60" Width="100"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

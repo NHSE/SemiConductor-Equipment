@@ -15,8 +15,6 @@ public partial class LogDatabaseContext : DbContext
     {
     }
 
-    public virtual DbSet<ChamberStatus> ChamberStatuses { get; set; }
-
     public virtual DbSet<Chamberlogtable> Chamberlogtables { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,38 +23,13 @@ public partial class LogDatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ChamberStatus>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("chamber_status");
-
-            entity.Property(e => e.Ch1)
-                .HasColumnType("character varying")
-                .HasColumnName("ch1");
-            entity.Property(e => e.Ch2)
-                .HasColumnType("character varying")
-                .HasColumnName("ch2");
-            entity.Property(e => e.Ch3)
-                .HasColumnType("character varying")
-                .HasColumnName("ch3");
-            entity.Property(e => e.Ch4)
-                .HasColumnType("character varying")
-                .HasColumnName("ch4");
-            entity.Property(e => e.Ch5)
-                .HasColumnType("character varying")
-                .HasColumnName("ch5");
-            entity.Property(e => e.Ch6)
-                .HasColumnType("character varying")
-                .HasColumnName("ch6");
-        });
-
         modelBuilder.Entity<Chamberlogtable>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("chamberlogtable");
+            entity.HasKey(e => e.Id).HasName("chamberlogtable_pkey");
 
+            entity.ToTable("chamberlogtable");
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ChamberName)
                 .HasColumnType("character varying")
                 .HasColumnName("chamber_name");
@@ -70,7 +43,9 @@ public partial class LogDatabaseContext : DbContext
             entity.Property(e => e.State)
                 .HasColumnType("character varying")
                 .HasColumnName("state");
-            entity.Property(e => e.Time).HasColumnName("time");
+            entity.Property(e => e.Time)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("time");
             entity.Property(e => e.WaferId)
                 .HasColumnType("character varying")
                 .HasColumnName("wafer_id");

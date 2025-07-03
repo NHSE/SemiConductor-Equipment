@@ -10,7 +10,7 @@
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800"
         Title="Chamber1_Page"
-        Loaded="Page_Loaded"
+        KeepAlive="True"
         Background="#232C39">
 
     <Grid>
@@ -53,7 +53,7 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
-                
+                <ui:Image x:Name="imgChamber1"/>
             </Border>
 
             <!-- 하단: 웨이퍼 상세 목록 -->

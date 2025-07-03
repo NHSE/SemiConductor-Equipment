@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
@@ -27,26 +28,22 @@ namespace SemiConductor_Equipment.Views.Pages
     public partial class Chamber1_Page : Page
     {
         #region FIELDS
-        public Chamber_ViewModel ViewModel { get; set; }
+        public Chamber1_ViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber1_Page()
+        public Chamber1_Page(Chamber1_ViewModel viewModel)
         {
             InitializeComponent();
-            ViewModel = new Chamber_ViewModel(new ChamberStatusService(new LogDatabaseContext()), new LogService(@"C:\Logs"), new ChamberService(), new MessageBoxService(), 1);
+            ViewModel = viewModel;
             DataContext = this;
 
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.LogText))
-                {
-                    tblog.ScrollToEnd();
-                }
-            };
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            this.imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
         }
         #endregion
 
@@ -54,19 +51,38 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LogText")
+            {
+                tblog.ScrollToEnd();
+            }
+            else if (e.PropertyName == "IsWafer")
+            {
+                Change_Image(ViewModel.IsWafer);
+            }
+        }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.MainFrame.Source = new Uri("../Pages/MainPage.xaml", UriKind.Relative);
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
             }
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Change_Image(bool isChecked)
         {
-            await ViewModel.OnNavigatedToAsync(1);
+            if (isChecked)
+            {
+                imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer_in_wafer.png", UriKind.Relative));
+            }
+            else
+            {
+                imgChamber1.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
+            }
         }
 
         #endregion

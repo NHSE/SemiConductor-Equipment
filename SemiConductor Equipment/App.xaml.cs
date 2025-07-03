@@ -14,6 +14,10 @@ using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.ViewModels.Menus;
+using SemiConductor_Equipment.Helpers;
+using System.Configuration;
 
 namespace SemiConductor_Equipment
 {
@@ -42,32 +46,74 @@ namespace SemiConductor_Equipment
 
                 services.AddSingleton<LogPage>();
                 services.AddSingleton<LogPageViewModel>();
+                services.AddSingleton<ILogManager>(provider =>
+                                    new LogService(@"C:\Logs"));
 
+                services.AddSingleton<IpSettingMenu>();
+                services.AddSingleton<IpSettingViewModel>();
+                services.AddTransient<IConfigManager>(provider => new IPSettingService(@"C:\Configs"));
+
+                services.AddSingleton<IBufferManager, BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
                 services.AddSingleton<Buffer1_Page>();
                 services.AddSingleton<Buffer2_Page>();
                 services.AddSingleton<Buffer3_Page>();
                 services.AddSingleton<Buffer4_Page>();
 
-                services.AddTransient<IChamberService, ChamberService>();
-                services.AddTransient<Chamber_ViewModel>();
+                services.AddSingleton<IChamberManager, ChamberService>();
+                services.AddSingleton<Chamber1_ViewModel>();
+                services.AddSingleton<Chamber2_ViewModel>();
+                services.AddSingleton<Chamber3_ViewModel>();
+                services.AddSingleton<Chamber4_ViewModel>();
+                services.AddSingleton<Chamber5_ViewModel>();
+                services.AddSingleton<Chamber6_ViewModel>();
+
                 services.AddSingleton<Chamber1_Page>();
-                services.AddSingleton<IDatabase<ChamberStatus>, ChamberStatusService>();
+                services.AddSingleton<Chamber2_Page>();
+                services.AddSingleton<Chamber3_Page>();
+                services.AddSingleton<Chamber4_Page>();
+                services.AddSingleton<Chamber5_Page>();
+                services.AddSingleton<Chamber6_Page>();
+                services.AddSingleton<ChamberStatus>();
 
                 services.AddSingleton<IMessageBox, MessageBoxService>();
-                services.AddSingleton<ILogManager, LogService>();
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
                 services.AddSingleton<IThemeService, ThemeService>();
                 // TaskBar manipulation
                 services.AddSingleton<ITaskBarService, TaskBarService>();
 
-                services.AddTransient<LoadPort_ViewModel>();
+                services.AddSingleton<LoadPort1_ViewModel>();
+                services.AddSingleton<LoadPort2_ViewModel>();
+
+                services.AddSingleton<Func<byte, ILoadPortViewModel>>(provider => key =>
+                {
+                    return key switch
+                    {
+                        1 => provider.GetRequiredService<LoadPort1_ViewModel>(),
+                        2 => provider.GetRequiredService<LoadPort2_ViewModel>(),
+                        _ => throw new ArgumentException("Invalid LoadPortId", nameof(key)),
+                    };
+                });
+
                 services.AddSingleton<LoadPort1_Page>();
                 services.AddSingleton<LoadPort2_Page>();
+                services.AddSingleton<CarrierSetupWindow>();
 
                 services.AddDbContext<LogDatabaseContext>();
+
+                services.AddSingleton<Action<string>>(provider => AppendLog);
+                services.AddSingleton<MessageHandlerService>();
+                services.AddSingleton<ISecsGemServer, SecsGemServer>();
+                services.AddSingleton<WaferService>();
+                services.AddSingleton<WaferProcessCoordinatorService>();
+                services.AddSingleton<LoadPortService>();
+                services.AddSingleton<RobotArmService>();
+                services.AddSingleton<RunningStateService>();
+                services.AddSingleton<DbLogHelper>();
             }).Build();
+
+        public static Action<string> AppendLog = msg => Console.WriteLine(msg);
 
         /// <summary>
         /// Gets services.

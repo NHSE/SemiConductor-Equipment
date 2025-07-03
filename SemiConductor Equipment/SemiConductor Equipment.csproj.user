@@ -5,6 +5,9 @@
     <Compile Update="Controls\LoadingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Menus\IpSettingMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\Buffer1_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -41,10 +44,13 @@
     <Compile Update="Views\Pages\LoadPort2_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\LogPage.xaml.cs">
+    <Compile Update="Views\Menus\LogPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\MainPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\CarrierSetupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Windows\MainWindow.xaml.cs">

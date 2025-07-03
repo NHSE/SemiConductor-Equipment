@@ -13,6 +13,7 @@
       Title="Page1"
       Background="#232C39"
       Loaded="Page_Loaded"
+      KeepAlive="True"
     >
 
     <Page.Resources>
@@ -40,19 +41,18 @@
                 <TextBlock Text="Etcher-3000" FontSize="20" Foreground="White" 
                        Margin="16,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0,0,16,0">
-                    <Ellipse Width="16" Height="16" Fill="LimeGreen" Margin="8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="NORMAL" Foreground="LimeGreen" VerticalAlignment="Center"/>
+                    <Ellipse x:Name="elpsstate" Width="16" Height="16" Fill="{Binding ViewModel.Equipment_color}" Margin="8,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="tbkstate" Text="{Binding ViewModel.Equipment_state}" Foreground="{Binding ViewModel.Equipment_color}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ViewModel.Currenttime}" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Operator: John" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
                     <ui:Button x:Name="bMenu" Width="60" Height="30"
                     Click="Menu_Click" MouseRightButtonUp="bMenu_MouseRightButtonUp"
                     MouseOverBackground="LightGray">
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
-                                <MenuItem Header="LOG" Click="SubMenu_Log_Click"/>
+                                <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
                                 <MenuItem Header="Equipment Setting"/>
                                 <MenuItem Header="CEID Setting"/>
-                                <MenuItem Header="IP Setting"/>
+                                <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
                             </ContextMenu>
                         </ui:Button.ContextMenu>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -74,11 +74,11 @@
                     <StackPanel>
                         <TextBlock Text="LOAD PORT" Foreground="#B0B7C3" FontWeight="Bold" Margin="0 0 0 12"/>
                         <UniformGrid Rows="2" Columns="1" Width="100">
-                            <ui:Button Width="100" Height="80" Click="LoadPort1_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Image Source="/Resources/Carrier_nothing.png"/>
+                            <ui:Button Width="100" Height="80" Command="{Binding ViewModel.LoadPort1Command}" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Image x:Name="imgLp1" Source="{Binding ViewModel.Loadport1imagepath}"/>
                             </ui:Button>
-                            <ui:Button Width="100" Height="80" Click="LoadPort2_Click" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Image Source="/Resources/Carrier_nothing.png"/>
+                            <ui:Button Width="100" Height="80" Command="{Binding ViewModel.LoadPort2Command}" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Image x:Name="imgLp2" Source="{Binding ViewModel.Loadport2imagepath}"/>
                             </ui:Button>
                         </UniformGrid>
                     </StackPanel>
@@ -96,10 +96,42 @@
                         <StackPanel>
                             <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
-                                <ui:Button Content="B1" Background="#5D4037" Click="Buffer1_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B2" Background="#5D4037" Click="Buffer2_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B3" Background="#5D4037" Click="Buffer3_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
-                                <ui:Button Content="B4" Background="#5D4037" Click="Buffer4_Click" Style="{StaticResource ModuleButtonStyle}" Width="55"/>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer1Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer1_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer1_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer2Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer2_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer2_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer3Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer3_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer3_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button Background="#5D4037" Command="{Binding ViewModel.Buffer4Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="B4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Buffer4_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Buffer4_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
                             </UniformGrid>
                         </StackPanel>
                     </Border>
@@ -114,22 +146,63 @@
                 </Grid>
 
                 <!-- 우측: 챔버 -->
-                <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="310" Padding="18" Effect="{StaticResource DropShadow}">
+                <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="300" Padding="12" Effect="{StaticResource DropShadow}">
                     <StackPanel>
-                        <TextBlock Text="PROCESS CHAMBER" Foreground="#B0B7C3" FontWeight="Bold"/>
-                        <UniformGrid Rows="4" Columns="2" Margin="0 12 0 0">
-                            <ui:Button Content="CH1" Click="Chamber1_Click" Background="#1565C0" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH2" Click="Chamber2_Click" Background="#607D8B" Width="70" Margin="0 30 0 0" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH3" Click="Chamber3_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH4" Click="Chamber4_Click" Background="#1565C0" Width="70" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH5" Click="Chamber5_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
-                            <ui:Button Content="CH6" Click="Chamber6_Click" Background="#1565C0" Width="70" Margin="0 0 0 30" Style="{StaticResource ModuleButtonStyle}"/>
+                        <TextBlock Text="PROCESS CHAMBER"
+                   Foreground="#B0B7C3"
+                   FontWeight="Bold"
+                   FontSize="14"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+                        <UniformGrid Rows="3" Columns="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ui:Button Command="{Binding ViewModel.Chamber1Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber1_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber1_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber2Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber2_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber2_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber3Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber3_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber3_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber4Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber4_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber4_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber5Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH5" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber5_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber5_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
+                            <ui:Button Command="{Binding ViewModel.Chamber6Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                                <StackPanel VerticalAlignment="Center" Width="Auto">
+                                    <TextBlock Text="CH6" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Chamber6_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber6_color}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ui:Button>
+
                         </UniformGrid>
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <!-- 하단 장비 Run 패널 -->
             <Border Background="#1A2233" CornerRadius="12" Margin="24" Height="120"
                 VerticalAlignment="Bottom" Effect="{StaticResource DropShadow}">
                 <Grid Margin="18">
@@ -138,29 +211,100 @@
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0" ShowGridLines="True">
-                        <ui:Button x:Name="btnRun" Command="{Binding ViewModel.RunCommand}" Background="ForestGreen" Height="38" Width="82" VerticalAlignment="Top" IsEnabled="True" Margin="6,1,0,0">
-                            <ui:TextBlock Text="Run" FontSize="20" HorizontalAlignment="Center"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnStop" Background="Red" Height="37" Width="83" Margin="96,2,0,0" VerticalAlignment="Top" IsEnabled="False">
-                            <ui:TextBlock Text="Stop" FontSize="20" Width="42" HorizontalAlignment="Center"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnPause" Background="DarkViolet" Height="36" Width="82" Margin="6,44,0,0" VerticalAlignment="Top" IsEnabled="False">
-                            <ui:TextBlock Text="Pause" FontSize="20" Width="56" HorizontalAlignment="Center" Height="26" RenderTransformOrigin="0.5,0.323"/>
-                        </ui:Button>
-                        <ui:Button x:Name="btnInit" Background="blue" Height="36" Width="83" Margin="96,44,0,0" VerticalAlignment="Top" IsEnabled="True">
-                            <ui:TextBlock Text="Init" FontSize="20" HorizontalAlignment="Center"/>
-                        </ui:Button>
+                    <Grid Grid.Column="0">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                            <!-- 통신 시작 버튼 -->
+                            <Button Content="⏺ Connect"
+                                x:Name="btnconnect"
+                                Width="120"
+                                Height="36"
+                                Margin="0,0,0,10"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Background="#3A88FE"
+                                BorderThickness="0"
+                                IsEnabled="{Binding ViewModel.IsConnected}"
+                                Command="{Binding ViewModel.ConnectCommand}"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="#FFC0C0C0"/>
+                                                <Setter Property="Foreground" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- 통신 종료 버튼 -->
+                            <Button Content="■ Disconnect"
+                                x:Name="btndisconnect"
+                                Width="120"
+                                Height="36"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Background="#FF4B5C"
+                                BorderThickness="0"
+                                IsEnabled="{Binding ViewModel.IsDisconnected}"
+                                Command="{Binding ViewModel.DisConnectCommand}"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                                <Setter Property="Background" Value="#FF888888"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="#FFC0C0C0"/>
+                                                <Setter Property="Foreground" Value="#FF888888"/>
+                                                <Setter Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                        </StackPanel>
                     </Grid>
 
                     <Border Grid.Column="1" Width="1" Margin="0,0,8,0" Background="#384050" HorizontalAlignment="Left" />
                     <!-- 로그 -->
                     <Grid Grid.Column="1" ShowGridLines="True">
-                        <Viewbox>
-                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0">
-                                <controls:LoadingControl x:Name="LogLoadingControl" Visibility="Visible" Height="67" Width="124"/>
-                            </StackPanel>
-                        </Viewbox>
+                        <TextBox x:Name="tbxLogText" Text="{Binding ViewModel.Secsdatalog}" VerticalScrollBarVisibility="Auto"
+                                    IsReadOnly="True" TextWrapping="Wrap" Foreground="White" Margin="10,0,10,0"/>
                     </Grid>
                 </Grid>
             </Border>

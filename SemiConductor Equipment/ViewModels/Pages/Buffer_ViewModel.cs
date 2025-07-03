@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -18,6 +19,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region PROPERTIES
         [ObservableProperty]
         private IEnumerable<Chamberlogtable>? _logpagetable;
+        [ObservableProperty]
+        private string? _imagepath;
+
         #endregion
 
         #region CONSTRUCTOR
@@ -43,7 +47,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             try
             {
-                this.Logpagetable = await Task.Run(() => this._database?.Search($"B{number}"));
+                this.Logpagetable = await Task.Run(() => this._database?.Search($"Buffer{number}"));
             }
             catch (Exception ex)
             {
