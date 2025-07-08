@@ -12,7 +12,7 @@ namespace SemiConductor_Equipment.Services
     public class BufferService : IBufferManager
     {
         private readonly DbLogHelper _logHelper;
-        private readonly RobotArmService _robotArmService;
+        private readonly IRobotArmManager _robotArmManager;
         private readonly object _lock = new();
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _bufferSlots = new()
         {
@@ -32,10 +32,10 @@ namespace SemiConductor_Equipment.Services
             ["Buffer4"] = "UN USE"
         };
 
-        public BufferService(DbLogHelper logHelper, RobotArmService robotArmService)
+        public BufferService(DbLogHelper logHelper, IRobotArmManager robotArmManager)
         {
             this._logHelper = logHelper;
-            this._robotArmService = robotArmService;
+            this._robotArmManager = robotArmManager;
         }
 
         public string? FindEmptySlot()
@@ -76,7 +76,7 @@ namespace SemiConductor_Equipment.Services
                 _bufferSlots[buffername] = (wafer, true);
             }
 
-            this._robotArmService.EnqueueCommand_Buffer(new RobotCommand
+            this._robotArmManager.EnqueueCommand_Buffer(new RobotCommand
             {
                 CommandType = RobotCommandType.MoveTo,
                 Wafer = wafer,

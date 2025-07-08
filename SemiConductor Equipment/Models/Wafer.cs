@@ -40,5 +40,14 @@ namespace SemiConductor_Equipment.Models
 
         [ObservableProperty]
         public string? status = "Ready";
+
+        [ObservableProperty]
+        private double positionX;
+
+        [ObservableProperty]
+        private double positionY;
+
+        [ObservableProperty]
+        private bool isVisible;
     }
 }

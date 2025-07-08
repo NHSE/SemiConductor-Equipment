@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -26,9 +27,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ISecsGemServer _secsGemServer;
         private readonly IChamberManager _chamberManager;
         private readonly IBufferManager _bufferManager;
+        private readonly IRobotArmManager _robotArmManager;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
+
+        public Dictionary<string, Point> locationPositions = new();
         #endregion
 
         #region PROPERTIES
@@ -94,11 +98,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [ObservableProperty]
         private Brush? _buffer4_color;
 
+        [ObservableProperty]
+        private ObservableCollection<Wafer> _animation_wafers = new();
         #endregion
 
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
-            ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, IChamberManager chamberManager, IBufferManager bufferManager)
+            ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
+            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -119,6 +126,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._secsGemServer = secsGemServer;
             this._chamberManager = chamberManager;
             this._bufferManager = bufferManager;
+            this._robotArmManager = robotArmManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
@@ -139,6 +147,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             this._chamberManager.DataEnqueued += Chamber_DataEnqueued;
             this._bufferManager.DataEnqueued += Buffer_DataEnqueued;
+            this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
 
             if (this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
             {
@@ -396,6 +405,41 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
             Draw_Color("Buffer");
             #endregion
+        }
+
+        private void Wafer_Position_Draw(object? sender, Wafer e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var existingWafer = this.Animation_wafers.FirstOrDefault(w =>
+                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId);
+
+                if (existingWafer != null)
+                {
+                    if (!double.IsNaN(e.PositionX) && !double.IsNaN(e.PositionY))
+                    {
+                        existingWafer.PositionX = locationPositions[e.CurrentLocation].X;
+                        existingWafer.PositionY = locationPositions[e.CurrentLocation].Y;
+
+                        if (e.CurrentLocation == "LoadPort1" || e.CurrentLocation == "LoadPort2")
+                        {
+                            this.Animation_wafers.Remove(existingWafer);
+                        }
+                    }
+                }
+                else
+                {
+                    this.Animation_wafers.Add(new Wafer
+                    {
+                        LoadportId = e.LoadportId,
+                        Wafer_Num = e.Wafer_Num,
+                        CarrierId = e.CarrierId ?? "",
+                        SlotId = e.SlotId ?? "",
+                        PositionX = locationPositions[e.CurrentLocation].X,
+                        PositionY = locationPositions[e.CurrentLocation].Y
+                    });
+                }
+            });
         }
     }
 }

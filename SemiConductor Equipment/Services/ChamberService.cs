@@ -15,7 +15,7 @@ namespace SemiConductor_Equipment.Services
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly DbLogHelper _logHelper;
-        private readonly RobotArmService _robotArmService;
+        private readonly IRobotArmManager _robotArmManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -39,11 +39,11 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, DbLogHelper logHelper, RobotArmService robotArmService)
+        public ChamberService(ILogManager logManager, DbLogHelper logHelper, IRobotArmManager robotArmManager)
         {
             this._logManager = logManager;
             this._logHelper = logHelper;
-            this._robotArmService = robotArmService;
+            this._robotArmManager = robotArmManager;
         }
 
         public string? FindEmptyChamber()
@@ -112,7 +112,7 @@ namespace SemiConductor_Equipment.Services
 
                 if (wafer.Status == "Completed")
                 {
-                    this._robotArmService.EnqueueCommand_Chamber(new RobotCommand
+                    this._robotArmManager.EnqueueCommand_Chamber(new RobotCommand
                     {
                         CommandType = RobotCommandType.MoveTo,
                         Wafer = wafer,
@@ -121,7 +121,7 @@ namespace SemiConductor_Equipment.Services
                 }
                 else if (wafer.Status == "Error")
                 {
-                    this._robotArmService.EnqueueCommand_Buffer(new RobotCommand
+                    this._robotArmManager.EnqueueCommand_Buffer(new RobotCommand
                     {
                         CommandType = RobotCommandType.Error,
                         Wafer = wafer,

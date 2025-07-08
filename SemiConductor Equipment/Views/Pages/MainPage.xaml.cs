@@ -30,6 +30,7 @@ namespace SemiConductor_Equipment.Views.Pages
     public partial class MainPage : Page
     {
         #region FIELDS
+        private readonly Dictionary<string, Point> locationPositions = new();
         #endregion
 
         #region PROPERTIES
@@ -76,11 +77,32 @@ namespace SemiConductor_Equipment.Views.Pages
                 this.tbkstate.Foreground = ViewModel.Equipment_color;
                 this.tbkstate.Text = ViewModel.Equipment_state;
             }
+            else if( e.PropertyName != "Currenttime")
+            {
+                Console.WriteLine($"{e.PropertyName}");
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            locationPositions["Buffer1"] = btnBuffer1.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Buffer2"] = btnBuffer2.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Buffer3"] = btnBuffer3.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Buffer4"] = btnBuffer4.TranslatePoint(new Point(0, 0), Animationctr);
 
+            locationPositions["Chamber1"] = btnChamber1.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Chamber2"] = btnChamber2.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Chamber3"] = btnChamber3.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Chamber4"] = btnChamber4.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Chamber5"] = btnChamber5.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Chamber6"] = btnChamber6.TranslatePoint(new Point(0, 0), Animationctr);
+
+            locationPositions["RobotArm"] = btnRobotArm.TranslatePoint(new Point(0, 0), Animationctr);
+
+            locationPositions["LoadPort1"] = new Point(0, 0);
+            locationPositions["LoadPort2"] = new Point(0, 0);
+
+            ViewModel.locationPositions = locationPositions;
         }
 
         public void Scroll()

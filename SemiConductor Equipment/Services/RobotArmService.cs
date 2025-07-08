@@ -5,16 +5,18 @@ using SemiConductor_Equipment.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
+using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class RobotArmService
+    public class RobotArmService : IRobotArmManager
     {
         private readonly Queue<RobotCommand> _EndChambercommandQueue = new();
         private readonly Queue<RobotCommand> _EndBuffercommandQueue = new();
         private readonly Queue<RobotCommand> _RobotArmcommandQueue = new();
         public event EventHandler<Wafer> CommandStarted;
         public event EventHandler<Wafer> CommandCompleted;
+        public event EventHandler<Wafer> WaferMoveInfo;
 
         private bool _isProcessing = false;
 
@@ -53,29 +55,6 @@ namespace SemiConductor_Equipment.Services
             return _EndBuffercommandQueue.Count;
         }
 
-        public RobotCommand CommandPeek_Chamber => _EndChambercommandQueue.Peek();
-
-        public RobotCommand CommandPeek_Buffer => _EndBuffercommandQueue.Peek();
-
-        public async Task WaitForBufferCommandAsync(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
-            {
-                // 1. 커맨드 큐에 명령이 있는지 확인
-                if (CommandSize_Buffer() > 0)
-                {
-                    // 2. 명령 있음 → 반환
-                    return;
-                }
-
-                // 3. 아직 없음 → 일정 시간 대기
-                await Task.Delay(100, token); // 100ms 폴링
-            }
-
-            // 4. 종료 요청됨
-            throw new OperationCanceledException();
-        }
-
         public async Task ProcessCommandQueueAsync()
         {
             if (_isProcessing)
@@ -91,6 +70,9 @@ namespace SemiConductor_Equipment.Services
                 {
                     command = _RobotArmcommandQueue.Dequeue();
                     CommandStarted?.Invoke(this, command.Wafer);
+
+                    command.Wafer.CurrentLocation = "RobotArm";
+                    WaferMoveInfo?.Invoke(this, command.Wafer);
                 }
 
                 if (command == null)
@@ -109,11 +91,12 @@ namespace SemiConductor_Equipment.Services
                 if (command.CommandType == RobotCommandType.Place)
                 {
                     command.Wafer.CurrentLocation = command.Location;
+                    WaferMoveInfo?.Invoke(this, command.Wafer);
                 }
             }
             _isProcessing = false;
         }
 
-        public bool IsBusy => _isProcessing;
+        public bool IsBusy() => _isProcessing;
     }
 }

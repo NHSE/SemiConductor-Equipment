@@ -17,14 +17,14 @@ namespace SemiConductor_Equipment.Services
     {
         private readonly IChamberManager _chamberManager;
         private readonly IBufferManager _bufferManager;
-        private readonly RobotArmService _robotArmService;
+        private readonly IRobotArmManager _robotArmManager;
         private readonly RunningStateService _runningStateService;
 
-        public WaferProcessCoordinatorService(IChamberManager chamberManager, IBufferManager bufferManager, RobotArmService robotArmService, RunningStateService runningStateService)
+        public WaferProcessCoordinatorService(IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager, RunningStateService runningStateService)
         {
             _chamberManager = chamberManager;
             _bufferManager = bufferManager;
-            _robotArmService = robotArmService;
+            _robotArmManager = robotArmManager;
             _runningStateService = runningStateService;
         }
 
@@ -62,34 +62,35 @@ namespace SemiConductor_Equipment.Services
                                 this._runningStateService.Change_State(EquipmentStatusEnum.Running);
                             }
 
-                            _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                            _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                             {
                                 CommandType = RobotCommandType.Place,
                                 Wafer = wafer,
                                 Location = emptyChamber
                             });
 
-                            await _robotArmService.ProcessCommandQueueAsync();
+                            if(!_robotArmManager.IsBusy())
+                                await _robotArmManager.ProcessCommandQueueAsync();
                             wafer.TargetLocation = emptyChamber;
                             _chamberManager.StartProcessingAsync(emptyChamber, wafer);
                         }
                     }
 
                     // 2. 챔버 완료 → 버퍼
-                    if (_robotArmService.CommandSize_Chamber() > 0)
+                    if (_robotArmManager.CommandSize_Chamber() > 0)
                     {
                         while (true)
                         {
-                            if (_robotArmService.CommandSize_Chamber() == 0) break;
+                            if (_robotArmManager.CommandSize_Chamber() == 0) break;
 
                             string? emptyBuffer = _bufferManager.FindEmptySlot();
                             if (emptyBuffer != null)
                             {
-                                var Command = _robotArmService.DequeueCommand_Chamber();
+                                var Command = _robotArmManager.DequeueCommand_Chamber();
                                 var completedInChamber = Command.Location;
 
                                 Command.Wafer.TargetLocation = emptyBuffer;
-                                _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                                _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                                 {
                                     CommandType = RobotCommandType.Place,
                                     Wafer = Command.Wafer,
@@ -97,7 +98,8 @@ namespace SemiConductor_Equipment.Services
                                 });
 
                                 _chamberManager.RemoveWaferFromChamber(completedInChamber);
-                                await _robotArmService.ProcessCommandQueueAsync();
+                                if (!_robotArmManager.IsBusy())
+                                    await _robotArmManager.ProcessCommandQueueAsync();
                                 _bufferManager.StartProcessingAsync(emptyBuffer, Command.Wafer);
 
                                 await Task.Delay(300);
@@ -107,23 +109,23 @@ namespace SemiConductor_Equipment.Services
                     }
 
                     //버퍼 -> 로드포트
-                    if (_robotArmService.CommandSize_Buffer() > 0)
+                    if (_robotArmManager.CommandSize_Buffer() > 0)
                     {
                         while (true)
                         {
-                            if (_robotArmService.CommandSize_Buffer() == 0) break;
+                            if (_robotArmManager.CommandSize_Buffer() == 0) break;
 
-                            var Command = _robotArmService.DequeueCommand_Buffer();
+                            var Command = _robotArmManager.DequeueCommand_Buffer();
 
                             Command.Wafer.TargetLocation = $"LoadPort{Command.Wafer.LoadportId}";
-                            _robotArmService.EnqueueCommand_RobotArm(new RobotCommand
+                            _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                             {
                                 CommandType = RobotCommandType.Place,
                                 Wafer = Command.Wafer,
                                 Location = Command.Wafer.TargetLocation,
                             });
 
-                            await _robotArmService.ProcessCommandQueueAsync();
+                            await _robotArmManager.ProcessCommandQueueAsync();
                             if (Command.CommandType != RobotCommandType.Error)
                             {
                                 var completedInBuffer = Command.Location;

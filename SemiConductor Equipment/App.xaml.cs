@@ -108,7 +108,7 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<WaferService>();
                 services.AddSingleton<WaferProcessCoordinatorService>();
                 services.AddSingleton<LoadPortService>();
-                services.AddSingleton<RobotArmService>();
+                services.AddSingleton<IRobotArmManager, RobotArmService>();
                 services.AddSingleton<RunningStateService>();
                 services.AddSingleton<DbLogHelper>();
             }).Build();

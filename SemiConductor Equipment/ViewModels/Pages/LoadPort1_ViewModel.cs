@@ -22,7 +22,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         public event EventHandler<Wafer> RemoveRequested;
         public event EventHandler<Wafer> AddRequested;
-        private readonly RobotArmService _robotArmService;
+        private readonly IRobotArmManager _robotArmManager;
         private readonly RunningStateService _runningStateService;
         public byte LoadPortId => 1;
         #endregion
@@ -48,13 +48,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort1_ViewModel(RobotArmService robotArmService, RunningStateService runningStateService)
+        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService)
         {
-            this._robotArmService = robotArmService;
+            this._robotArmManager = robotArmManager;
             this._runningStateService = runningStateService;
 
-            this._robotArmService.CommandStarted += OnWaferOut;
-            this._robotArmService.CommandCompleted += OnWaferIn;
+            this._robotArmManager.CommandStarted += OnWaferOut;
+            this._robotArmManager.CommandCompleted += OnWaferIn;
             this._runningStateService.DataChange += OnEquipment_State_Change;
 
             PropertyChanged += OnPropertyChanged;
@@ -70,6 +70,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.IsSetupEnabled = true;    // Setup 활성
             this.IsCancelEnabled = false;
             this.LPState = "Ready";
+
+            if (!string.IsNullOrEmpty(this.CarrierId))
+            {
+                this.CarrierId = "";
+            }
         }
         #endregion
 
