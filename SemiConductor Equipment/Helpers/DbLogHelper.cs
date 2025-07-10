@@ -22,13 +22,13 @@ namespace SemiConductor_Equipment.Helpers
 
         public void WriteDbLog(string chamberName, Wafer wafer, string state)
         {
-            if (wafer == null) return;
+        	if (wafer == null) return;
 
-            string num = string.Empty;
+			string num = string.Empty;
             TimeZoneInfo koreaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time");
             var log = new Chamberlogtable
             {
-                ChamberName = chamberName,
+				ChamberName = chamberName,
                 Time = TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.UtcNow.UtcDateTime, koreaTimeZone),
                 WaferId = wafer.Wafer_Num.ToString(),
                 Slot = short.TryParse(wafer.SlotId, out var slotValue) ? slotValue : (short?)null,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.interfaces
@@ -14,10 +15,12 @@ namespace SemiConductor_Equipment.interfaces
 
         (string ChamberName, Wafer Wafer)? PeekCompletedWafer();
         void RemoveWaferFromChamber(string chamberName);
+        void AddWaferToChamber(string chamberName, Wafer wafer);
         Task StartProcessingAsync(string chamberName, Wafer wafer);
 
         IDictionary<string, string> Chamber_State { get; set; }
 
         event EventHandler<ChamberStatus> DataEnqueued;
+        event EventHandler<RobotCommand> Enque_Robot;
     }
 }

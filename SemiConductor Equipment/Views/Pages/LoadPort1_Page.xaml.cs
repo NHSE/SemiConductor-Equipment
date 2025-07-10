@@ -98,7 +98,7 @@ namespace SemiConductor_Equipment.Views.Pages
             int SlotCount = 25;
             double GapY = (BottomY - TopY) / (SlotCount - 1);
 
-            if (wafer.Wafer_Num < 0 || wafer.Wafer_Num >= SlotCount) return;
+            if (wafer.Wafer_Num < 0 || wafer.Wafer_Num > SlotCount) return;
 
             double y = BottomY - wafer.Wafer_Num * GapY;
 
@@ -136,7 +136,7 @@ namespace SemiConductor_Equipment.Views.Pages
 
             foreach (int slotIndex in selectedSlots)
             {
-                if (slotIndex < 0 || slotIndex >= SlotCount) continue;
+                if (slotIndex < 0 || slotIndex > SlotCount) continue;
 
                 double y = BottomY - slotIndex * GapY;
                 var line = new Line

@@ -242,26 +242,29 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
         {
-            if (state == EquipmentStatusEnum.Running)
-            {
-                this.Equipment_color = Brushes.Orange;
-                this.Equipment_state = "Running";
-            }
-            else if (state == EquipmentStatusEnum.Completed)
-            {
-                this.Equipment_color = Brushes.LimeGreen;
-                this.Equipment_state = "Completed";
-            }
-            else if (state == EquipmentStatusEnum.Error)
-            {
-                this.Equipment_color = Brushes.Red;
-                this.Equipment_state = "Error";
-            }
-            else
-            {
-                this.Equipment_color = Brushes.LightBlue;
-                this.Equipment_state = "Ready";
-            }
+            Application.Current.Dispatcher.Invoke(() =>
+            { 
+                if (state == EquipmentStatusEnum.Running)
+                {
+                    this.Equipment_color = Brushes.Orange;
+                    this.Equipment_state = "Running";
+                }
+                else if (state == EquipmentStatusEnum.Completed)
+                {
+                    this.Equipment_color = Brushes.LimeGreen;
+                    this.Equipment_state = "Completed";
+                }
+                else if (state == EquipmentStatusEnum.Error)
+                {
+                    this.Equipment_color = Brushes.Red;
+                    this.Equipment_state = "Error";
+                }
+                else
+                {
+                    this.Equipment_color = Brushes.LightBlue;
+                    this.Equipment_state = "Ready";
+                }
+            });
         }
 
         private void NavigateToPage<TPage>() where TPage : class
@@ -353,58 +356,63 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void Chamber_DataEnqueued(object? sender, ChamberStatus e)
         {
-            switch (e.ChamberName)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                case "Chamber1":
-                    this.Chamber1_state = e.State;
-                    break;
+                switch (e.ChamberName)
+                {
+                    case "Chamber1":
+                        this.Chamber1_state = e.State;
+                        break;
 
-                case "Chamber2":
-                    this.Chamber2_state = e.State;
-                    break;
+                    case "Chamber2":
+                        this.Chamber2_state = e.State;
+                        break;
 
-                case "Chamber3":
-                    this.Chamber3_state = e.State;
-                    break;
+                    case "Chamber3":
+                        this.Chamber3_state = e.State;
+                        break;
 
-                case "Chamber4":
-                    this.Chamber4_state = e.State;
-                    break;
+                    case "Chamber4":
+                        this.Chamber4_state = e.State;
+                        break;
 
-                case "Chamber5":
-                    this.Chamber5_state = e.State;
-                    break;
+                    case "Chamber5":
+                        this.Chamber5_state = e.State;
+                        break;
 
-                case "Chamber6":
-                    this.Chamber6_state = e.State;
-                    break;
-            }
+                    case "Chamber6":
+                        this.Chamber6_state = e.State;
+                        break;
+                }
 
-            Draw_Color("Chamber");
+                Draw_Color("Chamber");
+            });
         }
 
         private void Buffer_DataEnqueued(object? sender, BufferStatus e)
         {
-            switch (e.BufferName)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                case "Buffer1":
-                    this.Buffer1_state = e.State;
-                    break;
+                switch (e.BufferName)
+                {
+                    case "Buffer1":
+                        this.Buffer1_state = e.State;
+                        break;
 
-                case "Buffer2":
-                    this.Buffer2_state = e.State;
-                    break;
+                    case "Buffer2":
+                        this.Buffer2_state = e.State;
+                        break;
 
-                case "Buffer3":
-                    this.Buffer3_state = e.State;
-                    break;
+                    case "Buffer3":
+                        this.Buffer3_state = e.State;
+                        break;
 
-                case "Buffer4":
-                    this.Buffer4_state = e.State;
-                    break;
-            }
-            Draw_Color("Buffer");
-            #endregion
+                    case "Buffer4":
+                        this.Buffer4_state = e.State;
+                        break;
+                }
+                Draw_Color("Buffer");
+            });
         }
 
         private void Wafer_Position_Draw(object? sender, Wafer e)
@@ -441,5 +449,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 }
             });
         }
+        #endregion
     }
 }

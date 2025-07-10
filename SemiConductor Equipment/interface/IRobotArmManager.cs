@@ -29,8 +29,12 @@ namespace SemiConductor_Equipment.interfaces
 
         int CommandSize_Buffer();
 
-        Task ProcessCommandQueueAsync();
+        Task ProcessCommandQueueAsync(CancellationToken token);
 
         bool IsBusy();
+
+        void StartProcessing(CancellationToken externalToken);
+
+        Task StopProcessing();
     }
 }

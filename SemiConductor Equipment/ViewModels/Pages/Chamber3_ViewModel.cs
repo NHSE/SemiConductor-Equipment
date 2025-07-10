@@ -132,11 +132,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             // 필요하다면 _service에서 직접 큐 상태를 조회할 수 있음
             //이벤트 넘겨줄때 챔버 네임 넘겨서 받아야함
             //그 이후 각 뷰모델에서 자기 이름과 같으면 bool 반전
-            if (chamber.ChamberName == "Chamber3")
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                this.IsWafer = !this.IsWafer;
-                this.StatusText = chamber.State;
-            }
+                if (chamber.ChamberName == "Chamber3")
+                {
+                    this.IsWafer = !this.IsWafer;
+                    this.StatusText = chamber.State;
+                }
+            });
         }
         #endregion
     }

@@ -12,7 +12,6 @@ namespace SemiConductor_Equipment.Services
     public class BufferService : IBufferManager
     {
         private readonly DbLogHelper _logHelper;
-        private readonly IRobotArmManager _robotArmManager;
         private readonly object _lock = new();
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _bufferSlots = new()
         {
@@ -23,6 +22,7 @@ namespace SemiConductor_Equipment.Services
         };
 
         public event EventHandler<BufferStatus> DataEnqueued;
+        public event EventHandler<RobotCommand> Enque_Robot;
 
         public IDictionary<string, string> Buffer_State { get; set; } = new Dictionary<string, string>()
         {
@@ -32,10 +32,9 @@ namespace SemiConductor_Equipment.Services
             ["Buffer4"] = "UN USE"
         };
 
-        public BufferService(DbLogHelper logHelper, IRobotArmManager robotArmManager)
+        public BufferService(DbLogHelper logHelper)
         {
             this._logHelper = logHelper;
-            this._robotArmManager = robotArmManager;
         }
 
         public string? FindEmptySlot()
@@ -63,7 +62,6 @@ namespace SemiConductor_Equipment.Services
                 // 웨이퍼 넣기 + 처리중 상태 표시
                 this.Buffer_State[buffername] = "IN USE";
                 DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
-                _bufferSlots[buffername] = (wafer, false);
                 this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "IN");
             }
 
@@ -76,11 +74,12 @@ namespace SemiConductor_Equipment.Services
                 _bufferSlots[buffername] = (wafer, true);
             }
 
-            this._robotArmManager.EnqueueCommand_Buffer(new RobotCommand
+            Enque_Robot?.Invoke(this, new RobotCommand
             {
                 CommandType = RobotCommandType.MoveTo,
                 Wafer = wafer,
-                Location = wafer.TargetLocation
+                Location = "LoadPort",
+                Completed = buffername
             });
 
             Console.WriteLine($"[Buffer] {wafer.SlotId} process done in {buffername}");
@@ -110,6 +109,14 @@ namespace SemiConductor_Equipment.Services
                     DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
                     _bufferSlots[buffername] = (null, false);
                 }
+            }
+        }
+
+        public void AddWaferToBuffer(string buffername, Wafer wafer)
+        {
+            lock (_lock)
+            {
+                _bufferSlots[buffername] = (wafer, false);
             }
         }
 

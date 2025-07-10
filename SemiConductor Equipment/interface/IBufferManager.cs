@@ -16,6 +16,8 @@ namespace SemiConductor_Equipment.interfaces
 
         event EventHandler<BufferStatus> DataEnqueued;
 
+        event EventHandler<RobotCommand> Enque_Robot;
+
         string? FindEmptySlot();
 
         (string BufferName, Wafer Wafer)? PeekCompletedWafer();
@@ -25,6 +27,7 @@ namespace SemiConductor_Equipment.interfaces
         (string Buffername, Wafer Wafer)? FindCompletedWafer();
 
         void RemoveWaferFromBuffer(string buffername);
+        void AddWaferToBuffer(string buffername, Wafer wafer);
 
         bool IsAllBufferEmpty();
     }

@@ -178,8 +178,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public string GetPJId(byte loadportId)
         {
-            string pjid = this.Waferinfo[loadportId].PJId;
-            return pjid;
+            var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId);
+            return wafer?.PJId ?? "";
         }
 
         private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
@@ -202,18 +202,25 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnWaferIn(object? sender, Wafer e)
         {
-            if (e.LoadportId == this.LoadPortId)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                AddRequested?.Invoke(this, e);
-            }
+                if (e.LoadportId == this.LoadPortId)
+                {
+                    AddRequested?.Invoke(this, e);
+                }
+            });
+
         }
 
         private void OnWaferOut(object? sender, Wafer e)
         {
-            if (e.LoadportId == this.LoadPortId)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                RemoveRequested?.Invoke(this, e);
-            }
+                if (e.LoadportId == this.LoadPortId)
+                {
+                    RemoveRequested?.Invoke(this, e);
+                }
+            });
         }
         #endregion
     }

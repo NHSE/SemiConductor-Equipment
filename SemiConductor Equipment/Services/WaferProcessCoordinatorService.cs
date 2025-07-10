@@ -31,6 +31,8 @@ namespace SemiConductor_Equipment.Services
         public async Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token)
         {
             bool isError = false;
+            CancellationTokenSource cts = new CancellationTokenSource();
+            _robotArmManager.StartProcessing(cts.Token);
             try
             {
                 this._runningStateService.Change_State(EquipmentStatusEnum.Wait);
@@ -55,13 +57,13 @@ namespace SemiConductor_Equipment.Services
                         if (wafer.CurrentLocation == $"LoadPort{wafer.LoadportId}")
                         {
                             waferQueue.Dequeue(); // 이제 꺼내도 됨
-                            wafer.Status = "Running";
 
                             if (this._runningStateService.Get_State() != EquipmentStatusEnum.Running)
                             {
                                 this._runningStateService.Change_State(EquipmentStatusEnum.Running);
                             }
 
+                            wafer.TargetLocation = emptyChamber;
                             _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                             {
                                 CommandType = RobotCommandType.Place,
@@ -69,10 +71,7 @@ namespace SemiConductor_Equipment.Services
                                 Location = emptyChamber
                             });
 
-                            if(!_robotArmManager.IsBusy())
-                                await _robotArmManager.ProcessCommandQueueAsync();
-                            wafer.TargetLocation = emptyChamber;
-                            _chamberManager.StartProcessingAsync(emptyChamber, wafer);
+                            _chamberManager.AddWaferToChamber(emptyChamber, wafer);
                         }
                     }
 
@@ -87,20 +86,18 @@ namespace SemiConductor_Equipment.Services
                             if (emptyBuffer != null)
                             {
                                 var Command = _robotArmManager.DequeueCommand_Chamber();
-                                var completedInChamber = Command.Location;
+                                var completedInChamber = Command.Completed;
 
                                 Command.Wafer.TargetLocation = emptyBuffer;
+
                                 _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                                 {
                                     CommandType = RobotCommandType.Place,
                                     Wafer = Command.Wafer,
                                     Location = Command.Wafer.TargetLocation,
+                                    Completed = completedInChamber
                                 });
-
-                                _chamberManager.RemoveWaferFromChamber(completedInChamber);
-                                if (!_robotArmManager.IsBusy())
-                                    await _robotArmManager.ProcessCommandQueueAsync();
-                                _bufferManager.StartProcessingAsync(emptyBuffer, Command.Wafer);
+                                _bufferManager.AddWaferToBuffer(emptyBuffer, Command.Wafer);
 
                                 await Task.Delay(300);
                             }
@@ -123,21 +120,8 @@ namespace SemiConductor_Equipment.Services
                                 CommandType = RobotCommandType.Place,
                                 Wafer = Command.Wafer,
                                 Location = Command.Wafer.TargetLocation,
+                                Completed = Command.Completed
                             });
-
-                            await _robotArmManager.ProcessCommandQueueAsync();
-                            if (Command.CommandType != RobotCommandType.Error)
-                            {
-                                var completedInBuffer = Command.Location;
-                                _bufferManager.RemoveWaferFromBuffer(completedInBuffer);
-                            }
-                            else
-                            {
-                                var completedInChamber = Command.Location;
-                                _chamberManager.RemoveWaferFromChamber(completedInChamber);
-                            }
-
-                                await Task.Delay(300);
                         }
                     }
 
@@ -151,6 +135,8 @@ namespace SemiConductor_Equipment.Services
                     this._runningStateService.Change_State(EquipmentStatusEnum.Completed);
                 else
                     this._runningStateService.Change_State(EquipmentStatusEnum.Error);
+
+                await _robotArmManager.StopProcessing();
             }
         }
     }

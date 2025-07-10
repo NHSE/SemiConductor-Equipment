@@ -15,7 +15,6 @@ namespace SemiConductor_Equipment.Services
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly DbLogHelper _logHelper;
-        private readonly IRobotArmManager _robotArmManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -28,6 +27,7 @@ namespace SemiConductor_Equipment.Services
         };
 
         public event EventHandler<ChamberStatus> DataEnqueued;
+        public event EventHandler<RobotCommand> Enque_Robot;
 
         public IDictionary<string, string> Chamber_State { get; set; } = new Dictionary<string, string>()
         {
@@ -39,11 +39,10 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, DbLogHelper logHelper, IRobotArmManager robotArmManager)
+        public ChamberService(ILogManager logManager, DbLogHelper logHelper)
         {
             this._logManager = logManager;
             this._logHelper = logHelper;
-            this._robotArmManager = robotArmManager;
         }
 
         public string? FindEmptyChamber()
@@ -80,14 +79,21 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        public void AddWaferToChamber(string chamberName, Wafer wafer)
+        {
+            lock (_lock)
+            {
+                // 웨이퍼 넣기 + 처리중 상태 표시
+                this._chambers[chamberName] = (wafer, false);
+            }
+        }
+
         public async Task StartProcessingAsync(string chamberName, Wafer wafer)
         {
             try
             {
                 lock (_lock)
                 {
-                    // 웨이퍼 넣기 + 처리중 상태 표시
-                    this._chambers[chamberName] = (wafer, false);
                     this.Chamber_State[chamberName] = "Running";
                     DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName]));
                 }
@@ -112,20 +118,22 @@ namespace SemiConductor_Equipment.Services
 
                 if (wafer.Status == "Completed")
                 {
-                    this._robotArmManager.EnqueueCommand_Chamber(new RobotCommand
+                    Enque_Robot?.Invoke(this, new RobotCommand
                     {
                         CommandType = RobotCommandType.MoveTo,
                         Wafer = wafer,
-                        Location = wafer.TargetLocation
+                        Location = "Buffer",
+                        Completed = chamberName
                     });
                 }
                 else if (wafer.Status == "Error")
                 {
-                    this._robotArmManager.EnqueueCommand_Buffer(new RobotCommand
+                    Enque_Robot?.Invoke(this, new RobotCommand
                     {
                         CommandType = RobotCommandType.Error,
                         Wafer = wafer,
-                        Location = wafer.TargetLocation
+                        Location = "LoadPort",
+                        Completed = chamberName
                     });
                 }
 
