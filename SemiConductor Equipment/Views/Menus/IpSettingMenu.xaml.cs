@@ -25,7 +25,7 @@ namespace SemiConductor_Equipment.Views.Menus
     public partial class IpSettingMenu : Page
     {
         #region FIELDS
-        public IpSettingViewModel ViewModels { get; set; }
+        public IpSettingViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
@@ -35,7 +35,7 @@ namespace SemiConductor_Equipment.Views.Menus
         public IpSettingMenu(IpSettingViewModel viewModel)
         {
             InitializeComponent();
-            ViewModels = viewModel;
+            ViewModel = viewModel;
             DataContext = this;
         }
         #endregion

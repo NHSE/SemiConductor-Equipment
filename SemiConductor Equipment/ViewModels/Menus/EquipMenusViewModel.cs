@@ -3,34 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.Dtos;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
-using SemiConductor_Equipment.Services;
 
 namespace SemiConductor_Equipment.ViewModels.Menus
 {
-    public partial class IpSettingViewModel : ObservableObject // temp
+    public partial class EquipMenusViewModel : ObservableObject
     {
         #region FIELDS
-        private readonly IConfigManager _configManager;
+        private readonly IEquipmentConfigManager _configManager;
         #endregion
 
         #region PROPERTIES
         [ObservableProperty]
-        private string? _iP;
+        private int _max_temperature;
         [ObservableProperty]
-        private ushort? _deviceID;
+        private int _min_temperature;
         [ObservableProperty]
-        private int? _port;
+        private int _allowable;
+        [ObservableProperty]
+        private int _chambertime;
         #endregion
 
         #region CONSTRUCTOR
-        public IpSettingViewModel(IConfigManager configManager) 
+        public EquipMenusViewModel(IEquipmentConfigManager configManager)
         {
             _configManager = configManager;
             _configManager.ConfigRead += OnConfigRead;
         }
-
         #endregion
 
         #region COMMAND
@@ -43,21 +44,22 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [RelayCommand]
         private void Save()
         {
-            _configManager.UpdateConfigValue("IP", this.IP);
-            _configManager.UpdateConfigValue("Port", this.Port.ToString());
-            _configManager.UpdateConfigValue("Device ID", this.DeviceID.ToString());
+            _configManager.UpdateConfigValue("Max Temperature", this.Max_temperature);
+            _configManager.UpdateConfigValue("Min Temperature", this.Min_temperature);
+            _configManager.UpdateConfigValue("Allowable", this.Allowable);
+            _configManager.UpdateConfigValue("Chamber Time", this.Chambertime);
 
             _configManager.InitConfig();
         }
         #endregion
 
         #region METHOD
-
         private void OnConfigRead()
         {
-            this.IP = _configManager.IP;
-            this.Port = _configManager.Port;
-            this.DeviceID = _configManager.DeviceID;
+            this.Max_temperature = _configManager.Max_Temp;
+            this.Min_temperature = _configManager.Min_Temp;
+            this.Allowable = _configManager.Allow;
+            this.Chambertime = _configManager.Chamber_Time;
         }
         #endregion
     }

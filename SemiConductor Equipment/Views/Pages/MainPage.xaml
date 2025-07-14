@@ -50,7 +50,7 @@
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
                                 <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
-                                <MenuItem Header="Equipment Setting"/>
+                                <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
                                 <MenuItem Header="CEID Setting"/>
                                 <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
                             </ContextMenu>

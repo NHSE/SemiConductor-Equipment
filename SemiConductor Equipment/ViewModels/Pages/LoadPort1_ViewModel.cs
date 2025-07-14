@@ -145,6 +145,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             if (newValue == null) return;
 
             this.Waferinfo.Clear();
+            Random random = new Random();
             string carrierId = this.CarrierId ?? "UNKNOWN";
 
             foreach (int slot in newValue.OrderBy(x => x))
@@ -158,7 +159,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     CJId = "",
                     SlotId = slot.ToString("D2"),
                     LotId = "",
-                    CurrentLocation = $"LoadPort{this.LoadPortId}"
+                    CurrentLocation = $"LoadPort{this.LoadPortId}",
+                    RequiredTemperature = random.Next(20, 30)
                 });
             }
         }

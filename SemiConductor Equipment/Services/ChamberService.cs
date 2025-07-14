@@ -7,6 +7,7 @@ using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
+using System.Net.Http.Headers;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -15,6 +16,7 @@ namespace SemiConductor_Equipment.Services
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly DbLogHelper _logHelper;
+        private readonly IEquipmentConfigManager _equiptempManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -39,10 +41,11 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, DbLogHelper logHelper)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, DbLogHelper logHelper)
         {
             this._logManager = logManager;
             this._logHelper = logHelper;
+            this._equiptempManager = equiptempManager;
         }
 
         public string? FindEmptyChamber()
@@ -102,19 +105,31 @@ namespace SemiConductor_Equipment.Services
                 this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
 
                 // 프로세스 시뮬레이션 (예: 3초)
-                await Task.Delay(10000);
-                //Wafer 프로세싱 성공, 실패 로직
-                if (wafer.Wafer_Num % 2 == 0)
+                Random rand = new Random();
+
+                for (int i = 0; i < this._equiptempManager.Chamber_Time; i++) // 설정된 시간 동안
+                {
+                    double prev_temp = wafer.RequiredTemperature;
+                    wafer.RequiredTemperature += rand.Next(1, 6); // 1~5도 증가
+                    this._logManager.WriteLog(chamberName, $"State", $"Wafer Temperature : {prev_temp} → {wafer.RequiredTemperature}");
+                    await Task.Delay(1000); // 1초 대기
+                }
+                //Processing
+
+                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp || wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
                 {
                     wafer.Status = "Error";
                 }
-                else wafer.Status = "Completed";
-
-                lock (_lock)
+                else
                 {
-                    // 처리 완료 상태로 변경 (processing = false)
-                    this._chambers[chamberName] = (wafer, true);
+                    wafer.Status = "Completed";
                 }
+
+                    lock (_lock)
+                    {
+                        // 처리 완료 상태로 변경 (processing = false)
+                        this._chambers[chamberName] = (wafer, true);
+                    }
 
                 if (wafer.Status == "Completed")
                 {
@@ -145,6 +160,13 @@ namespace SemiConductor_Equipment.Services
                 Console.WriteLine("StartProcessingAsync 예외: " + ex);
                 throw;
             }
+        }
+
+        public bool Processing(string ChamberName, Wafer Wafer)
+        {
+            bool ret = false;
+
+            return ret;
         }
 
         public (string ChamberName, Wafer Wafer)? FindCompletedWafer()

@@ -21,7 +21,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         private readonly ILogManager _logManager;
         private readonly IChamberManager _chamberManager;
-        private readonly IDatabase<ChamberStatus>? _database;
         private FileSystemWatcher _logFileWatcher;
         private long lastLogPosition = 0;
         #endregion
@@ -47,7 +46,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber5_ViewModel(IDatabase<ChamberStatus> database, ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager)
+        public Chamber5_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -55,8 +54,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             LoadInitialLogs();
             SetupLogFileWatcher();
-
-            this._database = database;
 
             this.IsReadyToRun = false;
             this.HasWafer = false;
@@ -127,25 +124,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             // UI 스레드에서 속성 갱신
             App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
-        }
-
-        public async Task OnNavigatedToAsync(int? number)
-        {
-               await InitializeViewModelAsync((number.ToString()));
-        }
-
-        public Task OnNavigatedFromAsync() => Task.CompletedTask;
-        private async Task InitializeViewModelAsync(string? number)
-        {
-            try
-            {
-                this.Logpagetable = await Task.Run(() => this._database?.SearchChamberField($"ch{number}"));
-                this.StatusText = this.Logpagetable?.FirstOrDefault() ?? string.Empty;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception();
-            }
         }
 
         private void OnDataEnqueued(object sender, ChamberStatus chamber)

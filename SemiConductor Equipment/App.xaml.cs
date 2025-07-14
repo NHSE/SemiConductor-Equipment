@@ -18,6 +18,8 @@ using SemiConductor_Equipment.Views.Menus;
 using SemiConductor_Equipment.ViewModels.Menus;
 using SemiConductor_Equipment.Helpers;
 using System.Configuration;
+using SemiConductor_Equipment.ViewModels.MessageBox;
+using SemiConductor_Equipment.Views.MessageBox;
 
 namespace SemiConductor_Equipment
 {
@@ -51,7 +53,13 @@ namespace SemiConductor_Equipment
 
                 services.AddSingleton<IpSettingMenu>();
                 services.AddSingleton<IpSettingViewModel>();
-                services.AddTransient<IConfigManager>(provider => new IPSettingService(@"C:\Configs"));
+                services.AddSingleton<IConfigManager>(provider => 
+                                    new IPSettingService(@"C:\Configs"));
+                
+                services.AddSingleton<EquipMenu>();
+                services.AddSingleton<EquipMenusViewModel>();
+                services.AddSingleton<IEquipmentConfigManager>(provider => 
+                                    new EquipmentSettingService(@"C:\Configs"));
 
                 services.AddSingleton<IBufferManager, BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
@@ -77,6 +85,9 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<ChamberStatus>();
 
                 services.AddSingleton<IMessageBox, MessageBoxService>();
+                services.AddSingleton<MessageBox_ViewModel>();
+                services.AddTransient<MessageBoxWindow>();
+
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
                 services.AddSingleton<IThemeService, ThemeService>();

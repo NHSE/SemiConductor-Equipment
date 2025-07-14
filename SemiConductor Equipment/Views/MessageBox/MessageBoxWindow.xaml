@@ -1,0 +1,34 @@
+﻿<Window x:Class="SemiConductor_Equipment.Views.MessageBox.MessageBoxWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SemiConductor_Equipment.Views.MessageBox"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:MessageBoxWindow, IsDesignTimeCreatable=False}"
+        ResizeMode="NoResize"
+        Title="MessageBoxWindow" Height="300" Width="500" Background="#232C39">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0">
+            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="32" Text="&#xE7BA;" Foreground="Orange"/>
+            <TextBlock Text="{Binding ViewModel.Title}" Foreground="White"/>
+         </StackPanel>
+
+        <Border Grid.Row="1" Background="#1A2233" CornerRadius="18" Margin="24" Padding="32" >
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="{Binding ViewModel.Msg}" Foreground="White"/>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 30 0">
+            <ui:Button Content="OK" Click="btnOK_Click" Width="100" Height="50" />
+        </StackPanel>
+    </Grid>
+</Window>

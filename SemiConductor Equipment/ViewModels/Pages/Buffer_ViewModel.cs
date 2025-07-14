@@ -25,16 +25,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        public Buffer_ViewModel(IDatabase<Chamberlogtable> database)
+        {
+            this._database = database;
+        }
         #endregion
 
         #region COMMAND
         #endregion
 
         #region METHOD
-        public Buffer_ViewModel(IDatabase<Chamberlogtable> database)
-        {
-            this._database = database;
-        }
 
         public async Task OnNavigatedToAsync(int? number)
         {

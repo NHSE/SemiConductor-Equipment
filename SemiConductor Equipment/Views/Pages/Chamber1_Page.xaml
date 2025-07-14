@@ -59,13 +59,28 @@
             <!-- 하단: 웨이퍼 상세 목록 -->
             <Border Grid.Column="1" Background="#263043" CornerRadius="8" Margin="12" Padding="12">
                 <Grid>
-                    <TextBox 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <TextBox 
+                        TextWrapping="Wrap"
+                        IsReadOnly="True"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"/>
+                    </Grid>
+                    <Border Grid.Row="1" Height="1" Background="Gray" Margin="0,8"/>
+                    <Grid Grid.Row="2">
+                        <TextBox 
                         x:Name="tblog"
                         Text="{Binding ViewModel.LogText}" 
                         TextWrapping="Wrap"
                         IsReadOnly="True"
                         VerticalScrollBarVisibility="Auto"
                         HorizontalScrollBarVisibility="Auto"/>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>
