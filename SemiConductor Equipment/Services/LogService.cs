@@ -67,7 +67,7 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetSecsGemLogPath(string logType)
         {
-            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
+            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
             return Path.Combine(_logDirectory, fileName);
         }
     }

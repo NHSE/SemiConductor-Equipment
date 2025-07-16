@@ -51,7 +51,7 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.OnNavigatedToAsync(1);
+            //await ViewModel.OnNavigatedToAsync(1);
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

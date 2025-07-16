@@ -31,6 +31,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         {
             _configManager = configManager;
             _configManager.ConfigRead += OnConfigRead;
+            _configManager.InitConfig();
         }
         #endregion
 

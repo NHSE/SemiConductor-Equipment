@@ -176,6 +176,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public string GetPJId(byte loadportId)
         {
+            if(this.Waferinfo[loadportId].PJId == string.Empty)
+                return string.Empty;
             string pjid = this.Waferinfo[loadportId].PJId;
             return pjid;
         }

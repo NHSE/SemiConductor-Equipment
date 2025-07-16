@@ -140,6 +140,15 @@ namespace SemiConductor_Equipment
         private async void OnStartup(object sender, StartupEventArgs e)
         {
             await _host.StartAsync();
+
+            // UI 스레드 예외 처리
+            this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+
+            // 백그라운드 스레드 예외 처리
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            // Task 예외 처리
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         }
 
         /// <summary>
@@ -157,7 +166,20 @@ namespace SemiConductor_Equipment
         /// </summary>
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
+            MessageBox.Show($"[UI 예외]\n{e.Exception.Message}", "예외 발생");
+            e.Handled = true;  // 앱 종료 방지
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = e.ExceptionObject as Exception;
+            MessageBox.Show($"[도메인 예외]\n{ex?.Message}", "예외 발생");
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            MessageBox.Show($"[Task 예외]\n{e.Exception.Message}", "예외 발생");
+            e.SetObserved();
         }
     }
 }

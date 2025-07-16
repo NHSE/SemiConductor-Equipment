@@ -52,5 +52,8 @@ namespace SemiConductor_Equipment.Models
 
         [ObservableProperty]
         private double requiredTemperature;
+
+        [ObservableProperty]
+        private double runningTime;
     }
 }

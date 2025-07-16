@@ -11,7 +11,7 @@ namespace SemiConductor_Equipment.Services
 {
     public class BufferService : IBufferManager
     {
-        private readonly DbLogHelper _logHelper;
+        //private readonly DbLogHelper _logHelper;
         private readonly object _lock = new();
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _bufferSlots = new()
         {
@@ -32,9 +32,9 @@ namespace SemiConductor_Equipment.Services
             ["Buffer4"] = "UN USE"
         };
 
-        public BufferService(DbLogHelper logHelper)
+        public BufferService()
         {
-            this._logHelper = logHelper;
+            //this._logHelper = logHelper;
         }
 
         public string? FindEmptySlot()
@@ -62,7 +62,7 @@ namespace SemiConductor_Equipment.Services
                 // 웨이퍼 넣기 + 처리중 상태 표시
                 this.Buffer_State[buffername] = "IN USE";
                 DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
-                this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "IN");
+                //this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "IN");
             }
 
             // 프로세스 시뮬레이션 (예: 3초)
@@ -83,7 +83,7 @@ namespace SemiConductor_Equipment.Services
             });
 
             Console.WriteLine($"[Buffer] {wafer.SlotId} process done in {buffername}");
-            this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "DONE");
+            //this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "DONE");
         }
 
         public (string Buffername, Wafer Wafer)? FindCompletedWafer()
@@ -104,7 +104,7 @@ namespace SemiConductor_Equipment.Services
             {
                 if (_bufferSlots.ContainsKey(buffername))
                 {
-                    this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "OUT");
+                    //this._logHelper.WriteDbLog(buffername, _bufferSlots[buffername].wafer, "OUT");
                     this.Buffer_State[buffername] = "UN USE";
                     DataEnqueued?.Invoke(this, new BufferStatus(buffername, this.Buffer_State[buffername]));
                     _bufferSlots[buffername] = (null, false);

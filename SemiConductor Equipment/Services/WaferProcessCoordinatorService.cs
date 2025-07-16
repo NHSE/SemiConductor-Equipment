@@ -33,6 +33,7 @@ namespace SemiConductor_Equipment.Services
             bool isError = false;
             CancellationTokenSource cts = new CancellationTokenSource();
             _robotArmManager.StartProcessing(cts.Token);
+            _chamberManager.ProcessStart();
             try
             {
                 this._runningStateService.Change_State(EquipmentStatusEnum.Wait);

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.ViewModels.Windows;
+using SemiConductor_Equipment.Views.Menus;
 using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using Wpf.Ui;
@@ -46,6 +47,12 @@ namespace SemiConductor_Equipment.Views.Windows
 
                 // 앱 실행 시 인스턴스 생성
                 App.Services.GetRequiredService<MessageBoxWindow>();
+                App.Services.GetRequiredService<Chamber1_Page>();
+                App.Services.GetRequiredService<Chamber2_Page>();
+                App.Services.GetRequiredService<Chamber3_Page>();
+                App.Services.GetRequiredService<Chamber4_Page>();
+                App.Services.GetRequiredService<Chamber5_Page>();
+                App.Services.GetRequiredService<Chamber6_Page>();
                 //
 
                 var mainWindow = Application.Current.MainWindow as MainWindow;

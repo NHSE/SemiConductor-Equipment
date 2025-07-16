@@ -247,7 +247,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 var cts = new CancellationTokenSource();
                                 var cancellationToken = cts.Token;
-                                _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss");
+                                _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss_HHmmss");
                                 await _coordinator.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
                             }
                         });

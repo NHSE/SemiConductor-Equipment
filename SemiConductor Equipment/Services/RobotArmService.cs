@@ -7,6 +7,7 @@ using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Diagnostics;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -125,12 +126,32 @@ namespace SemiConductor_Equipment.Services
                     {
                         case string s when s.Contains("Chamber"):
                             command.Wafer.Status = "Running";
-                            _chamberManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await _chamberManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("[Chamber 예외] " + ex);
+                                }
+                            });
                             break;
 
                         case string s when s.Contains("Buffer"):
                             _chamberManager.RemoveWaferFromChamber(command.Completed);
-                            _bufferManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await _bufferManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("[Chamber 예외] " + ex);
+                                }
+                            });
                             break;
 
                         case string s when s.Contains("LoadPort"):
@@ -164,7 +185,20 @@ namespace SemiConductor_Equipment.Services
             _cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
             var token = _cts.Token;
 
-            _processingTask = Task.Run(() => ProcessCommandQueueAsync(token), token);
+            //_processingTask = Task.Run(() => ProcessCommandQueueAsync(token), token);
+            Task.Run(async () =>
+            {
+                try
+                {
+                    // 예외 발생 가능 코
+                    await ProcessCommandQueueAsync(token);
+                }
+                catch (Exception ex)
+                {
+                    // 예외 로깅
+                    Debug.WriteLine(ex.ToString());
+                }
+            });
         }
 
         public async Task StopProcessing()

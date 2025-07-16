@@ -93,7 +93,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Update_Carrier_info(Wafer newWaferData)
         {
-            if(SelectedSlots.Count == 0)
+            if(SelectedSlots.Count == null)
             {
                 return false;
             }
@@ -160,7 +160,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     SlotId = slot.ToString("D2"),
                     LotId = "",
                     CurrentLocation = $"LoadPort{this.LoadPortId}",
-                    RequiredTemperature = random.Next(20, 30)
+                    RequiredTemperature = random.Next(20, 30),
+                    RunningTime = 0.0,
                 });
             }
         }
