@@ -7,6 +7,7 @@ using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
+using System.Net.Http.Headers;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -14,7 +15,9 @@ namespace SemiConductor_Equipment.Services
     {
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
-        private readonly DbLogHelper _logHelper;
+        private readonly MessageHandlerService _messageHandlerService;
+        //private readonly DbLogHelper _logHelper;
+        private readonly IEquipmentConfigManager _equiptempManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -27,7 +30,9 @@ namespace SemiConductor_Equipment.Services
         };
 
         public event EventHandler<ChamberStatus> DataEnqueued;
+        public event EventHandler<Wafer> ChangeTempData;
         public event EventHandler<RobotCommand> Enque_Robot;
+        public event Action ProcessHandled;
 
         public IDictionary<string, string> Chamber_State { get; set; } = new Dictionary<string, string>()
         {
@@ -39,10 +44,16 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, DbLogHelper logHelper)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager)
         {
             this._logManager = logManager;
-            this._logHelper = logHelper;
+            //this._logHelper = logHelper;
+            this._equiptempManager = equiptempManager;
+        }
+
+        public void ProcessStart()
+        {
+            ProcessHandled?.Invoke();
         }
 
         public string? FindEmptyChamber()
@@ -70,11 +81,14 @@ namespace SemiConductor_Equipment.Services
                 if (_chambers.ContainsKey(chamberName))
                 {
                     this._logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
-                    this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
+                    //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
 
-                    this._chambers[chamberName] = (null, false);
                     this.Chamber_State[chamberName] = "IDLE";
-                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName]));
+                    lock (_lock)
+                    {
+                        DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], _chambers[chamberName].wafer.Wafer_Num));
+                    }
+                    this._chambers[chamberName] = (null, false);
                 }
             }
         }
@@ -95,26 +109,40 @@ namespace SemiConductor_Equipment.Services
                 lock (_lock)
                 {
                     this.Chamber_State[chamberName] = "Running";
-                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName]));
+                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
+                    ChangeTempData?.Invoke(this, wafer);
                 }
 
                 this._logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");
-                this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
+                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
 
-                // 프로세스 시뮬레이션 (예: 3초)
-                await Task.Delay(10000);
-                //Wafer 프로세싱 성공, 실패 로직
-                if (wafer.Wafer_Num % 2 == 0)
+                Random rand = new Random();
+
+                for (int i = 0; i < this._equiptempManager.Chamber_Time; i++) // 설정된 시간 동안
+                {
+                    double prev_temp = wafer.RequiredTemperature;
+                    wafer.RequiredTemperature += rand.Next(1, 6); // 1~5도 증가
+                    wafer.RunningTime += 1;
+                    this._logManager.WriteLog(chamberName, $"State", $"Wafer Temperature : {prev_temp} → {wafer.RequiredTemperature}");
+                    await Task.Delay(1000); // 1초 대기
+                    ChangeTempData?.Invoke(this, wafer);
+                }
+                //Processing
+
+                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp || wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
                 {
                     wafer.Status = "Error";
                 }
-                else wafer.Status = "Completed";
-
-                lock (_lock)
+                else
                 {
-                    // 처리 완료 상태로 변경 (processing = false)
-                    this._chambers[chamberName] = (wafer, true);
+                    wafer.Status = "Completed";
                 }
+
+                    lock (_lock)
+                    {
+                        // 처리 완료 상태로 변경 (processing = false)
+                        this._chambers[chamberName] = (wafer, true);
+                    }
 
                 if (wafer.Status == "Completed")
                 {
@@ -138,13 +166,20 @@ namespace SemiConductor_Equipment.Services
                 }
 
                 this._logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
-                this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
+                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("StartProcessingAsync 예외: " + ex);
                 throw;
             }
+        }
+
+        public bool Processing(string ChamberName, Wafer Wafer)
+        {
+            bool ret = false;
+
+            return ret;
         }
 
         public (string ChamberName, Wafer Wafer)? FindCompletedWafer()

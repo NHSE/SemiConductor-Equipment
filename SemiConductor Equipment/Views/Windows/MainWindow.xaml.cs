@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.ViewModels.Windows;
+using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
@@ -28,19 +30,13 @@ namespace SemiConductor_Equipment.Views.Windows
     {
 
         #region FIELDS
+        public MainWindowViewModel ViewModel { get; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        #endregion
-
-        #region COMMAND
-        #endregion
-
-        #region METHOD
-        public MainWindowViewModel ViewModel { get; }
         public MainWindow(MainWindowViewModel viewModel)
         {
             try
@@ -48,6 +44,17 @@ namespace SemiConductor_Equipment.Views.Windows
                 ViewModel = viewModel;
                 DataContext = this;
                 InitializeComponent();
+
+                // 앱 실행 시 인스턴스 생성
+                App.Services.GetRequiredService<MessageBoxWindow>();
+                App.Services.GetRequiredService<Chamber1_Page>();
+                App.Services.GetRequiredService<Chamber2_Page>();
+                App.Services.GetRequiredService<Chamber3_Page>();
+                App.Services.GetRequiredService<Chamber4_Page>();
+                App.Services.GetRequiredService<Chamber5_Page>();
+                App.Services.GetRequiredService<Chamber6_Page>();
+                //
+
                 var mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow != null)
                 {
@@ -61,7 +68,12 @@ namespace SemiConductor_Equipment.Views.Windows
                 System.Windows.MessageBox.Show(ex.ToString(), "MainWindow 생성자 예외");
             }
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

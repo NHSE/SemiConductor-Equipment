@@ -8,10 +8,14 @@ namespace SemiConductor_Equipment.interfaces
 {
     public partial interface ILogManager
     {
-        public void WriteLog(string logType, string messagetype, string message);
+        void WriteLog(string logType, string messagetype, string message);
 
-        public void Subscribe(string logType, Action<string> handler);
+        void Subscribe(string logType, Action<string> handler);
 
-        public string GetLogFilePath(string logType);
+        string GetLogFilePath(string logType);
+
+        string GetSecsGemLogPath(string logType);
+
+        string LogDataTime { get; set; }
     }
 }

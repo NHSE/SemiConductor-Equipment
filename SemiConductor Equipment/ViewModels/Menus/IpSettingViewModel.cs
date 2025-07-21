@@ -46,6 +46,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             _configManager.UpdateConfigValue("IP", this.IP);
             _configManager.UpdateConfigValue("Port", this.Port.ToString());
             _configManager.UpdateConfigValue("Device ID", this.DeviceID.ToString());
+
+            _configManager.InitConfig();
         }
         #endregion
 

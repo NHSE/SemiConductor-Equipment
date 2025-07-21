@@ -16,7 +16,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding ViewModels.InitCommand}" />
+            <i:InvokeCommandAction Command="{Binding ViewModel.InitCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -62,7 +62,7 @@
                     <!-- IP -->
                     <StackPanel>
                         <TextBlock Text="IP" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBox Text="{Binding ViewModels.IP, Mode=TwoWay}"
+                        <TextBox Text="{Binding ViewModel.IP, Mode=TwoWay}"
                                      FontSize="24"
                                      FontWeight="Bold"
                                      Background="#2E3B4E"
@@ -79,7 +79,7 @@
                     <!-- Port -->
                     <StackPanel>
                         <TextBlock Text="Port" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBox Text="{Binding ViewModels.Port, Mode=TwoWay}"
+                        <TextBox Text="{Binding ViewModel.Port, Mode=TwoWay}"
                                      FontSize="24"
                                      FontWeight="Bold"
                                      Background="#2E3B4E"
@@ -96,7 +96,7 @@
                     <!-- Device ID -->
                     <StackPanel>
                         <TextBlock Text="Device ID" Foreground="#B0C4DE" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                        <TextBox Text="{Binding ViewModels.DeviceID, Mode=TwoWay}"
+                        <TextBox Text="{Binding ViewModel.DeviceID, Mode=TwoWay}"
                                      FontSize="24"
                                      FontWeight="Bold"
                                      Background="#2E3B4E"
@@ -113,7 +113,7 @@
                 </UniformGrid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                     <Button Content="초기화"
-                                Command="{Binding ViewModels.InitCommand}"
+                                Command="{Binding ViewModel.InitCommand}"
                                 Width="140"
                                 Height="40"
                                 FontSize="16"
@@ -125,7 +125,7 @@
                                 Cursor="Hand"
                                 Margin="0,0,8,0"/>
                     <Button Content="저장"
-                                Command="{Binding ViewModels.SaveCommand}"
+                                Command="{Binding ViewModel.SaveCommand}"
                                 Width="140"
                                 Height="40"
                                 FontSize="16"

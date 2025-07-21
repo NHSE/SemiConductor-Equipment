@@ -11,6 +11,8 @@ namespace SemiConductor_Equipment.Services
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
 
+        public string LogDataTime { get; set; }
+
         public LogService(string logDirectory)
         {
             _logDirectory = logDirectory;
@@ -23,7 +25,15 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public void WriteLog(string logType, string messagetype, string message)
         {
-            string filePath = GetLogFilePath(logType);
+            string filePath;
+            if (logType.Contains("Chamber"))
+            {
+                filePath = GetLogFilePath(logType);
+            }
+            else
+            {
+                filePath = GetSecsGemLogPath(logType);
+            }
             string logLine = $"{DateTime.Now:HH:mm:ss} {messagetype} ▶ {message}";
             File.AppendAllText(filePath, logLine + Environment.NewLine);
 
@@ -48,7 +58,16 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetLogFilePath(string logType)
         {
-            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
+            string fileName = $"{logType}_{LogDataTime}.log";
+            return Path.Combine(_logDirectory, fileName);
+        }
+
+        /// <summary>
+        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// </summary>
+        public string GetSecsGemLogPath(string logType)
+        {
+            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
             return Path.Combine(_logDirectory, fileName);
         }
     }

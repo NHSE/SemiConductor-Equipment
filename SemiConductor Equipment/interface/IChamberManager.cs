@@ -17,10 +17,13 @@ namespace SemiConductor_Equipment.interfaces
         void RemoveWaferFromChamber(string chamberName);
         void AddWaferToChamber(string chamberName, Wafer wafer);
         Task StartProcessingAsync(string chamberName, Wafer wafer);
+        void ProcessStart();
 
         IDictionary<string, string> Chamber_State { get; set; }
 
         event EventHandler<ChamberStatus> DataEnqueued;
         event EventHandler<RobotCommand> Enque_Robot;
+        event EventHandler<Wafer> ChangeTempData;
+        event Action ProcessHandled;
     }
 }

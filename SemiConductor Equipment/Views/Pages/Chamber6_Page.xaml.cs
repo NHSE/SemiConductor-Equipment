@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
@@ -39,13 +41,9 @@ namespace SemiConductor_Equipment.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
 
-            ViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.LogText))
-                {
-                    tblog.ScrollToEnd();
-                }
-            };
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            this.imgChamber6.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
         }
         #endregion
 
@@ -53,6 +51,17 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region METHOD
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LogText")
+            {
+                tblog.ScrollToEnd();
+            }
+            else if (e.PropertyName == "IsWafer")
+            {
+                Change_Image(ViewModel.IsWafer);
+            }
+        }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -63,6 +72,19 @@ namespace SemiConductor_Equipment.Views.Pages
                 mainWindow.MainFrame.Navigate(mainPage);
             }
         }
+
+        private void Change_Image(bool isChecked)
+        {
+            if (isChecked)
+            {
+                imgChamber6.Source = new BitmapImage(new Uri("/Resources/Buffer_in_wafer.png", UriKind.Relative));
+            }
+            else
+            {
+                imgChamber6.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
+            }
+        }
+
         #endregion
     }
 }

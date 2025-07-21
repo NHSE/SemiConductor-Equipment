@@ -12,6 +12,7 @@ using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
 using Wpf.Ui;
@@ -99,6 +100,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private Brush? _buffer4_color;
 
         [ObservableProperty]
+        private bool? _setting_menu = true;
+
+        [ObservableProperty]
         private ObservableCollection<Wafer> _animation_wafers = new();
         #endregion
 
@@ -181,8 +185,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void DisConnect()
         {
-            var configManager = App.Services.GetRequiredService<IConfigManager>();
-            this._secsGemServer.Initialize(AppendLog, this._messageHandler, configManager);
+            this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = true;
             this.IsDisconnected = false;
         }
@@ -190,8 +193,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Connect()
         {
-            var configManager = App.Services.GetRequiredService<IConfigManager>();
-            this._secsGemServer.Initialize(AppendLog, this._messageHandler, configManager);
+            this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = false;
             this.IsDisconnected = true;
         }
@@ -236,6 +238,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [RelayCommand]
         private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
+
+        [RelayCommand]
+        private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
         #endregion
 
         #region METHODS
@@ -248,21 +253,25 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 {
                     this.Equipment_color = Brushes.Orange;
                     this.Equipment_state = "Running";
+                    this.Setting_menu = false;
                 }
                 else if (state == EquipmentStatusEnum.Completed)
                 {
                     this.Equipment_color = Brushes.LimeGreen;
                     this.Equipment_state = "Completed";
+                    this.Setting_menu = true;
                 }
                 else if (state == EquipmentStatusEnum.Error)
                 {
                     this.Equipment_color = Brushes.Red;
                     this.Equipment_state = "Error";
+                    this.Setting_menu = true;
                 }
                 else
                 {
                     this.Equipment_color = Brushes.LightBlue;
                     this.Equipment_state = "Ready";
+                    this.Setting_menu = true;
                 }
             });
         }

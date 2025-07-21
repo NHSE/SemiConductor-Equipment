@@ -11,6 +11,7 @@ using System.ComponentModel;
 using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.Models;
 using System.Threading;
+using System.Data;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -246,6 +247,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 var cts = new CancellationTokenSource();
                                 var cancellationToken = cts.Token;
+                                _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss_HHmmss");
                                 await _coordinator.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
                             }
                         });

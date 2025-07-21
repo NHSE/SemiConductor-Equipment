@@ -5,7 +5,13 @@
     <Compile Update="Controls\LoadingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Menus\EquipMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Menus\IpSettingMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MessageBox\MessageBoxWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Buffer1_Page.xaml.cs">

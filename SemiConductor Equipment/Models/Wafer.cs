@@ -49,5 +49,11 @@ namespace SemiConductor_Equipment.Models
 
         [ObservableProperty]
         private bool isVisible;
+
+        [ObservableProperty]
+        private double requiredTemperature;
+
+        [ObservableProperty]
+        private double runningTime;
     }
 }

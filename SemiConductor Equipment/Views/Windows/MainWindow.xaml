@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Windows"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:vm="clr-namespace:SemiConductor_Equipment.ViewModels.Windows"
+        ResizeMode="NoResize"
         mc:Ignorable="d"
         Title="{Binding ViewModel.ApplicationTitle}" 
         Height="800" Width="1200"

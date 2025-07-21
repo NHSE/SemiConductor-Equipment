@@ -22,12 +22,6 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region CONSTRUCTOR
-        #endregion
-
-        #region COMMAND
-        #endregion
-
-        #region METHOD
         public Buffer1_Page(Buffer_ViewModel viewModel)
         {
             InitializeComponent();
@@ -36,6 +30,12 @@ namespace SemiConductor_Equipment.Views.Pages
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -51,7 +51,7 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.OnNavigatedToAsync(1);
+            //await ViewModel.OnNavigatedToAsync(1);
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

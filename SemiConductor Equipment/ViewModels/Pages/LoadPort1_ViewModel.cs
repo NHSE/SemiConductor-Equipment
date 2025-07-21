@@ -93,7 +93,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Update_Carrier_info(Wafer newWaferData)
         {
-            if(SelectedSlots.Count == 0)
+            if(SelectedSlots.Count == null)
             {
                 return false;
             }
@@ -145,6 +145,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             if (newValue == null) return;
 
             this.Waferinfo.Clear();
+            Random random = new Random();
             string carrierId = this.CarrierId ?? "UNKNOWN";
 
             foreach (int slot in newValue.OrderBy(x => x))
@@ -158,7 +159,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     CJId = "",
                     SlotId = slot.ToString("D2"),
                     LotId = "",
-                    CurrentLocation = $"LoadPort{this.LoadPortId}"
+                    CurrentLocation = $"LoadPort{this.LoadPortId}",
+                    RequiredTemperature = random.Next(20, 30),
+                    RunningTime = 0.0,
                 });
             }
         }
@@ -214,13 +217,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnWaferOut(object? sender, Wafer e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (e.LoadportId == this.LoadPortId)
             {
-                if (e.LoadportId == this.LoadPortId)
-                {
-                    RemoveRequested?.Invoke(this, e);
-                }
-            });
+                RemoveRequested?.Invoke(this, e);
+            }
         }
         #endregion
     }
