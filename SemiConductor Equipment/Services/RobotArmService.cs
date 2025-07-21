@@ -149,7 +149,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("[Chamber 예외] " + ex);
+                                    Console.WriteLine("[Buffer 예외] " + ex);
                                 }
                             });
                             break;
@@ -196,7 +196,7 @@ namespace SemiConductor_Equipment.Services
                 catch (Exception ex)
                 {
                     // 예외 로깅
-                    Debug.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.ToString());
                 }
             });
         }

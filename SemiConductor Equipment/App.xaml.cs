@@ -178,7 +178,7 @@ namespace SemiConductor_Equipment
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            MessageBox.Show($"[Task 예외]\n{e.Exception.Message}", "예외 발생");
+            MessageBox.Show($"[Task 예외]\n{e.Exception}", "예외 발생");
             e.SetObserved();
         }
     }

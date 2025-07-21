@@ -51,7 +51,7 @@ namespace SemiConductor_Equipment.Views.Menus
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.OnNavigatedToAsync();
+            //await ViewModel.OnNavigatedToAsync();
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)

@@ -13,6 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
@@ -84,42 +88,91 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             if (_slotLines.TryGetValue(wafer.Wafer_Num, out var line))
             {
-                mainCanvas.Children.Remove(line);
-                _slotLines.Remove(wafer.Wafer_Num);
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    mainCanvas.Children.Remove(line);
+                    _slotLines.Remove(wafer.Wafer_Num);
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        mainCanvas.Children.Remove(line);
+                        _slotLines.Remove(wafer.Wafer_Num);
+                    });
+                }
             }
         }
 
         private void Add_WaferLine(object sender, Wafer wafer)
         {
-            double TopY = 90;
-            double BottomY = 350;
-            double XStart = 50;
-            double XEnd = 270;
-            int SlotCount = 25;
-            double GapY = (BottomY - TopY) / (SlotCount - 1);
-
-            if (wafer.Wafer_Num < 0 || wafer.Wafer_Num > SlotCount) return;
-
-            double y = BottomY - wafer.Wafer_Num * GapY;
-
-            Brush brush = Brushes.Green;
-            if (wafer.Status == "Error")
+            if (Application.Current.Dispatcher.CheckAccess())
             {
-                brush = Brushes.Red;
+                double TopY = 90;
+                double BottomY = 350;
+                double XStart = 50;
+                double XEnd = 270;
+                int SlotCount = 25;
+                double GapY = (BottomY - TopY) / (SlotCount - 1);
+
+                if (wafer.Wafer_Num < 0 || wafer.Wafer_Num > SlotCount) return;
+
+                double y = BottomY - wafer.Wafer_Num * GapY;
+
+                Brush brush = Brushes.Green;
+                if (wafer.Status == "Error")
+                {
+                    brush = Brushes.Red;
+                }
+
+                var line = new Line
+                {
+                    X1 = XStart,
+                    X2 = XEnd,
+                    Y1 = y,
+                    Y2 = y,
+                    Stroke = brush,
+                    StrokeThickness = 6
+                };
+
+                _slotLines[wafer.Wafer_Num] = line;
+                mainCanvas.Children.Add(line);
             }
-            
-            var line = new Line
+            else
             {
-                X1 = XStart,
-                X2 = XEnd,
-                Y1 = y,
-                Y2 = y,
-                Stroke = brush,
-                StrokeThickness = 6
-            };
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    double TopY = 90;
+                    double BottomY = 350;
+                    double XStart = 50;
+                    double XEnd = 270;
+                    int SlotCount = 25;
+                    double GapY = (BottomY - TopY) / (SlotCount - 1);
 
-            _slotLines[wafer.Wafer_Num] = line;
-            mainCanvas.Children.Add(line);
+                    if (wafer.Wafer_Num < 0 || wafer.Wafer_Num > SlotCount) return;
+
+                    double y = BottomY - wafer.Wafer_Num * GapY;
+
+                    Brush brush = Brushes.Green;
+                    if (wafer.Status == "Error")
+                    {
+                        brush = Brushes.Red;
+                    }
+
+                    var line = new Line
+                    {
+                        X1 = XStart,
+                        X2 = XEnd,
+                        Y1 = y,
+                        Y2 = y,
+                        Stroke = brush,
+                        StrokeThickness = 6
+                    };
+
+                    _slotLines[wafer.Wafer_Num] = line;
+                    mainCanvas.Children.Add(line);
+                });
+            }
         }
 
         private void DrawLinesBasedOnSelectedSlots(List<int> selectedSlots)

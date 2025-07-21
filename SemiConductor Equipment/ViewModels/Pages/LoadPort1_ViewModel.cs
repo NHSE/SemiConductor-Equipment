@@ -217,13 +217,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnWaferOut(object? sender, Wafer e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (e.LoadportId == this.LoadPortId)
             {
-                if (e.LoadportId == this.LoadPortId)
-                {
-                    RemoveRequested?.Invoke(this, e);
-                }
-            });
+                RemoveRequested?.Invoke(this, e);
+            }
         }
         #endregion
     }
