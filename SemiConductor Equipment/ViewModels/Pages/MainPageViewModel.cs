@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Secs4Net;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
@@ -16,6 +17,7 @@ using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
 using Wpf.Ui;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -32,7 +34,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
-
+        private readonly SecsGem _secs;
         public Dictionary<string, Point> locationPositions = new();
         #endregion
 
@@ -158,6 +160,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.IsDisconnected = true;
             }
 
+
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
                 switch (m.Content)
@@ -241,6 +244,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
+
+        [RelayCommand]
+        private void SubMenuEventSetting() => NavigateToPage<EventMenu>();
         #endregion
 
         #region METHODS

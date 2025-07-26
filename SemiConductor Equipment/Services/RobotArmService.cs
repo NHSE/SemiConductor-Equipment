@@ -185,7 +185,6 @@ namespace SemiConductor_Equipment.Services
             _cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
             var token = _cts.Token;
 
-            //_processingTask = Task.Run(() => ProcessCommandQueueAsync(token), token);
             Task.Run(async () =>
             {
                 try

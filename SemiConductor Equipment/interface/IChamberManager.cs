@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Secs4Net;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Models;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.interfaces
 {

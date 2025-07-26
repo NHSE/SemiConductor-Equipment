@@ -8,6 +8,8 @@ using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
 using System.Net.Http.Headers;
+using static SemiConductor_Equipment.Models.EventInfo;
+using Secs4Net;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -15,9 +17,9 @@ namespace SemiConductor_Equipment.Services
     {
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
-        private readonly MessageHandlerService _messageHandlerService;
         //private readonly DbLogHelper _logHelper;
         private readonly IEquipmentConfigManager _equiptempManager;
+        private readonly IEventMessageManager _eventMessageManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -44,11 +46,12 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager)
         {
             this._logManager = logManager;
             //this._logHelper = logHelper;
             this._equiptempManager = equiptempManager;
+            this._eventMessageManager = eventMessageManager;
         }
 
         public void ProcessStart()
@@ -111,6 +114,8 @@ namespace SemiConductor_Equipment.Services
                     this.Chamber_State[chamberName] = "Running";
                     DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
                     ChangeTempData?.Invoke(this, wafer);
+                    CEIDInfo info = this._eventMessageManager.GetCEID(300);
+                    this._eventMessageManager.EnqueueEventData(info);
                 }
 
                 this._logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");
@@ -142,6 +147,8 @@ namespace SemiConductor_Equipment.Services
                     {
                         // 처리 완료 상태로 변경 (processing = false)
                         this._chambers[chamberName] = (wafer, true);
+                        CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                        this._eventMessageManager.EnqueueEventData(info);
                     }
 
                 if (wafer.Status == "Completed")

@@ -12,6 +12,8 @@ using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.Models;
 using System.Threading;
 using System.Data;
+using static SemiConductor_Equipment.Models.EventInfo;
+using System.Windows.Interop;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -310,7 +312,7 @@ namespace SemiConductor_Equipment.Services
                 {
                     Name = success ? "ProceedWithCarrier" : "Nothing",
                     SecsItem = L(
-                        U1(0),
+                        U1(0    ),
                         L(
                             L(
                                 U4((uint)(success ? 0 : 1)),
@@ -324,6 +326,30 @@ namespace SemiConductor_Equipment.Services
                 _logManager.WriteLog("SECS", "RECV", recv_logMessage);
                 _logAction?.Invoke(recv_logMessage);
             }
+        }
+
+        public async Task HandleEventReport(CEIDInfo cEIDInfo, SecsGem secs)
+        {
+            var eventmsg = new SecsMessage(6, 11)
+            {
+                Name = "Event Report Send",
+                SecsItem = L(
+                   U4(0),
+                   U4(1),
+                   L(
+                       L(
+                           U4((uint)cEIDInfo.Number),
+                           L(
+                                A("unknown object")
+                            )
+                         )
+                     )
+                )
+            };
+
+            SecsMessage reply = await secs.SendAsync(eventmsg);
+            string send_logMessage = $"[SEND] → S6F11";
+            _logManager.WriteLog("SECS", "RECV", send_logMessage);
         }
         #endregion
     }

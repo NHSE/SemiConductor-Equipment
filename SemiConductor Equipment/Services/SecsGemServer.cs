@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Secs4Net;
 using Secs4Net.Sml;
 using SemiConductor_Equipment.interfaces;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -18,16 +19,16 @@ namespace SemiConductor_Equipment.Services
         private Action<string> _log;
         private SecsGem _secs;
         private ISecsConnection _hsmsConnector;
+        private IEventMessageManager _eventMessageManager;
         public event EventHandler Connected;
         public event EventHandler Disconnected;
         private readonly MessageHandlerService _messageHandler;
         private CancellationTokenSource? _cts;
 
-        //public static ISecsGemServer Instance { get; private set; }
-
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler)
+        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager)
         {
             _messageHandler = messageHandler;
+            _eventMessageManager = eventMessageManager;
         }
 
         public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
@@ -55,6 +56,8 @@ namespace SemiConductor_Equipment.Services
 
                 // 4) SecsGem 생성
                 _secs = new SecsGem(secsGemOptions, this._hsmsConnector, secsLogger);
+
+                _eventMessageManager.SetSecsGem(_secs);
 
                 this._hsmsConnector.ConnectionChanged += OnConnectionChanged;
                 Start();
@@ -140,5 +143,23 @@ namespace SemiConductor_Equipment.Services
                 _log($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
             }
         }
+
+        public async Task SendEventMessagesAsync(CEIDInfo cEIDInfo)
+        {
+            try
+            {
+                await _messageHandler.HandleEventReport(cEIDInfo, _secs);
+            }
+            catch (OperationCanceledException)
+            {
+                _log("[INFO] Primary message receiving cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _log($"[ERROR] Exception in SendEventMessagesAsync: {ex}");
+            }
+        }
+
+        public ISecsGem GetCommInstance => _secs;
     }
 }

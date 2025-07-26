@@ -77,10 +77,6 @@ namespace SemiConductor_Equipment.Views.Pages
                 this.tbkstate.Foreground = ViewModel.Equipment_color;
                 this.tbkstate.Text = ViewModel.Equipment_state;
             }
-            else if( e.PropertyName != "Currenttime")
-            {
-                Console.WriteLine($"{e.PropertyName}");
-            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

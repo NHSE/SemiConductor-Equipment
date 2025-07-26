@@ -19,12 +19,12 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0">
             <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="32" Text="&#xE7BA;" Foreground="Orange"/>
-            <TextBlock Text="{Binding ViewModel.Title}" Foreground="White"/>
+            <TextBlock Text="{Binding ViewModel.Title}" Foreground="White" TextWrapping="Wrap"/>
          </StackPanel>
 
         <Border Grid.Row="1" Background="#1A2233" CornerRadius="18" Margin="24" Padding="32" >
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock Text="{Binding ViewModel.Msg}" Foreground="White"/>
+                <TextBlock Text="{Binding ViewModel.Msg}" Foreground="White" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
         <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 30 0">

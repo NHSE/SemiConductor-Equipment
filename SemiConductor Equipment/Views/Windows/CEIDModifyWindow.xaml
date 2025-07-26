@@ -1,0 +1,93 @@
+﻿    <Window x:Class="SemiConductor_Equipment.Views.Windows.CEIDModifyWindow"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:local="clr-namespace:SemiConductor_Equipment.ViewModels.Windows"
+            xmlns:conv="clr-namespace:SemiConductor_Equipment.Coverter"
+            xmlns:ui="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            mc:Ignorable="d"
+            d:DataContext="{d:DesignInstance local:CEIDModifyViewModel, IsDesignTimeCreatable=False}"
+            Title="CEID Modify" Height="300" Width="400"
+            Background="#232C39"
+            WindowStartupLocation="CenterOwner"
+            ResizeMode="NoResize">
+
+            <Window.Resources>
+                <conv:SelectedConverter x:Key="SelectedConverter"/>
+            </Window.Resources>
+    <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- CEID Number (읽기 전용) -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="CEID Number:" 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ViewModel.Number}" 
+                       Foreground="LightGray" VerticalAlignment="Center"/>
+
+            <!-- Name (읽기 전용) -->
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Name:" 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,8,0,0"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ViewModel.Name}" 
+                       Foreground="LightGray" VerticalAlignment="Center" Margin="0,8,0,0"/>
+
+            <!-- State (수정 가능) -->
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="State:" 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,12,0,0"/>
+            <ToggleButton Grid.Row="2" Grid.Column="1" 
+                          x:Name="tgbstate"
+                          IsChecked="{Binding ViewModel.State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          Width="60" Height="28" Margin="0,12,0,0"
+                          Foreground="White" Background="#374259" FontWeight="Bold"
+                          BorderBrush="#55596D"
+                          HorizontalAlignment="Left"/>
+
+            <!-- SVID (읽기 전용) -->
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="SVIDs:" 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,8,0,0"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ViewModel.Svid_list}" 
+                       Foreground="LightGray" VerticalAlignment="Center" Margin="0,8,0,0" />
+
+        <ItemsControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+              ItemsSource="{Binding ViewModel.AllSvids}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ToggleButton Content="{Binding}" Margin="0 20 10 4" Padding="6,2" Checked="ToggleButton_Checked" Unchecked="ToggleButton_UnChecked">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{StaticResource SelectedConverter}" Mode="OneWay">
+                                <!-- Mode 생략 또는 Mode=OneWay 설정 -->
+                                <Binding Path="DataContext.ViewModel.SelectedSvids" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                <Binding Path="."/>
+                                <!-- 현재 항목 -->
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
+                    </ToggleButton>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- 버튼 영역 -->
+            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="저장" Width="80" Height="32" Command="{Binding ViewModel.SaveCommand}" 
+                        Background="#1976D2" Foreground="White" FontWeight="Bold" />
+                <Button Content="취소" Width="80" Height="32"
+                        Background="#55596D" Foreground="White" FontWeight="Bold" />
+            </StackPanel>
+        </Grid>
+    </Window>
