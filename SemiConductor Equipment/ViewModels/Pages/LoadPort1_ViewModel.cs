@@ -14,6 +14,7 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -24,6 +25,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public event EventHandler<Wafer> AddRequested;
         private readonly IRobotArmManager _robotArmManager;
         private readonly RunningStateService _runningStateService;
+        private readonly IVIDManager _vIDManager;
+        private readonly IEventMessageManager _eventMessageManager;
         public byte LoadPortId => 1;
         #endregion
 
@@ -48,10 +51,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService)
+        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateService = runningStateService;
+            this._vIDManager = VIDManager;
+            this._eventMessageManager = eventMessageManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
@@ -134,6 +139,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         LotId = newWaferData.LotId ?? ""
                     });
                 }
+
+                if(existingWafer.LotId != string.Empty)
+                {
+                    this._vIDManager.SetDVID(1003, existingWafer.LotId, existingWafer.Wafer_Num);
+                }
+                if(existingWafer.SlotId != string.Empty)
+                {
+                    this._vIDManager.SetDVID(1004, existingWafer.LotId, existingWafer.Wafer_Num);
+                }
             }
 
             // CarrierId는 Wafer 단위로 관리하므로, 여기서 비교할 필요 없으면 생략 가능
@@ -150,6 +164,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             foreach (int slot in newValue.OrderBy(x => x))
             {
+                double temperature = random.Next(20, 30);
                 this.Waferinfo.Add(new Wafer
                 {
                     LoadportId = this.LoadPortId,
@@ -160,10 +175,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     SlotId = slot.ToString("D2"),
                     LotId = "",
                     CurrentLocation = $"LoadPort{this.LoadPortId}",
-                    RequiredTemperature = random.Next(20, 30),
+                    RequiredTemperature = temperature,
                     RunningTime = 0.0,
                 });
+
+                this._vIDManager?.SetDVID(1001, (int)temperature, slot);
             }
+            this._vIDManager?.SetSVID(3, newValue.Count(), LoadPortId);
+            LoadPortCompleted();
+        }
+
+        private void LoadPortCompleted()
+        {
+            CEIDInfo info = this._eventMessageManager.GetCEID(100);
+            info.Loadport_Number = this.LoadPortId;
+            info.Wafer_List = this.Waferinfo.Select(w => w.Wafer_Num).ToList();
+            this._eventMessageManager.EnqueueEventData(info);
         }
 
         public string GetCarrierId()

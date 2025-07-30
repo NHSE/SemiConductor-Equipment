@@ -22,6 +22,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="AUTO"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="AUTO"/>
         </Grid.RowDefinitions>
 
         <!-- 상단 타이틀 바 -->
@@ -56,9 +57,9 @@
             <Border Grid.Row="0" Background="#263043" CornerRadius="12" Margin="24,24,24,12" Padding="18" >
                 <StackPanel>
                     <ui:TextBox Text="CEID Setting" Focusable="False"/>
-                    <ui:DataGrid ItemsSource="{Binding ViewModel.CEID}" MouseDoubleClick="DataGrid_MouseDoubleClick" FontSize="13" AutoGenerateColumns="False"
+                    <ui:DataGrid ItemsSource="{Binding ViewModel.CEID}" MouseDoubleClick="CEID_MouseDoubleClick" FontSize="13" AutoGenerateColumns="False"
                         Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                 Height="200" CanUserAddRows="False" >
+                                 Height="180" CanUserAddRows="False" >
                         <DataGrid.Resources>
                             <Style TargetType="DataGridRow">
                                 <Setter Property="Focusable" Value="False"/>
@@ -92,7 +93,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="SVID">
+                            <DataGridTemplateColumn Header="RPTID">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border 
@@ -100,45 +101,53 @@
                                             CornerRadius="6" 
                                             Margin="2"
                                             Padding="4,2">
-                                            <TextBlock Text="{Binding SVIDsDisplay}"/>
+                                            <TextBlock Text="{Binding RPTIDsDisplay}"/>
                                         </Border>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                                 <DataGridTemplateColumn.CellEditingTemplate>
                                     <DataTemplate>
-                                        <TextBox Text="{Binding SVIDsDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
+                                        <TextBox Text="{Binding RPTIDsDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellEditingTemplate>
                             </DataGridTemplateColumn>
-                            <!-- 나머지 속성은 숨김 -->
                         </DataGrid.Columns>
                     </ui:DataGrid>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="2" Background="#263043" CornerRadius="12" Margin="24,24,24,12" Padding="18" >
+            <Border Grid.Row="2" Background="#263043" CornerRadius="12" Margin="24,12,24,12" Padding="18" >
                 <StackPanel>
-                    <ui:TextBox Text="RPTID Setting"/>
-                    <ui:DataGrid ItemsSource="{Binding Waferinfo}" RowHeight="32" FontSize="13" AutoGenerateColumns="False"
-                        Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None">
+                    <ui:TextBox Text="RPTID Setting" Focusable="False"/>
+                    <ui:DataGrid ItemsSource="{Binding ViewModel.RPTID}" MouseDoubleClick="RPTID_MouseDoubleClick" RowHeight="32" FontSize="8" AutoGenerateColumns="False"
+                        Background="#232C39" Foreground="White" HeadersVisibility="Column" GridLinesVisibility="None" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="180">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Focusable" Value="False"/>
+                            </Style>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="PRTID" Binding="{Binding SlotId}" />
-                            <DataGridTemplateColumn Header="State">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ui:ToggleSwitch
-                                        IsChecked="{Binding CJId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Content="{Binding CJId, Converter={StaticResource BoolToOnOffConverter}}"
-                                        Width="60"
-                                        Height="25"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="CEID" Binding="{Binding CurrentLocation}" />
-                            <!-- 나머지 속성은 숨김 -->
+                            <DataGridTextColumn Header="PRTID" Binding="{Binding Number}">
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="VID" Binding="{Binding VIDsDisplay}">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Focusable" Value="False"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#444D5C"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </ui:DataGrid>
-                </StackPanel>
+                    <ui:Button Content="ADD" Click="RPTID_ADD_Clicked" Margin="0,10,10,0" HorizontalAlignment="Right" Height="30" />
+                    </StackPanel>
             </Border>
         </Grid>
     </Grid>

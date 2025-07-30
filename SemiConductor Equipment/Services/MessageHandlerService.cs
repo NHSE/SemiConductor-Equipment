@@ -14,6 +14,7 @@ using System.Threading;
 using System.Data;
 using static SemiConductor_Equipment.Models.EventInfo;
 using System.Windows.Interop;
+using Secs4Net.Sml;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -21,6 +22,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly ILogManager _logManager;
+        private readonly IEventMessageManager _eventMessageManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
         private readonly WaferService _waferService;
@@ -44,7 +46,7 @@ namespace SemiConductor_Equipment.Services
 
         #region CONSTRUCTOR
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
-            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService)
+            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService, IEventMessageManager eventMessageManager)
         {
             _logManager = logManager;
             _logAction = logAction;
@@ -52,6 +54,7 @@ namespace SemiConductor_Equipment.Services
             _waferService = waferService;
             _coordinator = coordinator;
             _loadPortService = loadPortService;
+            _eventMessageManager = eventMessageManager;
         }
         #endregion
 
@@ -62,12 +65,15 @@ namespace SemiConductor_Equipment.Services
         public async Task HandleMessageAsync(PrimaryMessageWrapper wrapper)
         {
             var msg = wrapper.PrimaryMessage;
-            string recv_logMessage = $"[RECV] S{msg.S}F{msg.F} (W? {msg.ReplyExpected})";
-            string send_logMessage = $"[SEND] → S{msg.S}F{msg.F + 1} (ACK 응답)";
+            string recv_logMessage = $"[RECV] S{msg.S}F{msg.F} (W? {msg.ReplyExpected})\n";
+            string send_logMessage = $"[SEND] → S{msg.S}F{msg.F + 1} (ACK 응답)\n";
 
             // S1F1 처리
             if (msg.S == 1 && msg.F == 1)
             {
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
+
                 var reply = new SecsMessage(1, 2)
                 {
                     Name = "CreateProcessJob",
@@ -89,8 +95,8 @@ namespace SemiConductor_Equipment.Services
                                                 L()))))
                 };
                 await wrapper.TryReplyAsync(reply);
-                _logManager.WriteLog("SECS", "RECV", recv_logMessage);
-                _logAction?.Invoke(recv_logMessage);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
             }
 
             else if (msg.S == 3 && msg.F == 17)
@@ -118,9 +124,11 @@ namespace SemiConductor_Equipment.Services
                     carrierId = msg?.SecsItem?[3][0][0].GetString();
                 else
                     return;
-                    //var list = msg?.SecsItem?[3][0][1];
 
-                    bool success = false;
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
+
+                bool success = false;
 
                 for (byte loadportId = 1; loadportId <= 2; loadportId++)
                 {
@@ -158,8 +166,8 @@ namespace SemiConductor_Equipment.Services
                                      )
                     };
                     await wrapper.TryReplyAsync(reply);
-                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
-                    _logAction?.Invoke(recv_logMessage);
+                    string send_log = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_log);
                 }
                 else if (msg.ReplyExpected && !success)
                 {
@@ -177,6 +185,8 @@ namespace SemiConductor_Equipment.Services
                                  )
                     };
                     await wrapper.TryReplyAsync(reply);
+                    string send_log = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_log);
                 }
 
             }
@@ -216,6 +226,9 @@ namespace SemiConductor_Equipment.Services
                 {
                     goto error_msg;
                 }
+
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
 
                 for (byte loadportId = 1; loadportId <= 2; loadportId++)
                 {
@@ -261,9 +274,30 @@ namespace SemiConductor_Equipment.Services
             // W-bit 응답
             if (msg.ReplyExpected)
             {
-                _logManager.WriteLog("SECS", "SEND", send_logMessage);
-                _logAction?.Invoke(send_logMessage);
-
+                var reply = new SecsMessage(14, 10)
+                {
+                    Name = "ControlJob",
+                    SecsItem = L(
+                                    A(cmd),
+                                    L(
+                                       L(
+                                           A("ControlJob"),
+                                           A(cjId)
+                                       )
+                                    ),
+                                    L(
+                                        U4(0),
+                                        L(
+                                            L(
+                                                U4(0),
+                                                A("no error")
+                                             )
+                                         )
+                                    )
+                                )
+                };
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
             }
 
 
@@ -272,16 +306,27 @@ namespace SemiConductor_Equipment.Services
             {
                 Name = "ControlJob",
                 SecsItem = L(
-                   U1(0),
-                   L(
-                       L(
-                           U4(0),
-                           A("unknown object")
-                         )
-                     )
-                )
+                                    A(cmd),
+                                    L(
+                                       L(
+                                           A("ControlJob"),
+                                           A(cjId)
+                                       )
+                                    ),
+                                    L(
+                                        U4(1),
+                                        L(
+                                            L(
+                                                U4(2),
+                                                A("unknown class")
+                                             )
+                                         )
+                                    )
+                                )
             };
             await wrapper.TryReplyAsync(errormsg);
+            string send_errorlog = send_logMessage + errormsg.ToSml();
+            _logManager.WriteLog("SECS", "SEND", send_errorlog);
         }
 
         private async Task HandleProceedWithCarrier(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
@@ -306,6 +351,9 @@ namespace SemiConductor_Equipment.Services
                 });
             }
 
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
             if (msg.ReplyExpected)
             {
                 var reply = new SecsMessage(3, 18)
@@ -324,32 +372,7 @@ namespace SemiConductor_Equipment.Services
 
                 await wrapper.TryReplyAsync(reply);
                 _logManager.WriteLog("SECS", "RECV", recv_logMessage);
-                _logAction?.Invoke(recv_logMessage);
             }
-        }
-
-        public async Task HandleEventReport(CEIDInfo cEIDInfo, SecsGem secs)
-        {
-            var eventmsg = new SecsMessage(6, 11)
-            {
-                Name = "Event Report Send",
-                SecsItem = L(
-                   U4(0),
-                   U4(1),
-                   L(
-                       L(
-                           U4((uint)cEIDInfo.Number),
-                           L(
-                                A("unknown object")
-                            )
-                         )
-                     )
-                )
-            };
-
-            SecsMessage reply = await secs.SendAsync(eventmsg);
-            string send_logMessage = $"[SEND] → S6F11";
-            _logManager.WriteLog("SECS", "RECV", send_logMessage);
         }
         #endregion
     }

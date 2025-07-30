@@ -14,6 +14,8 @@ namespace SemiConductor_Equipment.interfaces
         bool IsCEIDEnabled(int ceid);
         void EnqueueEventData(CEIDInfo eventData);
         void SetSecsGem(ISecsGem secsGem);
+        void SetConnect(ISecsConnection connection);
+        void DisConnect();
         void StartProcessing();
         Task StopProcessing();
         Task ProcessEventQueueAsync(CancellationToken token);

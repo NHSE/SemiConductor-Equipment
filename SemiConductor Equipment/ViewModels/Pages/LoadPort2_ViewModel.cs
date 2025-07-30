@@ -22,6 +22,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public event EventHandler<Wafer> AddRequested;
         private readonly IRobotArmManager _robotArmManager;
         private readonly RunningStateService _runningStateService;
+        private readonly IVIDManager _vIDManager;
         public byte LoadPortId => 2;
         #endregion
 
@@ -46,10 +47,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort2_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService)
+        public LoadPort2_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager sVIDManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateService = runningStateService;
+            this._vIDManager = sVIDManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
@@ -142,11 +144,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             if (newValue == null) return;
 
+            Random random = new Random();
+
             this.Waferinfo.Clear();
             string carrierId = this.CarrierId ?? "UNKNOWN";
 
             foreach (int slot in newValue.OrderBy(x => x))
             {
+                double temperature = random.Next(20, 30);
                 this.Waferinfo.Add(new Wafer
                 {
                     LoadportId = this.LoadPortId,
@@ -156,9 +161,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     CJId = "",
                     SlotId = slot.ToString("D2"),
                     LotId = "",
-                    CurrentLocation = $"LoadPort{this.LoadPortId}"
+                    CurrentLocation = $"LoadPort{this.LoadPortId}",
+                    RequiredTemperature = temperature,
+                    RunningTime = 0.0,
                 });
+
+                this._vIDManager?.SetDVID(1001, (int)temperature, slot);
             }
+            this._vIDManager?.SetSVID(3, newValue.Count(), LoadPortId);
         }
 
         public string GetCarrierId()

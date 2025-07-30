@@ -18,8 +18,5 @@ namespace SemiConductor_Equipment.interfaces
         event EventHandler Disconnected;
 
         bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager);
-
-        Task SendEventMessagesAsync(CEIDInfo cEIDInfo);
-        ISecsGem GetCommInstance { get; }
     }
 }

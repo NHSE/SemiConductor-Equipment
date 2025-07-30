@@ -16,11 +16,12 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         private CEIDInfo _item;
         private readonly IEventConfigManager _configManager;
         public event Action CloseRequested;
+        private ObservableCollection<RPTIDInfo> RPTID_LIST;
         #endregion
 
         #region PROPERTIES
         [ObservableProperty]
-        private ObservableCollection<int> allSvids = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        private ObservableCollection<int> allRPTID;
         [ObservableProperty]
         private ObservableCollection<int> selectedSvids = new ObservableCollection<int>();
         [ObservableProperty]
@@ -32,7 +33,7 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         [ObservableProperty]
         private bool state;
         [ObservableProperty]
-        private List<int> sVIDs;
+        private List<int> rPTIDs;
         [ObservableProperty]
         private string on_off;
         #endregion
@@ -68,12 +69,12 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             this.Number = this._item.Number;
             this.Name = this._item.Name;
             this.State = this._item.State;
-            this.Svid_list = this._item.SVIDsDisplay;
-            this.SVIDs = this._item.SVIDs;
+            this.Svid_list = this._item.RPTIDsDisplay;
+            this.RPTIDs = this._item.RPTIDs;
 
             this.SelectedSvids.Clear();
 
-            foreach (var svid in this.SVIDs)
+            foreach (var svid in this.RPTIDs)
             {
                 this.SelectedSvids.Add(svid);
             }
@@ -82,6 +83,10 @@ namespace SemiConductor_Equipment.ViewModels.Windows
                 this.On_off = "ON";
             else
                 this.On_off = "OFF";
+
+            RPTID_LIST = new ObservableCollection<RPTIDInfo>(_configManager.RPTID.Values);
+
+            this.AllRPTID = new ObservableCollection<int>(RPTID_LIST.SelectMany(r => r.Number_list));
         }
 
         private void ChangeData()
@@ -90,15 +95,15 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             this._item.Name = this.Name;
             this._item.State = this.State;
 
-            this._item.SVIDsDisplay = this.Svid_list;
+            this._item.RPTIDsDisplay = this.Svid_list;
 
-            SVIDs.Clear();
+            RPTIDs.Clear();
             foreach (var svid in this.SelectedSvids)
             {
-                this.SVIDs.Add(svid);
+                this.RPTIDs.Add(svid);
             }
 
-            this._item.SVIDs = this.SVIDs;
+            this._item.RPTIDs = this.RPTIDs;
 
             if (this.State)
                 this.On_off = "ON";

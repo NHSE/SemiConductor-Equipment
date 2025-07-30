@@ -45,7 +45,6 @@ namespace SemiConductor_Equipment.Views.Menus
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-            ViewModel.modify_action += CEID_Modify;
 
             this._ceidWindow = ceidWindow;
             this._ceidViewModel = ceidViewModel;
@@ -67,13 +66,7 @@ namespace SemiConductor_Equipment.Views.Menus
             }
         }
 
-        private void CEID_Modify()
-        {
-            //var ceidmodifyWindow = new CEIDModifyWindow();
-            //ceidmodifyWindow.ShowDialog();
-        }
-
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void CEID_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             // 마우스가 클릭된 위치에 있는 DataGridRow 확인
             DependencyObject source = (DependencyObject)e.OriginalSource;
@@ -96,6 +89,40 @@ namespace SemiConductor_Equipment.Views.Menus
                     window.ShowDialog();
                 }
             }
+        }
+
+        private void RPTID_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // 마우스가 클릭된 위치에 있는 DataGridRow 확인
+            DependencyObject source = (DependencyObject)e.OriginalSource;
+
+            while (source != null && !(source is DataGridRow))
+            {
+                source = VisualTreeHelper.GetParent(source);
+            }
+
+            if (source is DataGridRow row)
+            {
+                // 클릭된 행의 데이터 아이템 가져오기
+                var item = row.Item as RPTIDInfo;
+                if (item != null)
+                {
+                    // 여기에 새 창 띄우기 코드 작성
+                    var vm = App.Services.GetRequiredService<RPTIDModifyViewModel>();
+                    var window = new RPTIDModifyWindow(vm);
+                    window.SetItem(item);
+                    window.ShowDialog();
+                }
+            }
+        }
+
+        private void RPTID_ADD_Clicked(object sender, RoutedEventArgs e)
+        {
+            var vm = App.Services.GetRequiredService<RPTIDAddViewModel>();
+            vm.Clear();
+            var window = new RPTIDAddWindow(vm);
+            window.SetItem();
+            window.ShowDialog();
         }
         #endregion
     }

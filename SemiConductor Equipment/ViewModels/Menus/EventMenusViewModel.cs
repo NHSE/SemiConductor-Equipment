@@ -19,6 +19,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #region PROPERTIES
         [ObservableProperty]
         private ObservableCollection<CEIDInfo> _cEID = new();
+        [ObservableProperty]
+        private ObservableCollection<RPTIDInfo> _rPTID = new();
         #endregion
 
         #region CONSTRUCTOR
@@ -32,17 +34,13 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region COMMAND
-        [RelayCommand]
-        private void Modify()
-        {
-            modify_action?.Invoke();
-        }
         #endregion
 
         #region METHOD
         private void OnConfigRead()
         {
             this.CEID = new ObservableCollection<CEIDInfo>(_configManager.CEID.Values);
+            this.RPTID = new ObservableCollection<RPTIDInfo>(_configManager.RPTID.Values);
         }
         #endregion
     }

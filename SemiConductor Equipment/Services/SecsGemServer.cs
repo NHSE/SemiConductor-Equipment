@@ -34,6 +34,7 @@ namespace SemiConductor_Equipment.Services
         public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
         {
             bool ret = false;
+
             if (this._hsmsConnector == null)
             {
                 _log = logger;
@@ -58,6 +59,7 @@ namespace SemiConductor_Equipment.Services
                 _secs = new SecsGem(secsGemOptions, this._hsmsConnector, secsLogger);
 
                 _eventMessageManager.SetSecsGem(_secs);
+                _eventMessageManager.SetConnect(this._hsmsConnector);
 
                 this._hsmsConnector.ConnectionChanged += OnConnectionChanged;
                 Start();
@@ -98,6 +100,7 @@ namespace SemiConductor_Equipment.Services
 
             // 3. 로그 기록
             _log("[STOP] SECS/GEM 서버 종료됨");
+            this._eventMessageManager.DisConnect();
         }
 
         private void OnConnected() => Connected?.Invoke(this, EventArgs.Empty);
@@ -143,23 +146,5 @@ namespace SemiConductor_Equipment.Services
                 _log($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
             }
         }
-
-        public async Task SendEventMessagesAsync(CEIDInfo cEIDInfo)
-        {
-            try
-            {
-                await _messageHandler.HandleEventReport(cEIDInfo, _secs);
-            }
-            catch (OperationCanceledException)
-            {
-                _log("[INFO] Primary message receiving cancelled.");
-            }
-            catch (Exception ex)
-            {
-                _log($"[ERROR] Exception in SendEventMessagesAsync: {ex}");
-            }
-        }
-
-        public ISecsGem GetCommInstance => _secs;
     }
 }

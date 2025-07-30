@@ -1,0 +1,74 @@
+﻿<Window x:Class="SemiConductor_Equipment.Views.Windows.RPTIDAddWindow"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:local="clr-namespace:SemiConductor_Equipment.ViewModels.Windows"
+            xmlns:conv="clr-namespace:SemiConductor_Equipment.Coverter"
+            xmlns:ui="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            mc:Ignorable="d"
+            d:DataContext="{d:DesignInstance local:RPTIDModifyViewModel, IsDesignTimeCreatable=False}"
+            Title="RPTID Add" Height="370" Width="400"
+            Background="#232C39"
+            WindowStartupLocation="CenterOwner"
+            ResizeMode="NoResize">
+
+    <Window.Resources>
+        <conv:SelectedConverter x:Key="SelectedConverter"/>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="AUTO" />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="AUTO" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="RPTID Number : " 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>
+        <ui:TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ViewModel.Number, Mode=TwoWay}" 
+                       Foreground="LightGray" VerticalAlignment="Center"/>
+
+        <!-- VID (읽기 전용) -->
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="VID :" 
+                       Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,8,0,0"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ViewModel.Svid_list}" 
+                       Foreground="LightGray" VerticalAlignment="Center" Margin="0,8,0,0" />
+
+        <ItemsControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+              ItemsSource="{Binding ViewModel.AllVID}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ToggleButton Width="100" Height="25" Margin="0 15 10 2" Padding="15,1" Checked="ToggleButton_Checked" Unchecked="ToggleButton_UnChecked">
+                        <ToggleButton.IsChecked>
+                            <MultiBinding Converter="{StaticResource SelectedConverter}" Mode="OneWay">
+                                <!-- Mode 생략 또는 Mode=OneWay 설정 -->
+                                <Binding Path="DataContext.ViewModel.SelectedSvids" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                <Binding Path="."/>
+                                <!-- 현재 항목 -->
+                            </MultiBinding>
+                        </ToggleButton.IsChecked>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="40"/>
+                    </ToggleButton>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- 버튼 영역 -->
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="저장" Width="80" Height="32" Command="{Binding ViewModel.SaveCommand}" 
+                        Background="#1976D2" Foreground="White" FontWeight="Bold" Margin="0 0 10 10" />
+        </StackPanel>
+    </Grid>
+</Window>

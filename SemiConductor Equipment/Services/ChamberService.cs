@@ -114,7 +114,10 @@ namespace SemiConductor_Equipment.Services
                     this.Chamber_State[chamberName] = "Running";
                     DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
                     ChangeTempData?.Invoke(this, wafer);
+
                     CEIDInfo info = this._eventMessageManager.GetCEID(300);
+                    info.Wafer_number = wafer.Wafer_Num;
+                    info.Loadport_Number = wafer.LoadportId;
                     this._eventMessageManager.EnqueueEventData(info);
                 }
 
@@ -148,6 +151,8 @@ namespace SemiConductor_Equipment.Services
                         // 처리 완료 상태로 변경 (processing = false)
                         this._chambers[chamberName] = (wafer, true);
                         CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                        info.Wafer_number = wafer.Wafer_Num;
+                        info.Loadport_Number = wafer.LoadportId;
                         this._eventMessageManager.EnqueueEventData(info);
                     }
 

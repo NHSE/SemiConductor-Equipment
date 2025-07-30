@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly string _configDirectory;
+        private readonly IMessageBox messageBoxManager;
         public event Action ConfigRead;
         #endregion
 
@@ -24,7 +25,7 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public EventMenuService(string configDirectory)
+        public EventMenuService(string configDirectory, IMessageBox messageBoxManager)
         {
             _configDirectory = configDirectory;
             if (!Directory.Exists(_configDirectory))
@@ -32,6 +33,7 @@ namespace SemiConductor_Equipment.Services
 
             InitCEIDConfig();
             InitRPTIDConfig();
+            this.messageBoxManager = messageBoxManager;
         }
         #endregion
 
@@ -62,26 +64,22 @@ namespace SemiConductor_Equipment.Services
                     if (currentRPTID != -1 && currentRPTIDInfo != null)
                         rptidDict[currentRPTID] = currentRPTIDInfo;
 
-                    string idStr = trimmed.Substring(7, trimmed.Length - 8); // "CEID_100" -> "100"
+                    string idStr = trimmed.Substring(7, trimmed.Length - 8);
                     if (int.TryParse(idStr, out int rptid))
                     {
                         currentRPTID = rptid;
-                        currentRPTIDInfo = new RPTIDInfo { CEIDs = new List<int>() };
+                        currentRPTIDInfo = new RPTIDInfo { VIDs = new List<int>() };
                         currentRPTIDInfo.Number = rptid;
+                        currentRPTIDInfo.Number_list.Add(rptid);
                     }
                 }
-                else if (trimmed.StartsWith("State ="))
-                {
-                    if (currentRPTIDInfo != null && bool.TryParse(trimmed.Substring(7).Trim(), out bool state))
-                        currentRPTIDInfo.State = state;
-                }
-                else if (trimmed.StartsWith("CEID ="))
+                else if (trimmed.StartsWith("VID ="))
                 {
                     string[] parts = trimmed.Substring(6).Split(',');
                     foreach (var part in parts)
                     {
                         if (int.TryParse(part.Trim(), out int svid))
-                            currentRPTIDInfo.CEIDs.Add(svid);
+                            currentRPTIDInfo.VIDs.Add(svid);
                     }
                 }
             }
@@ -93,6 +91,143 @@ namespace SemiConductor_Equipment.Services
             // 서비스에 할당 (예시)
             this.RPTID = rptidDict;
             ConfigRead?.Invoke();
+        }
+
+        /// <summary>
+        /// Config 파일 경로 반환 없을 경우 생성
+        /// </summary>
+        public void UpdateRPTIDSectionPartial(RPTIDInfo newData)
+        {
+            string filePath = GetFilePathAndCreateIfNotExists("RPTID.config");
+            var lines = File.ReadAllLines(filePath).ToList();
+
+            string targetSection = $"[RPTID_{newData.Number}]";
+            bool inTargetSection = false;
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string line = lines[i].Trim();
+
+                // 섹션 시작 라인 탐색
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    inTargetSection = line.Equals(targetSection, StringComparison.OrdinalIgnoreCase);
+                    continue; // 섹션 헤더는 그대로 유지
+                }
+
+                if (inTargetSection)
+                {
+                    if (line.StartsWith("VID"))
+                    {
+                        lines[i] = $"VID = {newData.VIDsDisplay}"; // "1, 2, 3" 문자열로 넣기
+                    }
+                }
+            }
+
+            // 수정된 전체 라인을 파일에 다시 씀
+            File.WriteAllLines(filePath, lines);
+            InitRPTIDConfig();
+        }
+
+        /// <summary>
+        /// Config 파일 경로 반환 없을 경우 생성
+        /// </summary>
+        public void RemoveRPTIDSectionPartial(RPTIDInfo newData)
+        {
+            string filePath = GetFilePathAndCreateIfNotExists("RPTID.config");
+            var lines = File.ReadAllLines(filePath).ToList();
+
+            string targetSection = $"[RPTID_{newData.Number}]";
+            int startIndex = -1;
+            int endIndex = -1;
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string trimmed = lines[i].Trim();
+
+                if (trimmed.StartsWith("[") && trimmed.EndsWith("]"))
+                {
+                    if (trimmed.Equals(targetSection, StringComparison.OrdinalIgnoreCase))
+                    {
+                        startIndex = i;
+                        // endIndex는 기본적으로 startIndex + 1부터 시작
+                        endIndex = i + 1;
+
+                        // 다음 섹션이 나올 때까지 계속 endIndex 증가
+                        for (int j = i + 1; j < lines.Count; j++)
+                        {
+                            string nextLine = lines[j].Trim();
+                            if (nextLine.StartsWith("[") && nextLine.EndsWith("]"))
+                            {
+                                break;
+                            }
+                            endIndex = j;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            if (startIndex != -1 && endIndex != -1)
+            {
+                // 삭제 범위: startIndex부터 endIndex까지
+                lines.RemoveRange(startIndex, endIndex - startIndex + 1);
+
+                // 삭제 후 startIndex에 공백 줄이 있다면 제거
+                if (startIndex < lines.Count && string.IsNullOrWhiteSpace(lines[startIndex]))
+                {
+                    lines.RemoveAt(startIndex);
+                }
+
+                File.WriteAllLines(filePath, lines);
+                InitRPTIDConfig();
+            }
+        }
+
+
+        /// <summary>
+        /// Config 파일 경로 반환 없을 경우 생성
+        /// </summary>
+        public void CreatedRPTIDSectionPartial(RPTIDInfo newData)
+        {
+            string filePath = GetFilePathAndCreateIfNotExists("RPTID.config");
+            var lines = File.ReadAllLines(filePath).ToList();
+
+            string targetSection = $"[RPTID_{newData.Number}]";
+            bool sectionFound = false;
+            bool inTargetSection = false;
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string line = lines[i].Trim();
+
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    inTargetSection = line.Equals(targetSection, StringComparison.OrdinalIgnoreCase);
+                    if (inTargetSection)
+                    {
+                        sectionFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!sectionFound)
+            {
+                lines.Add("");
+                lines.Add(targetSection);
+                lines.Add($"VID = {newData.VIDsDisplay}");
+            }
+            else
+            {
+                //msg 박스 생성
+                this.messageBoxManager.Show("예외 발생", "이미 존재하는 RPTID입니다.");
+
+            }
+
+            File.WriteAllLines(filePath, lines);
+            InitRPTIDConfig();
         }
 
         public void InitCEIDConfig()
@@ -122,7 +257,7 @@ namespace SemiConductor_Equipment.Services
                     if (int.TryParse(idStr, out int ceid))
                     {
                         currentCEID = ceid;
-                        currentCEIDInfo = new CEIDInfo { SVIDs = new List<int>() };
+                        currentCEIDInfo = new CEIDInfo { RPTIDs = new List<int>() };
                         currentCEIDInfo.Number = ceid;
                     }
                 }
@@ -135,13 +270,13 @@ namespace SemiConductor_Equipment.Services
                     if (currentCEIDInfo != null && bool.TryParse(trimmed.Substring(7).Trim(), out bool state))
                         currentCEIDInfo.State = state;
                 }
-                else if (trimmed.StartsWith("SVID ="))
+                else if (trimmed.StartsWith("RPTID ="))
                 {
-                    string[] parts = trimmed.Substring(6).Split(',');
+                    string[] parts = trimmed.Substring(7).Split(',');
                     foreach (var part in parts)
                     {
                         if (int.TryParse(part.Trim(), out int svid))
-                            currentCEIDInfo.SVIDs.Add(svid);
+                            currentCEIDInfo.RPTIDs.Add(svid);
                     }
                 }
             }
@@ -188,9 +323,9 @@ namespace SemiConductor_Equipment.Services
                     {
                         lines[i] = $"State = {newData.State}";
                     }
-                    else if (line.StartsWith("SVID"))
+                    else if (line.StartsWith("RPTID"))
                     {
-                        lines[i] = $"SVID = {newData.SVIDsDisplay}"; // "1, 2, 3" 문자열로 넣기
+                        lines[i] = $"RPTID = {newData.RPTIDsDisplay}"; // "1, 2, 3" 문자열로 넣기
                     }
                 }
             }
@@ -212,7 +347,22 @@ namespace SemiConductor_Equipment.Services
                 string content = string.Empty;
                 if (fileName.Contains("RPTID"))
                 {
-                    content = "";
+                    content = @"
+[RPTID_1]
+VID = 1, 3, 1001
+
+[RPTID_2]
+VID = 1002, 1003
+
+[RPTID_3]
+VID = 7, 8, 1004
+
+[RPTID_4]
+VID = 10, 11, 1005
+
+[RPTID_5]
+VID = 9
+";
                 }
                 else if(fileName.Contains("CEID"))
                 {
@@ -220,47 +370,43 @@ namespace SemiConductor_Equipment.Services
 [CEID_100]
 Name = Load Port Load Complete
 State = False
-SVID = 1, 2, 3
+RPTID = 1
 
 [CEID_101]
 Name = Load Port Unload Complete
 State = False
-SVID = 4, 5
+RPTID = 2
 
 [CEID_200]
 Name = Wafer Move Start
 State = False
-SVID = 6, 7, 8
+RPTID = 3
 
 [CEID_201]
 Name = Wafer Move Complete
 State = False
-SVID = 6, 7, 8
+RPTID = 3
 
 [CEID_300]
 Name = Process Start
 State = False
-SVID = 10, 11, 12
+RPTID = 4
 
 [CEID_301]
 Name = Process Complete
 State = False
-SVID = 10, 11, 12
+RPTID = 4
 
 [CEID_600]
 Name = Alarm Occurred
 State = False
-SVID = 9
+RPTID = 5
 
 [CEID_601]
 Name = Alarm Cleared
 State = False
-SVID = 9
+RPTID = 5
 ";
-                }
-                else
-                {
-                    content = "IP = 127.0.0.1\nPort = 5000\nDevice ID : 1";
                 }
                     File.WriteAllText(filePath, content);
             }

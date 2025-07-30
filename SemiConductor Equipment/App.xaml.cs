@@ -62,16 +62,16 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IEquipmentConfigManager>(provider => 
                                     new EquipmentSettingService(@"C:\Configs"));
 
-                services.AddSingleton<EventMenu>();
-                services.AddSingleton<EventMenusViewModel>();
-                services.AddSingleton<IEventConfigManager>(provider =>
-                                    new EventMenuService(@"C:\Configs"));
-
                 services.AddSingleton<IEventMessageManager, EventMessageService>();
                 services.AddSingleton<SecsGem>();
 
                 services.AddSingleton<CEIDModifyWindow>();
                 services.AddSingleton<CEIDModifyViewModel>();
+                services.AddSingleton<RPTIDModifyWindow>();
+                services.AddSingleton<RPTIDModifyViewModel>();
+                services.AddSingleton<RPTIDAddWindow>();
+                services.AddSingleton<RPTIDAddViewModel>();
+                services.AddSingleton<IVIDManager, VIDService>();
 
                 services.AddSingleton<IBufferManager, BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
@@ -99,6 +99,15 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IMessageBox, MessageBoxService>();
                 services.AddSingleton<MessageBox_ViewModel>();
                 services.AddTransient<MessageBoxWindow>();
+
+                services.AddSingleton<EventMenu>();
+                services.AddSingleton<EventMenusViewModel>();
+                services.AddSingleton<IEventConfigManager>(provider =>
+                {
+                    var messageBox = provider.GetRequiredService<IMessageBox>();
+                    return new EventMenuService(@"C:\Configs", messageBox);
+                });
+
 
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
@@ -185,7 +194,7 @@ namespace SemiConductor_Equipment
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            messageBoxService.Show($"[UI 예외]\n{e.Exception.Message}", "예외 발생");
+            //messageBoxService.Show("예외 발생", $"[UI 예외]\n{e.Exception.Message}");
             Console.WriteLine($"[UI 예외]\n{e.Exception.Message}");
             e.Handled = true;  // 앱 종료 방지
         }
@@ -194,14 +203,14 @@ namespace SemiConductor_Equipment
         {
             Exception ex = e.ExceptionObject as Exception;
             var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            messageBoxService.Show($"[도메인 예외]\n{ex?.Message}", "예외 발생");
+            //messageBoxService.Show("예외 발생", $"[도메인 예외]\n{ex?.Message}");
             Console.WriteLine($"[도메인 예외]\n{ex?.Message}");
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
             var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            messageBoxService.Show($"[Task 예외]\n{e.Exception}", "예외 발생");
+            //messageBoxService.Show("예외 발생", $"[Task 예외]\n{e.Exception}");
             Console.WriteLine($"[Task 예외]\n{e.Exception}");
             e.SetObserved();
         }

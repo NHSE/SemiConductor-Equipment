@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Secs4Net;
 using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
@@ -29,6 +30,10 @@ namespace SemiConductor_Equipment.Services
             if (logType.Contains("Chamber"))
             {
                 filePath = GetLogFilePath(logType);
+            }
+            else if(logType.Contains("Event"))
+            {
+                filePath = GetEventLogLogPath(logType);
             }
             else
             {
@@ -67,7 +72,13 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetSecsGemLogPath(string logType)
         {
-            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
+            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
+            return Path.Combine(_logDirectory, fileName);
+        }
+
+        public string GetEventLogLogPath(string logType)
+        {
+            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
             return Path.Combine(_logDirectory, fileName);
         }
     }

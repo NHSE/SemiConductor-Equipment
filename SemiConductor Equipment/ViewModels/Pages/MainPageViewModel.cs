@@ -34,7 +34,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
-        private readonly SecsGem _secs;
+        private readonly IVIDManager _vIDManager;
         public Dictionary<string, Point> locationPositions = new();
         #endregion
 
@@ -111,7 +111,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
-            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager)
+            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager, IVIDManager svIDManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -133,9 +133,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager = chamberManager;
             this._bufferManager = bufferManager;
             this._robotArmManager = robotArmManager;
+            this._vIDManager = svIDManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
+            this._vIDManager.SetSVID(1, this.Equipment_state);
 
             this.Chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
             this.Chamber2_state = this._chamberManager.Chamber_State["Chamber2"];
@@ -280,6 +282,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this.Setting_menu = true;
                 }
             });
+
+            this._vIDManager?.SetSVID(1, this.Equipment_state);
         }
 
         private void NavigateToPage<TPage>() where TPage : class

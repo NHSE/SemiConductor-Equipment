@@ -8,6 +8,7 @@ using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Diagnostics;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -27,11 +28,15 @@ namespace SemiConductor_Equipment.Services
 
         private readonly IChamberManager _chamberManager;
         private readonly IBufferManager _bufferManager;
+        private readonly IVIDManager _vidManager;
+        private readonly IEventMessageManager _eventMessageManager;
 
-        public RobotArmService(IChamberManager chamberManager, IBufferManager bufferManager)
+        public RobotArmService(IChamberManager chamberManager, IBufferManager bufferManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
         {
             _chamberManager = chamberManager;
             _bufferManager = bufferManager;
+            _vidManager = VIDManager;
+            _eventMessageManager = eventMessageManager;
 
             _chamberManager.Enque_Robot += OnQueDataInput;
             _bufferManager.Enque_Robot += OnQueDataInput;
@@ -105,10 +110,18 @@ namespace SemiConductor_Equipment.Services
 
                         command.Wafer.CurrentLocation = "RobotArm";
                         WaferMoveInfo?.Invoke(this, command.Wafer);
+
+                        _vidManager.SetDVID(1005, command.Wafer.CurrentLocation, command.Wafer.Wafer_Num);
+                        CEIDInfo info = _eventMessageManager.GetCEID(200);
+                        info.Wafer_number = command.Wafer.Wafer_Num;
+                        info.Loadport_Number = command.Wafer.LoadportId;
+                        _eventMessageManager.EnqueueEventData(info);
                     }
 
                     if (command == null)
                     {
+                        if (_vidManager.RobotStatus != "IDLE")
+                            _vidManager.SetSVID(7, "IDLE", 0);
                         await Task.Delay(100, token);
                         continue;
                     }
@@ -119,6 +132,7 @@ namespace SemiConductor_Equipment.Services
                     }
 
                     Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
+                    _vidManager.SetSVID(7, "Running", 0);
 
                     await Task.Delay(300); // 모션 처리 시간 시뮬레이션
 
@@ -130,6 +144,11 @@ namespace SemiConductor_Equipment.Services
                             {
                                 try
                                 {
+                                    _vidManager.SetDVID(1005, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
+                                    CEIDInfo info = _eventMessageManager.GetCEID(200);
+                                    info.Loadport_Number = command.Wafer.LoadportId;
+                                    info.Wafer_number = command.Wafer.Wafer_Num;
+                                    _eventMessageManager.EnqueueEventData(info);
                                     await _chamberManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
                                 }
                                 catch (Exception ex)
@@ -145,6 +164,11 @@ namespace SemiConductor_Equipment.Services
                             {
                                 try
                                 {
+                                    _vidManager.SetDVID(1005, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
+                                    CEIDInfo info = _eventMessageManager.GetCEID(201);
+                                    info.Wafer_number = command.Wafer.Wafer_Num;
+                                    info.Loadport_Number = command.Wafer.LoadportId;
+                                    _eventMessageManager.EnqueueEventData(info);
                                     await _bufferManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
                                 }
                                 catch (Exception ex)
@@ -156,9 +180,18 @@ namespace SemiConductor_Equipment.Services
 
                         case string s when s.Contains("LoadPort"):
                             if (command.Completed.Contains("Chamber"))
+                            {
                                 _chamberManager.RemoveWaferFromChamber(command.Completed);
+                            }
                             else
+                            {
                                 _bufferManager.RemoveWaferFromBuffer(command.Completed);
+                            }
+                            _vidManager.SetDVID(1005, $"LoadPort{command.Wafer.LoadportId}", command.Wafer.Wafer_Num);
+                            CEIDInfo info = _eventMessageManager.GetCEID(201);
+                            info.Loadport_Number = command.Wafer.LoadportId;
+                            info.Wafer_number = command.Wafer.Wafer_Num;
+                            _eventMessageManager.EnqueueEventData(info);
                             break;
                     }
 
@@ -166,6 +199,7 @@ namespace SemiConductor_Equipment.Services
                     if (command.CommandType == RobotCommandType.Place)
                     {
                         command.Wafer.CurrentLocation = command.Location;
+                        _vidManager.SetSVID(7, "IDLE", 0);
                         WaferMoveInfo?.Invoke(this, command.Wafer);
                     }
                 }

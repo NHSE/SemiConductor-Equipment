@@ -12,23 +12,25 @@
     
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="AUTO"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0">
-            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="32" Text="&#xE7BA;" Foreground="Orange"/>
-            <TextBlock Text="{Binding ViewModel.Title}" Foreground="White" TextWrapping="Wrap"/>
-         </StackPanel>
+            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="32" Text="&#xE7BA;" VerticalAlignment="Center" Foreground="Orange"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Height="50" Width="416">
+                <TextBlock Text="{Binding ViewModel.Title}" Foreground="White" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            </ScrollViewer>
+        </StackPanel>
 
-        <Border Grid.Row="1" Background="#1A2233" CornerRadius="18" Margin="24" Padding="32" >
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock Text="{Binding ViewModel.Msg}" Foreground="White" TextWrapping="Wrap"/>
-            </StackPanel>
+        <Border Grid.Row="1" Background="#1A2233" CornerRadius="20" Margin="24,24,24,0" Padding="5" >
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Width="400" Margin="21,0,21,-5" >
+                <TextBlock Text="{Binding ViewModel.Msg}" HorizontalAlignment="Left" Foreground="White" TextWrapping="Wrap"/>
+            </ScrollViewer>
         </Border>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 30 0">
-            <ui:Button Content="OK" Click="btnOK_Click" Width="100" Height="50" />
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 10 30 10">
+            <ui:Button Content="OK" Click="btnOK_Click" Width="80" Height="50" />
         </StackPanel>
     </Grid>
 </Window>
