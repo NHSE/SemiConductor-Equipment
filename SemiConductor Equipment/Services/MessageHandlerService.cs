@@ -270,6 +270,19 @@ namespace SemiConductor_Equipment.Services
                 }
             }
 
+            else if (msg.S == 2 && msg.F == 33) // CJ Create //수정 필
+            {
+                await HandleRPTIDVIDLink(msg, wrapper, recv_logMessage);
+            }
+            else if (msg.S == 2 && msg.F == 35) // CJ Create //수정 필
+            {
+                await HandleCEIDLink(msg, wrapper, recv_logMessage);
+            }
+            else if (msg.S == 2 && msg.F == 37) // CJ Create //수정 필
+            {
+                await HandleCEIDEnable(msg, wrapper, recv_logMessage);
+            }
+
 
             // W-bit 응답
             if (msg.ReplyExpected)
@@ -372,6 +385,281 @@ namespace SemiConductor_Equipment.Services
 
                 await wrapper.TryReplyAsync(reply);
                 _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+            }
+        }
+
+        private async Task HandleRPTIDVIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        {
+            try
+            {
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
+
+                int rptid_cnt = msg.SecsItem[1].Count;
+                bool flag = false;
+
+                for (int i = 0; i < rptid_cnt; i++)
+                {
+                    uint rptid = msg.SecsItem[1][i][0].FirstValue<uint>();
+
+                    if (this._eventMessageManager.IsRPTID(rptid))
+                    {
+                        if (msg.ReplyExpected)
+                        {
+                            var reply = new SecsMessage(2, 34)
+                            {
+                                Name = "RPTIDLINK",
+                                SecsItem = B(3)
+                            };
+
+                            await wrapper.TryReplyAsync(reply);
+                            _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        }
+                    }
+                    else
+                    {
+                        int vid_cnt = msg.SecsItem[1][i][1].Count;
+                        List<uint> vid_list = new List<uint>();
+
+                        for (int j = 0; j < vid_cnt; j++)
+                        {
+                            uint vid = msg.SecsItem[1][i][1][j].FirstValue<uint>();
+
+                            if (!this._eventMessageManager.IsVID(rptid, vid))
+                            {
+                                flag = true;
+                                break;
+                            }
+                            else
+                            {
+                                vid_list.Add(vid);
+                            }
+                        }
+
+                        if (flag)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            this._eventMessageManager.CreateRPTID(rptid, vid_list);
+                        }
+                    }
+                }
+                if (flag)
+                {
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 34)
+                        {
+                            Name = "RPTIDLINK",
+                            SecsItem = B(4)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    }
+                }
+                else
+                {
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 34)
+                        {
+                            Name = "RPTIDLINK",
+                            SecsItem = B(0)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (msg.ReplyExpected)
+                {
+                    var reply = new SecsMessage(2, 34)
+                    {
+                        Name = "RPTIDLINK",
+                        SecsItem = B(2)
+                    };
+
+                    await wrapper.TryReplyAsync(reply);
+                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                }
+            }
+        }
+
+        private async Task HandleCEIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        {
+            try
+            {
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
+
+                int ceid_cnt = msg.SecsItem[1].Count;
+                bool flag = false;
+
+                for (int i = 0; i < ceid_cnt; i++)
+                {
+                    uint ceid = msg.SecsItem[1][i][0].FirstValue<uint>();
+
+                    if (!this._eventMessageManager.IsCEID(ceid))
+                    {
+                        if (msg.ReplyExpected)
+                        {
+                            var reply = new SecsMessage(2, 36)
+                            {
+                                Name = "CEID LINK",
+                                SecsItem = B(4)
+                            };
+
+                            await wrapper.TryReplyAsync(reply);
+                            _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        }
+                    }
+                    else
+                    {
+                        int vid_cnt = msg.SecsItem[1][i][1].Count;
+                        List<uint> rptid_list = new List<uint>();
+
+                        for (int j = 0; j < vid_cnt; j++)
+                        {
+                            uint rptid = msg.SecsItem[1][i][1][j].FirstValue<uint>();
+
+                            if (this._eventMessageManager.IsRPTIDInCEID(ceid, rptid))
+                            {
+                                flag = true;
+                                break;
+                            }
+                            else
+                            {
+                                rptid_list.Add(rptid);
+                            }
+                        }
+
+                        if (flag)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            this._eventMessageManager.LinkCEID(ceid, rptid_list);
+                        }
+                    }
+                }
+                if (flag)
+                {
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 36)
+                        {
+                            Name = "CEID LINK",
+                            SecsItem = B(5)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    }
+                }
+                else
+                {
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 36)
+                        {
+                            Name = "CEID LINK",
+                            SecsItem = B(0)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (msg.ReplyExpected)
+                {
+                    var reply = new SecsMessage(2, 36)
+                    {
+                        Name = "CEID LINK",
+                        SecsItem = B(2)
+                    };
+
+                    await wrapper.TryReplyAsync(reply);
+                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                }
+            }
+        }
+
+        private async Task HandleCEIDEnable(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        {
+            try
+            {
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
+
+                bool State = msg.SecsItem[0].FirstValue<bool>();
+                int ceid_cnt = msg.SecsItem[1].Count;
+                List<uint> ceid_list = new List<uint>();
+                if (ceid_cnt > 0)
+                {
+                    bool flag = false;
+                    for (int i = 0; i < ceid_cnt; i++)
+                    {
+                        uint ceid = msg.SecsItem[1][i].FirstValue<uint>();
+
+                        if (!this._eventMessageManager.IsCEID(ceid))
+                        {
+                            throw new Exception();
+                        }
+                        else
+                        {
+                            ceid_list.Add(ceid);
+                        }
+                    }
+                }
+                else if (ceid_cnt == 0)
+                {
+                    this._eventMessageManager.CEIDStateChange(0, State);
+                }
+                else throw new Exception();
+
+                if (ceid_list.Count > 0)
+                {
+                    foreach (uint ceid in ceid_list)
+                    {
+                        this._eventMessageManager.CEIDStateChange((int)ceid, State);
+                    }
+
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 38)
+                        {
+                            Name = "Enable/Disable Event",
+                            SecsItem = B(0)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (msg.ReplyExpected)
+                {
+                    var reply = new SecsMessage(2, 38)
+                    {
+                        Name = "Enable/Disable Event",
+                        SecsItem = B(1)
+                    };
+
+                    await wrapper.TryReplyAsync(reply);
+                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                }
             }
         }
         #endregion

@@ -50,6 +50,62 @@ namespace SemiConductor_Equipment.Services
             return this._eventConfigManager.CEID[ceid_num];
         }
 
+        public bool IsCEID(uint ceid)
+        {
+            return this._vIDManager.IsCEID(ceid);
+        }
+
+        public bool IsRPTIDInCEID(uint ceid, uint rptid)
+        {
+            return this._vIDManager.IsRPTIDInCEID(ceid, rptid);
+        }
+
+        public bool IsRPTID(uint rptid)
+        {
+            return this._vIDManager.IsRPTID(rptid);
+        }
+
+        public bool IsVID(uint rptid, uint vid)
+        {
+            if(!this._vIDManager.IsVID(rptid, vid))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void CreateRPTID(uint rptid, List<uint> vid)
+        {
+            RPTIDInfo Item = new RPTIDInfo();
+            Item.Number = (int)rptid;
+            Item.VIDs = new List<int>();
+
+            foreach (uint i in vid)
+            {
+                Item.VIDs.Add((int)i);
+            }
+
+            this._eventConfigManager.CreatedRPTIDSectionPartial(Item);
+        }
+
+        public void LinkCEID(uint ceid, List<uint> rptid)
+        {
+            CEIDInfo Item = this._eventConfigManager.CEID[(int)ceid];
+
+            foreach (uint i in rptid)
+            {
+                Item.RPTIDs.Add((int)i);
+            }
+
+            this._eventConfigManager.UpdateCEIDSectionPartial(Item);
+        }
+
+        public void CEIDStateChange(int ceid, bool state)
+        {
+            this._eventConfigManager.CEIDStateChange(ceid, state);
+        }
+
         public bool IsCEIDEnabled(int ceid)
         {
             return this._eventConfigManager.CEID[ceid].State;

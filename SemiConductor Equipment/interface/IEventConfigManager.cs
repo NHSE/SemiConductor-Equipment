@@ -24,6 +24,7 @@ namespace SemiConductor_Equipment.interfaces
         void UpdateRPTIDSectionPartial(RPTIDInfo newData);
         void CreatedRPTIDSectionPartial(RPTIDInfo newData);
         void RemoveRPTIDSectionPartial(RPTIDInfo newData);
+        void CEIDStateChange(int ceid, bool state);
 
     }
 }

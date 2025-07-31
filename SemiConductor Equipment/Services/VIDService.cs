@@ -15,6 +15,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
+        private readonly List<int> vid_list = new List<int> { 1, 3, 7, 8, 9, 10, 11, 1001, 1002, 1003, 1004, 1005 };
         #endregion
 
         #region PROPERTIES
@@ -189,6 +190,35 @@ namespace SemiConductor_Equipment.Services
                     WaferPosition[array_data] = data.ToString();
                     break;
             }
+        }
+
+        public bool IsRPTID(uint rptid)
+        {
+            if (!this._eventConfigManager.RPTID.ContainsKey((int)rptid))
+                return false;
+            else
+                return true;
+        }
+
+        public bool IsVID(uint rptid, uint vid)
+        {
+            return this.vid_list.Contains((int)vid);
+        }
+
+        public bool IsCEID(uint ceid)
+        {
+            if (!this._eventConfigManager.CEID.ContainsKey((int)ceid))
+                return false;
+            else
+                return true;
+        }
+
+        public bool IsRPTIDInCEID(uint ceid, uint rptid)
+        {
+            if (!this._eventConfigManager.CEID[(int)ceid].RPTIDs.Contains((int)rptid))
+                return false;
+            else
+                return true;
         }
         #endregion
     }

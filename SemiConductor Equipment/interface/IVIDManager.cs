@@ -14,6 +14,10 @@ namespace SemiConductor_Equipment.interfaces
         void SetSVID(int svid, object data, int array_data = 0);
         void SetDVID(int svid, object data, int array_data = 0);
         List<Item>? GetRPTID(int rptid, object wafer_number, int loadport_number);
+        bool IsRPTID(uint rptid);
+        bool IsVID(uint rptid, uint vid);
+        bool IsCEID(uint ceid);
+        bool IsRPTIDInCEID(uint ceid, uint rptid);
 
         string? EquipmentStatus { get; set; }
         int?[] WaferTemp { get; set; }

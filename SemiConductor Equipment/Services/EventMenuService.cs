@@ -335,6 +335,23 @@ namespace SemiConductor_Equipment.Services
             InitCEIDConfig();
         }
 
+        public void CEIDStateChange(int ceid, bool state)
+        {
+            if(ceid == 0)
+            {
+                foreach(int i in CEID.Keys)
+                {
+                    CEID[i].State = state;
+                    UpdateCEIDSectionPartial(CEID[i]);
+                }
+            }
+            else
+            {
+                CEID[ceid].State = state;
+                UpdateCEIDSectionPartial(CEID[ceid]);
+            }
+        }
+
 
         public string GetFilePathAndCreateIfNotExists(string configname)
         {
