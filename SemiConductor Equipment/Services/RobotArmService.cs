@@ -25,6 +25,7 @@ namespace SemiConductor_Equipment.Services
         private bool _isProcessing = false;
         private CancellationTokenSource? _cts;
         private Task? _processingTask;
+        private readonly object _lock = new();
 
         private readonly IChamberManager _chamberManager;
         private readonly IBufferManager _bufferManager;
@@ -95,33 +96,41 @@ namespace SemiConductor_Equipment.Services
             if (_isProcessing)
                 return;
 
-            _isProcessing = true;
+            _isProcessing = false;
 
             try
             {
                 while (!token.IsCancellationRequested)
                 {
                     RobotCommand? command = null;
-
-                    if (_RobotArmcommandQueue.Count > 0)
+                    lock (_lock)
                     {
-                        command = _RobotArmcommandQueue.Dequeue();
-                        CommandStarted?.Invoke(this, command.Wafer);
+                        if (_RobotArmcommandQueue.Count > 0)
+                        {
+                            if (_isProcessing) continue;
 
-                        command.Wafer.CurrentLocation = "RobotArm";
-                        WaferMoveInfo?.Invoke(this, command.Wafer);
+                            command = _RobotArmcommandQueue.Dequeue();
+                            if (command == null) continue;
 
-                        _vidManager.SetDVID(1005, command.Wafer.CurrentLocation, command.Wafer.Wafer_Num);
-                        CEIDInfo info = _eventMessageManager.GetCEID(200);
-                        info.Wafer_number = command.Wafer.Wafer_Num;
-                        info.Loadport_Number = command.Wafer.LoadportId;
-                        _eventMessageManager.EnqueueEventData(info);
+                            command.Wafer.CurrentLocation = "RobotArm";
+
+                            CommandStarted?.Invoke(this, command.Wafer);
+                            WaferMoveInfo?.Invoke(this, command.Wafer);
+
+                            _vidManager.SetDVID(1007, command.Wafer.CurrentLocation, command.Wafer.Wafer_Num);
+                            CEIDInfo info = _eventMessageManager.GetCEID(200);
+                            info.Wafer_number = command.Wafer.Wafer_Num;
+                            info.Loadport_Number = command.Wafer.LoadportId;
+                            _eventMessageManager.EnqueueEventData(info);
+
+                            _isProcessing = true;
+                        }
                     }
 
                     if (command == null)
                     {
                         if (_vidManager.RobotStatus != "IDLE")
-                            _vidManager.SetSVID(7, "IDLE", 0);
+                            _vidManager.SetSVID(101, "IDLE", 0);
                         await Task.Delay(100, token);
                         continue;
                     }
@@ -132,23 +141,25 @@ namespace SemiConductor_Equipment.Services
                     }
 
                     Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
-                    _vidManager.SetSVID(7, "Running", 0);
+                    _vidManager.SetSVID(101, "Running", 0);
 
-                    await Task.Delay(300); // 모션 처리 시간 시뮬레이션
+                    await Task.Delay(1000); // 모션 처리 시간 시뮬레이션
 
                     switch (command.Location)
                     {
                         case string s when s.Contains("Chamber"):
                             command.Wafer.Status = "Running";
+
+                            _vidManager.SetDVID(1007, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
+                            CEIDInfo info = _eventMessageManager.GetCEID(201);
+                            info.Loadport_Number = command.Wafer.LoadportId;
+                            info.Wafer_number = command.Wafer.Wafer_Num;
+                            _eventMessageManager.EnqueueEventData(info);
+
                             _ = Task.Run(async () =>
                             {
                                 try
                                 {
-                                    _vidManager.SetDVID(1005, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
-                                    CEIDInfo info = _eventMessageManager.GetCEID(200);
-                                    info.Loadport_Number = command.Wafer.LoadportId;
-                                    info.Wafer_number = command.Wafer.Wafer_Num;
-                                    _eventMessageManager.EnqueueEventData(info);
                                     await _chamberManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
                                 }
                                 catch (Exception ex)
@@ -160,20 +171,21 @@ namespace SemiConductor_Equipment.Services
 
                         case string s when s.Contains("Buffer"):
                             _chamberManager.RemoveWaferFromChamber(command.Completed);
+                            _vidManager.SetDVID(1007, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
+                            CEIDInfo data = _eventMessageManager.GetCEID(201);
+                            data.Wafer_number = command.Wafer.Wafer_Num;
+                            data.Loadport_Number = command.Wafer.LoadportId;
+                            _eventMessageManager.EnqueueEventData(data);
+
                             _ = Task.Run(async () =>
                             {
                                 try
                                 {
-                                    _vidManager.SetDVID(1005, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
-                                    CEIDInfo info = _eventMessageManager.GetCEID(201);
-                                    info.Wafer_number = command.Wafer.Wafer_Num;
-                                    info.Loadport_Number = command.Wafer.LoadportId;
-                                    _eventMessageManager.EnqueueEventData(info);
                                     await _bufferManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("[Buffer 예외] " + ex);
+                                    Console.WriteLine("[Chamber 예외] " + ex);
                                 }
                             });
                             break;
@@ -187,11 +199,11 @@ namespace SemiConductor_Equipment.Services
                             {
                                 _bufferManager.RemoveWaferFromBuffer(command.Completed);
                             }
-                            _vidManager.SetDVID(1005, $"LoadPort{command.Wafer.LoadportId}", command.Wafer.Wafer_Num);
-                            CEIDInfo info = _eventMessageManager.GetCEID(201);
-                            info.Loadport_Number = command.Wafer.LoadportId;
-                            info.Wafer_number = command.Wafer.Wafer_Num;
-                            _eventMessageManager.EnqueueEventData(info);
+                            _vidManager.SetDVID(1007, $"LoadPort{command.Wafer.LoadportId}", command.Wafer.Wafer_Num);
+                            CEIDInfo ceid_data = _eventMessageManager.GetCEID(201);
+                            ceid_data.Loadport_Number = command.Wafer.LoadportId;
+                            ceid_data.Wafer_number = command.Wafer.Wafer_Num;
+                            _eventMessageManager.EnqueueEventData(ceid_data);
                             break;
                     }
 
@@ -199,9 +211,12 @@ namespace SemiConductor_Equipment.Services
                     if (command.CommandType == RobotCommandType.Place)
                     {
                         command.Wafer.CurrentLocation = command.Location;
-                        _vidManager.SetSVID(7, "IDLE", 0);
+                        _vidManager.SetSVID(101, "IDLE", 0);
                         WaferMoveInfo?.Invoke(this, command.Wafer);
                     }
+                    await Task.Delay(1000); // 모션 처리 시간 시뮬레이션
+                    //Thread.Sleep(1000);
+                    _isProcessing = false;
                 }
             }
             finally

@@ -182,8 +182,55 @@ namespace SemiConductor_Equipment.Services
 
                 File.WriteAllLines(filePath, lines);
                 InitRPTIDConfig();
+
+                RemoveRPTIDFromCEIDSections(newData);
             }
         }
+
+        public void RemoveRPTIDFromCEIDSections(RPTIDInfo newData)
+        {
+            string ceidFilePath = GetFilePathAndCreateIfNotExists("CEID.config");
+            var ceidLines = File.ReadAllLines(ceidFilePath).ToList();
+
+            for (int i = 0; i < ceidLines.Count; i++)
+            {
+                string line = ceidLines[i].Trim();
+
+                if (line.StartsWith("RPTID", StringComparison.OrdinalIgnoreCase))
+                {
+                    // RPTID = 1, 5 형태를 지원
+                    int eqIdx = line.IndexOf('=');
+                    if (eqIdx < 0) continue; // '=' 없음 건너뜀
+
+                    string keyPart = line.Substring(0, eqIdx + 1); // "RPTID="
+                    string valuePart = line.Substring(eqIdx + 1).Trim(); // "1, 5" 등
+
+                    // 콤마로 분리 후, 현재 삭제 대상만 빼고 다시 합침
+                    var rptidList = valuePart.Split(',')
+                                             .Select(s => s.Trim())
+                                             .Where(s => !string.IsNullOrWhiteSpace(s))
+                                             .Where(s => s != newData.Number.ToString())
+                                             .ToList();
+
+                    if (rptidList.Count == 0)
+                    {
+                        // 모두 삭제된 경우: 라인을 아예 삭제할지, 빈 값으로 남길지 결정(여기선 삭제)
+                        ceidLines.RemoveAt(i);
+                        i--; // 인덱스 보정
+                    }
+                    else
+                    {
+                        // 라인 갱신
+                        ceidLines[i] = $"{keyPart} {string.Join(", ", rptidList)}";
+                    }
+                }
+            }
+
+            File.WriteAllLines(ceidFilePath, ceidLines);
+            InitCEIDConfig();
+        }
+
+
 
 
         /// <summary>
@@ -366,19 +413,19 @@ namespace SemiConductor_Equipment.Services
                 {
                     content = @"
 [RPTID_1]
-VID = 1, 3, 1001
+VID = 100, 1001, 1002
 
 [RPTID_2]
-VID = 1002, 1003
+VID = 1003, 1004
 
 [RPTID_3]
-VID = 7, 8, 1004
+VID = 101, 102, 1005
 
 [RPTID_4]
-VID = 10, 11, 1005
+VID = 103, 1005, 1007
 
 [RPTID_5]
-VID = 9
+VID = 1006
 ";
                 }
                 else if(fileName.Contains("CEID"))

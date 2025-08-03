@@ -23,6 +23,7 @@ namespace SemiConductor_Equipment.Services
         #region FIELDS
         private readonly ILogManager _logManager;
         private readonly IEventMessageManager _eventMessageManager;
+        private readonly IVIDManager _vIDManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
         private readonly WaferService _waferService;
@@ -46,7 +47,8 @@ namespace SemiConductor_Equipment.Services
 
         #region CONSTRUCTOR
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
-            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService, IEventMessageManager eventMessageManager)
+            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
+            IVIDManager vIDManager)
         {
             _logManager = logManager;
             _logAction = logAction;
@@ -55,6 +57,7 @@ namespace SemiConductor_Equipment.Services
             _coordinator = coordinator;
             _loadPortService = loadPortService;
             _eventMessageManager = eventMessageManager;
+            _vIDManager = vIDManager;
         }
         #endregion
 
@@ -144,6 +147,7 @@ namespace SemiConductor_Equipment.Services
                                     PJId = pjId
                                 };
                                 success = viewModel.Update_Carrier_info(waferData);
+                                _vIDManager.SetDVID(1009, pjId, (int)loadportId);
                             }
                         });
                     }
@@ -235,6 +239,10 @@ namespace SemiConductor_Equipment.Services
                     var viewModel = _loadPortFactory(loadportId);
                     if (viewModel != null)
                     {
+                        if (!viewModel.Check_Running(cjId))
+                        {
+                            continue;
+                        }
                         // Dispatcher.InvokeAsync를 사용하여 비동기 처리
                         await Application.Current.Dispatcher.InvokeAsync(async () =>
                         {
@@ -245,6 +253,7 @@ namespace SemiConductor_Equipment.Services
                                     CJId = cjId
                                 };
                                 viewModel.Update_Carrier_info(waferData);
+                                _vIDManager.SetDVID(1010, cjId, (int)loadportId);
                                 // pjId로 해당 웨이퍼 리스트를 가져옴
                                 var wafers = viewModel.GetAllWaferInfo(pjId);
 
@@ -385,6 +394,8 @@ namespace SemiConductor_Equipment.Services
 
                 await wrapper.TryReplyAsync(reply);
                 _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+
+                _vIDManager.SetDVID(1008, carrierId, (int)loadportId);
             }
         }
 

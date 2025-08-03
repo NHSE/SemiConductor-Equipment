@@ -12,27 +12,32 @@ namespace SemiConductor_Equipment.Services
         private EquipmentStatusEnum _state;
         public event EventHandler<EquipmentStatusEnum> DataChange;
 
-        public void Change_State(EquipmentStatusEnum state)
+        public void Change_State(object? sender, EquipmentStatusEnum state)
         {
             if(state == EquipmentStatusEnum.Running)
             {
                 this._state = EquipmentStatusEnum.Running;
-                DataChange?.Invoke(this, EquipmentStatusEnum.Running);
+                DataChange?.Invoke(sender, EquipmentStatusEnum.Running);
             }
             else if(state == EquipmentStatusEnum.Completed)
             {
                 this._state = EquipmentStatusEnum.Completed;
-                DataChange?.Invoke(this, EquipmentStatusEnum.Completed);
+                DataChange?.Invoke(sender, EquipmentStatusEnum.Completed);
             }
             else if (state == EquipmentStatusEnum.Error)
             {
                 this._state = EquipmentStatusEnum.Error;
-                DataChange?.Invoke(this, EquipmentStatusEnum.Error);
+                DataChange?.Invoke(sender, EquipmentStatusEnum.Error);
             }
             else if (state == EquipmentStatusEnum.Wait)
             {
                 this._state = EquipmentStatusEnum.Wait;
-                DataChange?.Invoke(this, EquipmentStatusEnum.Wait);
+                DataChange?.Invoke(sender, EquipmentStatusEnum.Wait);
+            }
+            else
+            {
+                this._state = EquipmentStatusEnum.Ready;
+                DataChange?.Invoke(sender, EquipmentStatusEnum.Ready);
             }
         }
 

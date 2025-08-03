@@ -9,6 +9,7 @@ using Secs4Net;
 using Secs4Net.Sml;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.Models;
 using static Secs4Net.Item;
 using static SemiConductor_Equipment.Models.EventInfo;
 
@@ -22,7 +23,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IVIDManager _vIDManager;
         private CancellationTokenSource _cts;
         private ISecsGem _secs;
-        private readonly Queue<CEIDInfo> _EventQue = new();
+        private readonly Queue<EventQueueItem> _EventQue = new();
         private ISecsConnection _connection;
         private bool IsActive = false;
         #endregion
@@ -113,7 +114,20 @@ namespace SemiConductor_Equipment.Services
 
         public void EnqueueEventData(CEIDInfo eventData)
         {
-            _EventQue.Enqueue(eventData);
+            var vidItems = new List<Item>();
+            foreach (int rptid in eventData.RPTIDs)
+            {
+                if (eventData.Number != 100)
+                    vidItems.AddRange(this._vIDManager.GetRPTID(rptid, eventData.Wafer_number, eventData.Loadport_Number));
+                else
+                    vidItems.AddRange(this._vIDManager.GetRPTID(rptid, eventData.Wafer_List, eventData.Loadport_Number));
+            }
+
+            EventQueueItem data = new EventQueueItem();
+            data.CEID = eventData;
+            data.VIDItems = vidItems;
+
+            _EventQue.Enqueue(data);
         }
 
         public void SetSecsGem(ISecsGem secsGem) => _secs = secsGem;
@@ -144,7 +158,7 @@ namespace SemiConductor_Equipment.Services
             {
                 while (!token.IsCancellationRequested)
                 {
-                    CEIDInfo? eventData = null;
+                    EventQueueItem? eventData = null;
 
                     if (!IsActive) // 통신이 끊겼을 때
                     {
@@ -156,26 +170,19 @@ namespace SemiConductor_Equipment.Services
                     {
                         eventData = _EventQue.Dequeue();
 
-                        if (!IsCEIDEnabled(eventData.Number))
-                            continue;
+                        if (eventData == null) continue;
 
-                        var vidItems = new List<Item>();
-                        foreach (int rptid in eventData.RPTIDs)
-                        {
-                            if(eventData.Number != 100)
-                                vidItems.AddRange(this._vIDManager.GetRPTID(rptid, eventData.Wafer_number, eventData.Loadport_Number));
-                            else
-                                vidItems.AddRange(this._vIDManager.GetRPTID(rptid, eventData.Wafer_List, eventData.Loadport_Number));
-                        }
+                        if (!IsCEIDEnabled(eventData.CEID.Number))
+                            continue;
 
                         var eventmsg = new SecsMessage(6, 11, false)
                         {
                             Name = "Event Report Send",
                             SecsItem = L(
                                U4(0),
-                               U4((uint)eventData.Number),
+                               U4((uint)eventData.CEID.Number),
                                L(
-                                   vidItems.ToArray()
+                                   eventData.VIDItems.ToArray()
                                 )
                             )
                         };

@@ -137,7 +137,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
-            this._vIDManager.SetSVID(1, this.Equipment_state);
+            this._vIDManager.SetSVID(100, this.Equipment_state);
 
             this.Chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
             this.Chamber2_state = this._chamberManager.Chamber_State["Chamber2"];
@@ -283,7 +283,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 }
             });
 
-            this._vIDManager?.SetSVID(1, this.Equipment_state);
+            this._vIDManager?.SetSVID(100, this.Equipment_state);
         }
 
         private void NavigateToPage<TPage>() where TPage : class
@@ -439,7 +439,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var existingWafer = this.Animation_wafers.FirstOrDefault(w =>
-                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId);
+                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId
+                    && w.LoadportId == e.LoadportId);
 
                 if (existingWafer != null)
                 {

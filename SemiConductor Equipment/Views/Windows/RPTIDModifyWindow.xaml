@@ -42,29 +42,33 @@
         <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ViewModel.Svid_list}" 
                        Foreground="LightGray" VerticalAlignment="Center" Margin="0,8,0,0" />
 
-        <ItemsControl Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
-              ItemsSource="{Binding ViewModel.AllVID}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ToggleButton Width="100" Height="30" Margin="0 15 10 2" Padding="15,1" Checked="ToggleButton_Checked" Unchecked="ToggleButton_UnChecked">
-                        <ToggleButton.IsChecked>
-                            <MultiBinding Converter="{StaticResource SelectedConverter}" Mode="OneWay">
-                                <!-- Mode 생략 또는 Mode=OneWay 설정 -->
-                                <Binding Path="DataContext.ViewModel.SelectedSvids" RelativeSource="{RelativeSource AncestorType=Window}" />
-                                <Binding Path="."/>
-                                <!-- 현재 항목 -->
-                            </MultiBinding>
-                        </ToggleButton.IsChecked>
-                        <TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="40"/>
-                    </ToggleButton>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+      VerticalScrollBarVisibility="Auto"
+      HorizontalScrollBarVisibility="Disabled" 
+      Height="190">
+            <ItemsControl ItemsSource="{Binding ViewModel.AllVID}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Width="100" Height="30" Margin="0 15 10 2" Padding="15,1" Checked="ToggleButton_Checked" Unchecked="ToggleButton_UnChecked">
+                            <ToggleButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource SelectedConverter}" Mode="OneWay">
+                                    <!-- Mode 생략 또는 Mode=OneWay 설정 -->
+                                    <Binding Path="DataContext.ViewModel.SelectedSvids" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                    <Binding Path="."/>
+                                    <!-- 현재 항목 -->
+                                </MultiBinding>
+                            </ToggleButton.IsChecked>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="40"/>
+                        </ToggleButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <!-- 버튼 영역 -->
         <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">

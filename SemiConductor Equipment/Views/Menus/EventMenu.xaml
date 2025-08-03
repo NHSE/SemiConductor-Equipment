@@ -87,9 +87,10 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ui:ToggleSwitch
-                                        IsChecked="{Binding State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsChecked="{Binding State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         Width="60"
-                                        Height="25"/>
+                                        Height="25"
+                                        IsEnabled="False"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

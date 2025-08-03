@@ -6,12 +6,15 @@ using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.Services
 {
     public class BufferService : IBufferManager
     {
         //private readonly DbLogHelper _logHelper;
+        private readonly IEventMessageManager _eventMessageManager;
+
         private readonly object _lock = new();
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _bufferSlots = new()
         {
@@ -32,9 +35,10 @@ namespace SemiConductor_Equipment.Services
             ["Buffer4"] = "UN USE"
         };
 
-        public BufferService()
+        public BufferService(IEventMessageManager eventMessageManager)
         {
             //this._logHelper = logHelper;
+            this._eventMessageManager = eventMessageManager;
         }
 
         public string? FindEmptySlot()
@@ -72,7 +76,13 @@ namespace SemiConductor_Equipment.Services
             {
                 // 처리 완료 상태로 변경 (processing = false)
                 _bufferSlots[buffername] = (wafer, true);
+                CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                info.Wafer_number = wafer.Wafer_Num;
+                info.Loadport_Number = wafer.LoadportId;
+                this._eventMessageManager.EnqueueEventData(info);
             }
+
+            wafer.Status = "Completed";
 
             Enque_Robot?.Invoke(this, new RobotCommand
             {

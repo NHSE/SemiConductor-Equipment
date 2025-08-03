@@ -28,7 +28,6 @@ namespace SemiConductor_Equipment.interfaces
         string? RobotStatus { get; set; }
         string?[] LoadportDoorStatus { get; set; }
         string? LastAlarmCode { get; set; }
-        string? OperationMode { get; set; }
         string? SWVersion { get; set; }
         string?[] WaferPosition { get; set; }
     }

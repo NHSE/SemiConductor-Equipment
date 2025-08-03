@@ -65,6 +65,9 @@ namespace SemiConductor_Equipment.Models
             private List<int> wafer_List;
 
             [ObservableProperty]
+            private List<int> vIDItems;
+
+            [ObservableProperty]
             private int loadport_Number;
 
             private List<int> rPTIDs;

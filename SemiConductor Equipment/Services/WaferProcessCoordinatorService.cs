@@ -32,11 +32,11 @@ namespace SemiConductor_Equipment.Services
         {
             bool isError = false;
             CancellationTokenSource cts = new CancellationTokenSource();
+            string sender = "";
             _robotArmManager.StartProcessing(cts.Token);
             _chamberManager.ProcessStart();
             try
             {
-                this._runningStateService.Change_State(EquipmentStatusEnum.Wait);
                 while (!token.IsCancellationRequested)
                 {
                     bool isAllDone = waferQueue.Count == 0
@@ -61,7 +61,8 @@ namespace SemiConductor_Equipment.Services
 
                             if (this._runningStateService.Get_State() != EquipmentStatusEnum.Running)
                             {
-                                this._runningStateService.Change_State(EquipmentStatusEnum.Running);
+                                sender = wafer.CurrentLocation;
+                                this._runningStateService.Change_State(sender, EquipmentStatusEnum.Running);
                             }
 
                             wafer.TargetLocation = emptyChamber;
@@ -133,9 +134,9 @@ namespace SemiConductor_Equipment.Services
             {
                 waferQueue.Clear();
                 if (!isError)
-                    this._runningStateService.Change_State(EquipmentStatusEnum.Completed);
+                    this._runningStateService.Change_State(sender, EquipmentStatusEnum.Completed);
                 else
-                    this._runningStateService.Change_State(EquipmentStatusEnum.Error);
+                    this._runningStateService.Change_State(sender, EquipmentStatusEnum.Error);
 
                 await _robotArmManager.StopProcessing();
             }

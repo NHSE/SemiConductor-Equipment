@@ -10,6 +10,7 @@ using SemiConductor_Equipment.Enums;
 using System.Net.Http.Headers;
 using static SemiConductor_Equipment.Models.EventInfo;
 using Secs4Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -20,6 +21,7 @@ namespace SemiConductor_Equipment.Services
         //private readonly DbLogHelper _logHelper;
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IEventMessageManager _eventMessageManager;
+        private readonly IVIDManager _vIDManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -46,12 +48,13 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager)
         {
             this._logManager = logManager;
             //this._logHelper = logHelper;
             this._equiptempManager = equiptempManager;
             this._eventMessageManager = eventMessageManager;
+            this._vIDManager = vIDManager;
         }
 
         public void ProcessStart()
@@ -61,20 +64,14 @@ namespace SemiConductor_Equipment.Services
 
         public string? FindEmptyChamber()
         {
-            lock (_lock)
-            {
-                return this._chambers.FirstOrDefault(x => x.Value.wafer == null && x.Value.isProcessing == false).Key;
-            }
+            return this._chambers.FirstOrDefault(x => x.Value.wafer == null && x.Value.isProcessing == false).Key;
         }
 
         public (string ChamberName, Wafer Wafer)? PeekCompletedWafer()
         {
-            lock (_lock)
-            {
-                var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing != false);
-                if (completed.Value.wafer == null) return null;
-                return (completed.Key, completed.Value.wafer);
-            }
+            var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing != false);
+            if (completed.Value.wafer == null) return null;
+            return (completed.Key, completed.Value.wafer);
         }
 
         public void RemoveWaferFromChamber(string chamberName)
@@ -141,38 +138,35 @@ namespace SemiConductor_Equipment.Services
                 {
                     wafer.Status = "Error";
                 }
-                else
+
+                lock (_lock)
                 {
-                    wafer.Status = "Completed";
+                    // 처리 완료 상태로 변경 (processing = false)
+                    this._chambers[chamberName] = (wafer, true);
+                    this._vIDManager.SetDVID(1001, wafer.RequiredTemperature, wafer.Wafer_Num);
+                    CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                    info.Wafer_number = wafer.Wafer_Num;
+                    info.Loadport_Number = wafer.LoadportId;
+                    this._eventMessageManager.EnqueueEventData(info);
                 }
 
-                    lock (_lock)
-                    {
-                        // 처리 완료 상태로 변경 (processing = false)
-                        this._chambers[chamberName] = (wafer, true);
-                        CEIDInfo info = this._eventMessageManager.GetCEID(301);
-                        info.Wafer_number = wafer.Wafer_Num;
-                        info.Loadport_Number = wafer.LoadportId;
-                        this._eventMessageManager.EnqueueEventData(info);
-                    }
-
-                if (wafer.Status == "Completed")
-                {
-                    Enque_Robot?.Invoke(this, new RobotCommand
-                    {
-                        CommandType = RobotCommandType.MoveTo,
-                        Wafer = wafer,
-                        Location = "Buffer",
-                        Completed = chamberName
-                    });
-                }
-                else if (wafer.Status == "Error")
+                if (wafer.Status == "Error")
                 {
                     Enque_Robot?.Invoke(this, new RobotCommand
                     {
                         CommandType = RobotCommandType.Error,
                         Wafer = wafer,
                         Location = "LoadPort",
+                        Completed = chamberName
+                    });
+                }
+                else
+                {
+                    Enque_Robot?.Invoke(this, new RobotCommand
+                    {
+                        CommandType = RobotCommandType.MoveTo,
+                        Wafer = wafer,
+                        Location = "Buffer",
                         Completed = chamberName
                     });
                 }

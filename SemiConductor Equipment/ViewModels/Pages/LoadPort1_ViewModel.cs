@@ -70,16 +70,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Cancel()
         {
-            this.Waferinfo.Clear();
-            this.SelectedSlots?.Clear();
-            this.IsSetupEnabled = true;    // Setup 활성
-            this.IsCancelEnabled = false;
-            this.LPState = "Ready";
-
-            if (!string.IsNullOrEmpty(this.CarrierId))
-            {
-                this.CarrierId = "";
-            }
+            EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
+            this._runningStateService.Change_State("LoadPort1", state);
         }
         #endregion
 
@@ -142,15 +134,32 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
                 if(existingWafer.LotId != string.Empty)
                 {
-                    this._vIDManager.SetDVID(1003, existingWafer.LotId, existingWafer.Wafer_Num);
+                    this._vIDManager.SetDVID(1004, existingWafer.LotId, existingWafer.Wafer_Num);
                 }
                 if(existingWafer.SlotId != string.Empty)
                 {
-                    this._vIDManager.SetDVID(1004, existingWafer.LotId, existingWafer.Wafer_Num);
+                    this._vIDManager.SetDVID(1005, existingWafer.SlotId, existingWafer.Wafer_Num);
                 }
             }
+            return true;
+        }
 
-            // CarrierId는 Wafer 단위로 관리하므로, 여기서 비교할 필요 없으면 생략 가능
+        public bool Check_Running(string cjid)
+        {
+            if (SelectedSlots.Count == null)
+            {
+                return false;
+            }
+
+            foreach (int slot in SelectedSlots)
+            {
+                var existingWafer = this.Waferinfo.FirstOrDefault(w =>
+                    w.LoadportId == this.LoadPortId && w.Wafer_Num == slot);
+                if (!string.IsNullOrEmpty(existingWafer.CJId))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -181,7 +190,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
                 this._vIDManager?.SetDVID(1001, (int)temperature, slot);
             }
-            this._vIDManager?.SetSVID(3, newValue.Count(), LoadPortId);
+            this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
+            this._vIDManager?.SetSVID(102, "CLOSE", LoadPortId);
             LoadPortCompleted();
         }
 
@@ -214,19 +224,35 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
         {
-            if (state == EquipmentStatusEnum.Running)
+            if ((sender as string) == "LoadPort1")
             {
-                this.LPState = "Running";
-            }
-            else if (state == EquipmentStatusEnum.Completed)
-            {
-                this.LPState = "Completed";
-                this.IsCancelEnabled = true;
-            }
-            else if (state == EquipmentStatusEnum.Wait)
-            {
-                this.LPState = "Wait";
-                this.IsCancelEnabled = false;
+                if (state == EquipmentStatusEnum.Running)
+                {
+                    this.LPState = "Running";
+                    this.IsCancelEnabled = false;
+                }
+                else if (state == EquipmentStatusEnum.Completed)
+                {
+                    this.LPState = "Completed";
+                    this.IsCancelEnabled = true;
+                }
+                else if (state == EquipmentStatusEnum.Wait)
+                {
+                    this.LPState = "Wait";
+                    this.IsCancelEnabled = false;
+                }
+                else
+                {
+                    this.Waferinfo.Clear();
+                    this.SelectedSlots?.Clear();
+                    this.IsSetupEnabled = true;
+                    this.IsCancelEnabled = false;
+                    this.LPState = "Ready";
+                    if (!string.IsNullOrEmpty(this.CarrierId))
+                    {
+                        this.CarrierId = "";
+                    }
+                }
             }
         }
 

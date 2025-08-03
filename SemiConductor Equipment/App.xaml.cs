@@ -203,14 +203,14 @@ namespace SemiConductor_Equipment
         {
             Exception ex = e.ExceptionObject as Exception;
             var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            //messageBoxService.Show("예외 발생", $"[도메인 예외]\n{ex?.Message}");
+            messageBoxService.Show("예외 발생", $"[도메인 예외]\n{ex?.Message}");
             Console.WriteLine($"[도메인 예외]\n{ex?.Message}");
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
             var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            //messageBoxService.Show("예외 발생", $"[Task 예외]\n{e.Exception}");
+            messageBoxService.Show("예외 발생", $"[Task 예외]\n{e.Exception}");
             Console.WriteLine($"[Task 예외]\n{e.Exception}");
             e.SetObserved();
         }

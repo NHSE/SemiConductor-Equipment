@@ -12,6 +12,7 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -23,6 +24,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IRobotArmManager _robotArmManager;
         private readonly RunningStateService _runningStateService;
         private readonly IVIDManager _vIDManager;
+        private readonly IEventMessageManager _eventMessageManager;
         public byte LoadPortId => 2;
         #endregion
 
@@ -47,11 +49,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort2_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager sVIDManager)
+        public LoadPort2_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateService = runningStateService;
-            this._vIDManager = sVIDManager;
+            this._vIDManager = VIDManager;
+            this._eventMessageManager = eventMessageManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
@@ -65,16 +68,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Cancel()
         {
-            this.Waferinfo.Clear();
-            this.SelectedSlots?.Clear();
-            IsSetupEnabled = true;    // Setup 활성
-            IsCancelEnabled = false;
-            this.LPState = "Ready";
-
-            if (!string.IsNullOrEmpty(this.CarrierId))
-            {
-                this.CarrierId = "";
-            }
+            EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
+            this._runningStateService.Change_State("LoadPort2", state);
         }
         #endregion
 
@@ -93,7 +88,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Update_Carrier_info(Wafer newWaferData)
         {
-            if (SelectedSlots.Count == 0)
+            if(SelectedSlots.Count == null)
             {
                 return false;
             }
@@ -134,9 +129,35 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         LotId = newWaferData.LotId ?? ""
                     });
                 }
+
+                if(existingWafer.LotId != string.Empty)
+                {
+                    this._vIDManager.SetDVID(1004, existingWafer.LotId, existingWafer.Wafer_Num);
+                }
+                if(existingWafer.SlotId != string.Empty)
+                {
+                    this._vIDManager.SetDVID(1005, existingWafer.SlotId, existingWafer.Wafer_Num);
+                }
+            }
+            return true;
+        }
+
+        public bool Check_Running(string cjid)
+        {
+            if (SelectedSlots.Count == null)
+            {
+                return false;
             }
 
-            // CarrierId는 Wafer 단위로 관리하므로, 여기서 비교할 필요 없으면 생략 가능
+            foreach (int slot in SelectedSlots)
+            {
+                var existingWafer = this.Waferinfo.FirstOrDefault(w =>
+                    w.LoadportId == this.LoadPortId && w.Wafer_Num == slot);
+                if (!string.IsNullOrEmpty(existingWafer.CJId))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -144,9 +165,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             if (newValue == null) return;
 
-            Random random = new Random();
-
             this.Waferinfo.Clear();
+            Random random = new Random();
             string carrierId = this.CarrierId ?? "UNKNOWN";
 
             foreach (int slot in newValue.OrderBy(x => x))
@@ -168,7 +188,17 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
                 this._vIDManager?.SetDVID(1001, (int)temperature, slot);
             }
-            this._vIDManager?.SetSVID(3, newValue.Count(), LoadPortId);
+            this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
+            this._vIDManager?.SetSVID(102, "CLOSE", LoadPortId);
+            LoadPortCompleted();
+        }
+
+        private void LoadPortCompleted()
+        {
+            CEIDInfo info = this._eventMessageManager.GetCEID(100);
+            info.Loadport_Number = this.LoadPortId;
+            info.Wafer_List = this.Waferinfo.Select(w => w.Wafer_Num).ToList();
+            this._eventMessageManager.EnqueueEventData(info);
         }
 
         public string GetCarrierId()
@@ -186,37 +216,54 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public string GetPJId(byte loadportId)
         {
-            if(this.Waferinfo.Count == 0)
-                return string.Empty;
-
-            string pjid = this.Waferinfo[loadportId].PJId;
-            return pjid;
+            var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId);
+            return wafer?.PJId ?? "";
         }
 
         private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
         {
-            if (state == EquipmentStatusEnum.Running)
+            if ((sender as string) == "LoadPort2")
             {
-                this.LPState = "Running";
-            }
-            else if (state == EquipmentStatusEnum.Completed)
-            {
-                this.LPState = "Completed";
-                this.IsCancelEnabled = true;
-            }
-            else if (state == EquipmentStatusEnum.Wait)
-            {
-                this.LPState = "Wait";
-                this.IsCancelEnabled = false;
+                if (state == EquipmentStatusEnum.Running)
+                {
+                    this.LPState = "Running";
+                    this.IsCancelEnabled = false;
+                }
+                else if (state == EquipmentStatusEnum.Completed)
+                {
+                    this.LPState = "Completed";
+                    this.IsCancelEnabled = true;
+                }
+                else if (state == EquipmentStatusEnum.Wait)
+                {
+                    this.LPState = "Wait";
+                    this.IsCancelEnabled = false;
+                }
+                else
+                {
+                    this.Waferinfo.Clear();
+                    this.SelectedSlots?.Clear();
+                    this.IsSetupEnabled = true;
+                    this.IsCancelEnabled = false;
+                    this.LPState = "Ready";
+                    if (!string.IsNullOrEmpty(this.CarrierId))
+                    {
+                        this.CarrierId = "";
+                    }
+                }
             }
         }
 
         private void OnWaferIn(object? sender, Wafer e)
         {
-            if (e.LoadportId == this.LoadPortId)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                AddRequested?.Invoke(this, e);
-            }
+                if (e.LoadportId == this.LoadPortId)
+                {
+                    AddRequested?.Invoke(this, e);
+                }
+            });
+
         }
 
         private void OnWaferOut(object? sender, Wafer e)

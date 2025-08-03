@@ -84,7 +84,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="60 30 0 0">
+                                        <StackPanel Orientation="Horizontal" Margin="40 10 0 0">
                                             <TextBlock Text="{Binding Name, StringFormat='■ : {0}'}" Foreground="{Binding Stroke , Converter={StaticResource GraphToBrushConverter}}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>

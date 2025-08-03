@@ -30,19 +30,19 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- CEID Number (읽기 전용) -->
+            <!-- CEID Number -->
             <TextBlock Grid.Row="0" Grid.Column="0" Text="CEID Number:" 
                        Foreground="White" VerticalAlignment="Center" FontWeight="Bold"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ViewModel.Number}" 
                        Foreground="LightGray" VerticalAlignment="Center"/>
 
-            <!-- Name (읽기 전용) -->
+            <!-- Name -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Name :" 
                        Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,8,0,0"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ViewModel.Name}" 
                        Foreground="LightGray" VerticalAlignment="Center" Margin="0,8,0,0"/>
 
-            <!-- State (수정 가능) -->
+            <!-- State -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="State :" 
                        Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,12,0,0"/>
             <ToggleButton Grid.Row="2" Grid.Column="1" 
@@ -53,7 +53,7 @@
                           BorderBrush="#55596D"
                           HorizontalAlignment="Left"/>
 
-            <!-- VID (읽기 전용) -->
+            <!-- VID -->
             <TextBlock Grid.Row="3" Grid.Column="0" Text="RPTID :" 
                        Foreground="White" VerticalAlignment="Center" FontWeight="Bold" Margin="0,8,0,0"/>
             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ViewModel.Svid_list}" 
