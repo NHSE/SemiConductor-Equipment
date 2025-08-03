@@ -11,7 +11,6 @@ namespace SemiConductor_Equipment.interfaces
         void InitConfig();
 
         void UpdateConfigValue(string key, int newValue);
-
         string GetFilePathAndCreateIfNotExists();
 
         int Max_Temp { get; set; }

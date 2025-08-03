@@ -96,5 +96,44 @@ namespace SemiConductor_Equipment.Views.Windows // ALL 체크 박스 추가 !!!,
             this.DialogResult = true;
             this.Close();
         }
+
+        private void DrawAllLines()
+        {
+            for (int slotIndex = 0; slotIndex < SlotCount; slotIndex++)
+            {
+                double y = TopY + slotIndex * GapY;
+                if (!wafers.Any(w => w.Y1 == y))
+                {
+                    var line = new Line
+                    {
+                        X1 = XStart,
+                        X2 = XEnd,
+                        Y1 = y,
+                        Y2 = y,
+                        Stroke = Brushes.Red,
+                        StrokeThickness = 2
+                    };
+                    wafers.Add(line);
+                    ImageCanvas.Children.Add(line);
+                    AddWaferToSlot(slotIndex);
+                }
+            }
+        }
+
+        // 체크박스 체크 시 전체 라인 그리기
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            DrawAllLines();
+        }
+
+        // 선택: 체크 해제 시 전체 라인 지우기(원하면 사용)
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            foreach (var line in wafers)
+            {
+                ImageCanvas.Children.Remove(line);
+            }
+            wafers.Clear();
+        }
     }
 }

@@ -83,7 +83,6 @@ namespace SemiConductor_Equipment.Views.Menus
             {
                 if (value > 200)
                 {
-                    //MessageBox.Show("200 이하만 입력할 수 있습니다.", "경고", MessageBoxButton.OK, MessageBoxImage.Warning);
                     this._messageBox.Show("입력 초과", "200 이하만 입력할 수 있습니다.");
                     e.Handled = true; // 200 초과 입력 막기
                 }

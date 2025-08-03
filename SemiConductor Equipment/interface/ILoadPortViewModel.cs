@@ -13,6 +13,8 @@ namespace SemiConductor_Equipment.interfaces
     {
         bool Update_Carrier_info(Wafer newWaferData);
 
+        bool Check_Running(string cjid);
+
         public string GetCarrierId();
 
         public string GetPJId(byte loadportId);

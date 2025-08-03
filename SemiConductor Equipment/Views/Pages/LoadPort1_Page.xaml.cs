@@ -63,7 +63,7 @@ namespace SemiConductor_Equipment.Views.Pages
             }
         }
 
-        private void btnSetup_Click(object sender, RoutedEventArgs e)
+        private void btnSetup_Click(object sender, RoutedEventArgs e) // command로 빼기
         {
             var carrierSetupWindow = new CarrierSetupWindow();
             var result = carrierSetupWindow.ShowDialog();

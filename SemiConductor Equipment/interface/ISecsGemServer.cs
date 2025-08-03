@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Secs4Net;
 using SemiConductor_Equipment.Services;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.interfaces
 {
@@ -16,8 +17,6 @@ namespace SemiConductor_Equipment.interfaces
         event EventHandler Connected;
         event EventHandler Disconnected;
 
-        bool Initialize(Action<string> logger,
-                   MessageHandlerService messageHandler,
-                   IConfigManager configManager);
+        bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager);
     }
 }

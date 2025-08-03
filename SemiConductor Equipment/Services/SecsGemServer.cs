@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Secs4Net;
 using Secs4Net.Sml;
 using SemiConductor_Equipment.interfaces;
+using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -18,21 +19,22 @@ namespace SemiConductor_Equipment.Services
         private Action<string> _log;
         private SecsGem _secs;
         private ISecsConnection _hsmsConnector;
+        private IEventMessageManager _eventMessageManager;
         public event EventHandler Connected;
         public event EventHandler Disconnected;
         private readonly MessageHandlerService _messageHandler;
         private CancellationTokenSource? _cts;
 
-        //public static ISecsGemServer Instance { get; private set; }
-
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler)
+        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager)
         {
             _messageHandler = messageHandler;
+            _eventMessageManager = eventMessageManager;
         }
 
         public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
         {
             bool ret = false;
+
             if (this._hsmsConnector == null)
             {
                 _log = logger;
@@ -55,6 +57,9 @@ namespace SemiConductor_Equipment.Services
 
                 // 4) SecsGem 생성
                 _secs = new SecsGem(secsGemOptions, this._hsmsConnector, secsLogger);
+
+                _eventMessageManager.SetSecsGem(_secs);
+                _eventMessageManager.SetConnect(this._hsmsConnector);
 
                 this._hsmsConnector.ConnectionChanged += OnConnectionChanged;
                 Start();
@@ -95,6 +100,7 @@ namespace SemiConductor_Equipment.Services
 
             // 3. 로그 기록
             _log("[STOP] SECS/GEM 서버 종료됨");
+            this._eventMessageManager.DisConnect();
         }
 
         private void OnConnected() => Connected?.Invoke(this, EventArgs.Empty);

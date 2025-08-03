@@ -20,6 +20,7 @@ using SemiConductor_Equipment.Helpers;
 using System.Configuration;
 using SemiConductor_Equipment.ViewModels.MessageBox;
 using SemiConductor_Equipment.Views.MessageBox;
+using Secs4Net;
 
 namespace SemiConductor_Equipment
 {
@@ -61,6 +62,17 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IEquipmentConfigManager>(provider => 
                                     new EquipmentSettingService(@"C:\Configs"));
 
+                services.AddSingleton<IEventMessageManager, EventMessageService>();
+                services.AddSingleton<SecsGem>();
+
+                services.AddSingleton<CEIDModifyWindow>();
+                services.AddSingleton<CEIDModifyViewModel>();
+                services.AddSingleton<RPTIDModifyWindow>();
+                services.AddSingleton<RPTIDModifyViewModel>();
+                services.AddSingleton<RPTIDAddWindow>();
+                services.AddSingleton<RPTIDAddViewModel>();
+                services.AddSingleton<IVIDManager, VIDService>();
+
                 services.AddSingleton<IBufferManager, BufferService>();
                 services.AddTransient<Buffer_ViewModel>();
                 services.AddSingleton<Buffer1_Page>();
@@ -87,6 +99,15 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IMessageBox, MessageBoxService>();
                 services.AddSingleton<MessageBox_ViewModel>();
                 services.AddTransient<MessageBoxWindow>();
+
+                services.AddSingleton<EventMenu>();
+                services.AddSingleton<EventMenusViewModel>();
+                services.AddSingleton<IEventConfigManager>(provider =>
+                {
+                    var messageBox = provider.GetRequiredService<IMessageBox>();
+                    return new EventMenuService(@"C:\Configs", messageBox);
+                });
+
 
                 services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
@@ -141,6 +162,9 @@ namespace SemiConductor_Equipment
         {
             await _host.StartAsync();
 
+            var eventMsgManager = Services.GetRequiredService<IEventMessageManager>();
+            eventMsgManager.StartProcessing();
+
             // UI 스레드 예외 처리
             this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 
@@ -158,6 +182,9 @@ namespace SemiConductor_Equipment
         {
             await _host.StopAsync();
 
+            var eventMsgManager = Services.GetRequiredService<IEventMessageManager>();
+            await eventMsgManager.StopProcessing();
+
             _host.Dispose();
         }
 
@@ -166,19 +193,25 @@ namespace SemiConductor_Equipment
         /// </summary>
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show($"[UI 예외]\n{e.Exception.Message}", "예외 발생");
+            var messageBoxService = Services.GetRequiredService<IMessageBox>();
+            //messageBoxService.Show("예외 발생", $"[UI 예외]\n{e.Exception.Message}");
+            Console.WriteLine($"[UI 예외]\n{e.Exception.Message}");
             e.Handled = true;  // 앱 종료 방지
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = e.ExceptionObject as Exception;
-            MessageBox.Show($"[도메인 예외]\n{ex?.Message}", "예외 발생");
+            var messageBoxService = Services.GetRequiredService<IMessageBox>();
+            messageBoxService.Show("예외 발생", $"[도메인 예외]\n{ex?.Message}");
+            Console.WriteLine($"[도메인 예외]\n{ex?.Message}");
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            MessageBox.Show($"[Task 예외]\n{e.Exception}", "예외 발생");
+            var messageBoxService = Services.GetRequiredService<IMessageBox>();
+            messageBoxService.Show("예외 발생", $"[Task 예외]\n{e.Exception}");
+            Console.WriteLine($"[Task 예외]\n{e.Exception}");
             e.SetObserved();
         }
     }

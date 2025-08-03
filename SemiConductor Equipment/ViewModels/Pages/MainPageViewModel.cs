@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Secs4Net;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
@@ -16,6 +17,7 @@ using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
 using Wpf.Ui;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -32,7 +34,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
-
+        private readonly IVIDManager _vIDManager;
         public Dictionary<string, Point> locationPositions = new();
         #endregion
 
@@ -109,7 +111,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
-            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager)
+            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager, IVIDManager svIDManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -131,9 +133,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager = chamberManager;
             this._bufferManager = bufferManager;
             this._robotArmManager = robotArmManager;
+            this._vIDManager = svIDManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
+            this._vIDManager.SetSVID(100, this.Equipment_state);
 
             this.Chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
             this.Chamber2_state = this._chamberManager.Chamber_State["Chamber2"];
@@ -157,6 +161,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 this.IsDisconnected = true;
             }
+
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
@@ -241,6 +246,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
+
+        [RelayCommand]
+        private void SubMenuEventSetting() => NavigateToPage<EventMenu>();
         #endregion
 
         #region METHODS
@@ -274,6 +282,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this.Setting_menu = true;
                 }
             });
+
+            this._vIDManager?.SetSVID(100, this.Equipment_state);
         }
 
         private void NavigateToPage<TPage>() where TPage : class
@@ -429,7 +439,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var existingWafer = this.Animation_wafers.FirstOrDefault(w =>
-                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId);
+                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId
+                    && w.LoadportId == e.LoadportId);
 
                 if (existingWafer != null)
                 {

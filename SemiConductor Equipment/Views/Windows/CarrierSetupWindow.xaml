@@ -6,23 +6,27 @@
         Title="Wafer Loader" Height="444" Width="353" Background="#232C39">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="179*"/>
-            <RowDefinition Height="35*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="340"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
+            <CheckBox Content="All" HorizontalAlignment="Right" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </Grid>
+        <Grid Grid.Row="1">
             <Canvas x:Name="ImageCanvas"
                 MouseLeftButtonDown="ImageCanvas_MouseLeftButtonDown"
                 MouseRightButtonDown="ImageCanvas_MouseRightButtonDown">
                 <Image Source="/Resources/LoadPort.png" 
                    Stretch="Uniform" 
-                   Width="261" 
+                   Width="263" 
                    Height="323"
                    Canvas.Left="48" Canvas.Top="18" HorizontalAlignment="Center" VerticalAlignment="Top"/>
             </Canvas>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid>
-                <ui:Button x:Name="btnset" Click="btnset_Click" Content="Set" HorizontalAlignment="Center" Height="60" Width="100"/>
+                <ui:Button x:Name="btnset" Click="btnset_Click" Content="Set" HorizontalAlignment="Center" Height="40" Width="100"/>
             </Grid>
         </Grid>
     </Grid>

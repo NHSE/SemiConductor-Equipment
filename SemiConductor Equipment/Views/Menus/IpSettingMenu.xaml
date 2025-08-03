@@ -30,7 +30,7 @@
         <Border Grid.Row="0" Background="#263043" CornerRadius="12" Margin="24,24,24,12" Padding="18" >
             <DockPanel>
                 <TextBlock Text="IP Setting"
-                               FontSize="24"
+                               FontSize="18"
                                FontWeight="Bold"
                                Foreground="White"
                                VerticalAlignment="Center"/>

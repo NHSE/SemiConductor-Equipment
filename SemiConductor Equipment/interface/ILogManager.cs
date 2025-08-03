@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Secs4Net;
 
 namespace SemiConductor_Equipment.interfaces
 {
@@ -15,6 +16,8 @@ namespace SemiConductor_Equipment.interfaces
         string GetLogFilePath(string logType);
 
         string GetSecsGemLogPath(string logType);
+
+        string GetEventLogLogPath(string logType);
 
         string LogDataTime { get; set; }
     }

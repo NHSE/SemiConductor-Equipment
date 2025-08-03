@@ -8,6 +8,9 @@
     <Compile Update="Views\Menus\EquipMenu.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Menus\EventMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Menus\IpSettingMenu.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -59,7 +62,16 @@
     <Compile Update="Views\Windows\CarrierSetupWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Windows\CEIDModifyWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Windows\MainWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\RPTIDAddWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\RPTIDModifyWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -68,7 +68,10 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel>
-                        <Canvas x:Name="mainCanvas"/>
+                        <Canvas x:Name="mainCanvas"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent" />
                         <Image Source="/Resources/LoadPort.png" 
                             Stretch="Uniform"/>
                     </StackPanel>

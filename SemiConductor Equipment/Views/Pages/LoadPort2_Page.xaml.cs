@@ -1,5 +1,6 @@
 ﻿    using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Models;
+using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.ViewModels.Pages;
 using SemiConductor_Equipment.Views.Windows;
 
