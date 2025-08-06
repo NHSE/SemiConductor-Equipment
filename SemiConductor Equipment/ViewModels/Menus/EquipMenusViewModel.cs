@@ -17,13 +17,19 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
         #region PROPERTIES
         [ObservableProperty]
+        private int _rpm;
+        [ObservableProperty]
+        private int _flowRate;
+        [ObservableProperty]
+        private int _spraytime;
+        [ObservableProperty]
+        private int _chambertime;
+        [ObservableProperty]
         private int _max_temperature;
         [ObservableProperty]
         private int _min_temperature;
         [ObservableProperty]
         private int _allowable;
-        [ObservableProperty]
-        private int _chambertime;
         #endregion
 
         #region CONSTRUCTOR
@@ -45,6 +51,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [RelayCommand]
         private void Save()
         {
+            _configManager.UpdateConfigValue("RPM", this.Rpm);
+            _configManager.UpdateConfigValue("Chemical Flow Rate", this.FlowRate);
+            _configManager.UpdateConfigValue("Spray Time", this.Spraytime);
+
             _configManager.UpdateConfigValue("Max Temperature", this.Max_temperature);
             _configManager.UpdateConfigValue("Min Temperature", this.Min_temperature);
             _configManager.UpdateConfigValue("Allowable", this.Allowable);
@@ -57,6 +67,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #region METHOD
         private void OnConfigRead()
         {
+            this.Rpm = _configManager.RPM;
+            this.FlowRate = _configManager.Flow_Rate;
+            this.Spraytime = _configManager.Spray_Time;
+
             this.Max_temperature = _configManager.Max_Temp;
             this.Min_temperature = _configManager.Min_Temp;
             this.Allowable = _configManager.Allow;

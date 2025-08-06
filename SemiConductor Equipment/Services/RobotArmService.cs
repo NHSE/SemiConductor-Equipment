@@ -14,8 +14,8 @@ namespace SemiConductor_Equipment.Services
 {
     public class RobotArmService : IRobotArmManager
     {
-        private readonly Queue<RobotCommand> _EndChambercommandQueue = new();
-        private readonly Queue<RobotCommand> _EndBuffercommandQueue = new();
+        private readonly Queue<RobotCommand> _EndCleancommandQueue = new();
+        private readonly Queue<RobotCommand> _EndDrycommandQueue = new();
         private readonly Queue<RobotCommand> _RobotArmcommandQueue = new();
 
         public event EventHandler<Wafer> CommandStarted;
@@ -28,29 +28,29 @@ namespace SemiConductor_Equipment.Services
         private readonly object _lock = new();
 
         private readonly IChamberManager _chamberManager;
-        private readonly IBufferManager _bufferManager;
+        private readonly ICleanManager _cleanManager;
         private readonly IVIDManager _vidManager;
         private readonly IEventMessageManager _eventMessageManager;
 
-        public RobotArmService(IChamberManager chamberManager, IBufferManager bufferManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
+        public RobotArmService(IChamberManager chamberManager, ICleanManager cleanManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
         {
             _chamberManager = chamberManager;
-            _bufferManager = bufferManager;
+            _cleanManager = cleanManager;
             _vidManager = VIDManager;
             _eventMessageManager = eventMessageManager;
 
             _chamberManager.Enque_Robot += OnQueDataInput;
-            _bufferManager.Enque_Robot += OnQueDataInput;
+            _cleanManager.Enque_Robot += OnQueDataInput;
         }
 
         public void EnqueueCommand_Chamber(RobotCommand command)
         {
-            _EndChambercommandQueue.Enqueue(command);
+            _EndCleancommandQueue.Enqueue(command);
         }
 
         public void EnqueueCommand_Buffer(RobotCommand command)
         {
-            _EndBuffercommandQueue.Enqueue(command);
+            _EndDrycommandQueue.Enqueue(command);
         }
 
         public void EnqueueCommand_RobotArm(RobotCommand command)
@@ -60,33 +60,33 @@ namespace SemiConductor_Equipment.Services
 
         public RobotCommand DequeueCommand_Chamber()
         {
-            return _EndChambercommandQueue.Dequeue();
+            return _EndCleancommandQueue.Dequeue();
         }
 
         public RobotCommand DequeueCommand_Buffer()
         {
-            return _EndBuffercommandQueue.Dequeue();
+            return _EndDrycommandQueue.Dequeue();
         }
 
         public int CommandSize_Chamber()
         {
-            return _EndChambercommandQueue.Count;
+            return _EndCleancommandQueue.Count;
         }
 
         public int CommandSize_Buffer()
         {
-            return _EndBuffercommandQueue.Count;
+            return _EndDrycommandQueue.Count;
         }
 
         private void OnQueDataInput(object? sender, RobotCommand e)
         {
-            switch(e.Location)
+            switch(e.NextLocation)
             {
-                case "Buffer":
-                    _EndChambercommandQueue.Enqueue(e);
+                case string s when s.Contains("Chamber"):
+                    _EndCleancommandQueue.Enqueue(e);
                     break;
-                case "LoadPort":
-                    _EndBuffercommandQueue.Enqueue(e);
+                case string s when s.Contains("LoadPort"):
+                    _EndDrycommandQueue.Enqueue(e);
                     break;
             }
         }
@@ -97,6 +97,7 @@ namespace SemiConductor_Equipment.Services
                 return;
 
             _isProcessing = false;
+            string prev_Loacation = string.Empty;
 
             try
             {
@@ -112,6 +113,8 @@ namespace SemiConductor_Equipment.Services
                             command = _RobotArmcommandQueue.Dequeue();
                             if (command == null) continue;
 
+                            prev_Loacation = command.Wafer.CurrentLocation;
+
                             command.Wafer.CurrentLocation = "RobotArm";
 
                             CommandStarted?.Invoke(this, command.Wafer);
@@ -124,6 +127,11 @@ namespace SemiConductor_Equipment.Services
                             _eventMessageManager.EnqueueEventData(info);
 
                             _isProcessing = true;
+
+                            if(command.Wafer.Status == "Ready")
+                            {
+                                command.Wafer.Status = "Running";
+                            }
                         }
                     }
 
@@ -135,26 +143,45 @@ namespace SemiConductor_Equipment.Services
                         continue;
                     }
 
-                    if (command.Location == $"LoadPort{command.Wafer.LoadportId}")
-                    {
-                        CommandCompleted?.Invoke(this, command.Wafer);
-                    }
-
                     Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
                     _vidManager.SetSVID(101, "Running", 0);
 
-                    await Task.Delay(1000); // 모션 처리 시간 시뮬레이션
+                    await Task.Delay(500); // 모션 처리 시간 시뮬레이션
 
-                    switch (command.Location)
+                    switch (command.NextLocation)
                     {
-                        case string s when s.Contains("Chamber"):
-                            command.Wafer.Status = "Running";
+                        case string s when s.Contains("Clean Chamber"):
+                            _vidManager.SetDVID(1007, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
+                            CEIDInfo data = _eventMessageManager.GetCEID(201);
+                            data.Wafer_number = command.Wafer.Wafer_Num;
+                            data.Loadport_Number = command.Wafer.LoadportId;
+                            _eventMessageManager.EnqueueEventData(data);
 
+                            command.Wafer.CurrentLocation = command.NextLocation + "_" + command.Wafer.TargetLocation;
+
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await _cleanManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("[Clean Chamber 예외] " + ex);
+                                }
+                            });
+                            break;
+
+                        case string s when s.Contains("Dry Chamber"):
+                            command.Wafer.Status = "Running";
+                            _cleanManager.RemoveWaferFromCleanChamber(command.Completed);
                             _vidManager.SetDVID(1007, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
                             CEIDInfo info = _eventMessageManager.GetCEID(201);
                             info.Loadport_Number = command.Wafer.LoadportId;
                             info.Wafer_number = command.Wafer.Wafer_Num;
                             _eventMessageManager.EnqueueEventData(info);
+
+                            command.Wafer.CurrentLocation = command.NextLocation + "_" + command.Wafer.TargetLocation;
 
                             _ = Task.Run(async () =>
                             {
@@ -164,53 +191,30 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("[Chamber 예외] " + ex);
-                                }
-                            });
-                            break;
-
-                        case string s when s.Contains("Buffer"):
-                            _chamberManager.RemoveWaferFromChamber(command.Completed);
-                            _vidManager.SetDVID(1007, command.Wafer.TargetLocation, command.Wafer.Wafer_Num);
-                            CEIDInfo data = _eventMessageManager.GetCEID(201);
-                            data.Wafer_number = command.Wafer.Wafer_Num;
-                            data.Loadport_Number = command.Wafer.LoadportId;
-                            _eventMessageManager.EnqueueEventData(data);
-
-                            _ = Task.Run(async () =>
-                            {
-                                try
-                                {
-                                    await _bufferManager.StartProcessingAsync(command.Wafer.TargetLocation, command.Wafer);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine("[Chamber 예외] " + ex);
+                                    Console.WriteLine("[Dry Chamber 예외] " + ex);
                                 }
                             });
                             break;
 
                         case string s when s.Contains("LoadPort"):
-                            if (command.Completed.Contains("Chamber"))
-                            {
+                            if(prev_Loacation.Contains("Dry"))
                                 _chamberManager.RemoveWaferFromChamber(command.Completed);
-                            }
                             else
-                            {
-                                _bufferManager.RemoveWaferFromBuffer(command.Completed);
-                            }
+                                _cleanManager.RemoveWaferFromCleanChamber(command.Completed);
+                             
                             _vidManager.SetDVID(1007, $"LoadPort{command.Wafer.LoadportId}", command.Wafer.Wafer_Num);
                             CEIDInfo ceid_data = _eventMessageManager.GetCEID(201);
                             ceid_data.Loadport_Number = command.Wafer.LoadportId;
                             ceid_data.Wafer_number = command.Wafer.Wafer_Num;
                             _eventMessageManager.EnqueueEventData(ceid_data);
+                            command.Wafer.CurrentLocation = $"LoadPort{command.Wafer.LoadportId}";
+                            CommandCompleted?.Invoke(this, command.Wafer);
                             break;
                     }
 
                     // 이동 완료 후 현재 위치 갱신
                     if (command.CommandType == RobotCommandType.Place)
                     {
-                        command.Wafer.CurrentLocation = command.Location;
                         _vidManager.SetSVID(101, "IDLE", 0);
                         WaferMoveInfo?.Invoke(this, command.Wafer);
                     }

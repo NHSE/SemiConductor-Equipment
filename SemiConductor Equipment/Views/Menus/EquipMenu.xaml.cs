@@ -63,6 +63,11 @@ namespace SemiConductor_Equipment.Views.Menus
             textBox.MaxLength = 3;
 
             this.tbAllowable.MaxLength = 1;
+            this.tbchemical.MaxLength = 2;
+            this.tbSpraytime.MaxLength = 2;
+            this.tbrpm.MaxLength = 3;
+
+            //RPM, Spray, flow rate 최대 길이 정하기
 
             // 현재 텍스트에 입력값이 추가된 결과 예측
             string newText;
@@ -77,14 +82,42 @@ namespace SemiConductor_Equipment.Views.Menus
                 // 일반 입력
                 newText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
             }
-
-            // 빈 값이 아니고, 200 이상인지 확인
+             
             if (int.TryParse(newText, out int value))
             {
-                if (value > 200)
+                switch (textBox.Name)
                 {
-                    this._messageBox.Show("입력 초과", "200 이하만 입력할 수 있습니다.");
-                    e.Handled = true; // 200 초과 입력 막기
+                    case "tbchemical":
+                        if (value > 99)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 99 이하만 가능합니다.");
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case "tbSpraytime":
+                        if (value > 60)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 60 이하만 가능합니다.");
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case "tbrpm":
+                        if (value > 1000)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 1000 이하만 가능합니다.");
+                            e.Handled = true;
+                        }
+                        break;
+
+                    default:
+                        if (value > 200)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 200 이하만 입력할 수 있습니다.");
+                            e.Handled = true; // 200 초과 입력 막기
+                        }
+                        break;
                 }
             }
         }

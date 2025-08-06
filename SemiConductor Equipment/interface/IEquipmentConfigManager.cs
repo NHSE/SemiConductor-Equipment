@@ -13,6 +13,10 @@ namespace SemiConductor_Equipment.interfaces
         void UpdateConfigValue(string key, int newValue);
         string GetFilePathAndCreateIfNotExists();
 
+        int RPM { get; set; }
+        int Flow_Rate { get; set; }
+        int Spray_Time { get; set; }
+
         int Max_Temp { get; set; }
         int Min_Temp { get; set; }
         int Allow { get; set; }

@@ -2,31 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class EquipmentSettingService : IEquipmentConfigManager
+    public class ChemicalsService : IChemicalManager
     {
         #region FIELDS
         private readonly string _configDirectory;
-        public event Action ConfigRead;
         #endregion
 
         #region PROPERTIES
-        public int Max_Temp { get; set; }
-        public int Min_Temp { get; set; }
-        public int Allow { get; set; }
-        public int Chamber_Time { get; set; }
-        public int RPM { get; set; }
-        public int Flow_Rate { get; set; }
-        public int Spray_Time { get; set; }
+        public Dictionary<string, int> Chemical { get; set; } = new Dictionary<string, int>()
+        {
+            ["Chamber1"] = 0,
+            ["Chamber2"] = 0,
+            ["Chamber3"] = 0,
+            ["Chamber4"] = 0,
+            ["Chamber5"] = 0,
+            ["Chamber6"] = 0,
+        };
         #endregion
 
         #region CONSTRUCTOR
-        public EquipmentSettingService(string configDirectory)
+        public ChemicalsService(string configDirectory)
         {
             _configDirectory = configDirectory;
             if (!Directory.Exists(_configDirectory))
@@ -40,7 +43,6 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
-
         /// <summary>
         /// 파일 파싱
         /// </summary>
@@ -52,70 +54,77 @@ namespace SemiConductor_Equipment.Services
             foreach (string line in lines)
             {
                 // 각 줄에서 '=' 또는 ':' 기준으로 키와 값을 분리
-                if (line.StartsWith("Spray Time"))
+                if (line.StartsWith("Chamber1"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int sprayTime))
-                        Spray_Time = sprayTime;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber1"] = chemical;
                 }
-                else if (line.StartsWith("RPM"))
+                else if (line.StartsWith("Chamber2"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int rpm))
-                        RPM = rpm;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber2"] = chemical;
                 }
-                else if (line.StartsWith("Chemical Flow Rate"))
+                else if (line.StartsWith("Chamber3"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int flowrate))
-                        Flow_Rate = flowrate;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber3"] = chemical;
                 }
-                else if(line.StartsWith("Max Temperature"))
+                else if (line.StartsWith("Chamber4"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int tempValue))
-                        Max_Temp = tempValue;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber4"] = chemical;
                 }
-                else if (line.StartsWith("Min Temperature"))
+                else if (line.StartsWith("Chamber5"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int tempValue))
-                        Min_Temp = tempValue;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber5"] = chemical;
                 }
-                else if (line.StartsWith("Allowable"))
+                else if (line.StartsWith("Chamber6"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int allowValue))
-                        Allow = allowValue;
-                }
-                else if (line.StartsWith("Chamber Time"))
-                {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chamberTime))
-                        Chamber_Time = chamberTime;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
+                        Chemical["Chamber6"] = chemical;
                 }
             }
-
-            ConfigRead?.Invoke();
         }
 
         /// <summary>
         /// Config 파일 경로 반환 없을 경우 생성
         /// </summary>
-        public void UpdateConfigValue(string key, int newValue)
+        public bool UpdateConfigValue(string chambername, int Value)
         {
             string filePath = GetFilePathAndCreateIfNotExists();
             // 파일의 모든 줄을 읽어옵니다.
             var lines = File.ReadAllLines(filePath);
 
+            int newValue = this.Chemical[chambername] - Value;
+            if (newValue <= 0)
+            {
+                newValue = 0;
+            }
+
             for (int i = 0; i < lines.Length; i++)
             {
                 // 각 줄이 해당 key로 시작하는지 확인
-                if (lines[i].StartsWith(key))
+                if (lines[i].StartsWith(chambername))
                 {
                     // 구분자(: 또는 =)에 따라 새로운 값으로 줄을 만듭니다.
                     if (lines[i].Contains("="))
-                        lines[i] = $"{key} = {newValue}";
-                    else if (lines[i].Contains(":"))
-                        lines[i] = $"{key} : {newValue}";
+                    {
+                        lines[i] = $"{chambername} = {newValue}";
+                        break;
+                    }
                 }
             }
 
             // 수정된 내용을 파일에 다시 씁니다.
             File.WriteAllLines(filePath, lines);
+
+
+            InitConfig();
+            if (newValue == 0)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -123,17 +132,22 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetFilePathAndCreateIfNotExists()
         {
-            string fileName = $"Equipment.config";
+            string fileName = $".Chemical.config";
             string filePath = Path.Combine(_configDirectory, fileName);
 
             // 파일이 없으면 생성하면서 내용도 쓴다
             if (!File.Exists(filePath))
             {
-                string content = "RPM = 60\nChemical Flow Rate = 2\nSpray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nAllow = 5\nChamber Time = 10";
+                string content = "Chamber1 = 100\nChamber2 = 100\nChamber3 = 100\nChamber4 = 100\nChamber5 = 100\nChamber6 = 100\n";
                 File.WriteAllText(filePath, content);
             }
 
             return filePath;
+        }
+
+        public int GetValue(string chambername)
+        {
+            return this.Chemical[chambername];
         }
         #endregion
     }

@@ -81,17 +81,19 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            locationPositions["Buffer1"] = btnBuffer1.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Buffer2"] = btnBuffer2.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Buffer3"] = btnBuffer3.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Buffer4"] = btnBuffer4.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber1"] = btnBuffer1.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber2"] = btnBuffer2.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber3"] = btnBuffer3.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber4"] = btnBuffer4.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber5"] = btnBuffer5.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Clean Chamber_Chamber6"] = btnBuffer6.TranslatePoint(new Point(0, 0), Animationctr);
 
-            locationPositions["Chamber1"] = btnChamber1.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Chamber2"] = btnChamber2.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Chamber3"] = btnChamber3.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Chamber4"] = btnChamber4.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Chamber5"] = btnChamber5.TranslatePoint(new Point(0, 0), Animationctr);
-            locationPositions["Chamber6"] = btnChamber6.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber1"] = btnChamber1.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber2"] = btnChamber2.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber3"] = btnChamber3.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber4"] = btnChamber4.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber5"] = btnChamber5.TranslatePoint(new Point(0, 0), Animationctr);
+            locationPositions["Dry Chamber_Chamber6"] = btnChamber6.TranslatePoint(new Point(0, 0), Animationctr);
 
             locationPositions["RobotArm"] = btnRobotArm.TranslatePoint(new Point(0, 0), Animationctr);
 

@@ -259,7 +259,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnTempChanged(object? sender, Wafer e)
         {
-            if (e.CurrentLocation == "Chamber6")
+            if (e.CurrentLocation == "Dry Chamber_Chamber6")
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {

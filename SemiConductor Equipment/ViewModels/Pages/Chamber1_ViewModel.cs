@@ -176,9 +176,29 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             // 필요하다면 _service에서 직접 큐 상태를 조회할 수 있음
             //이벤트 넘겨줄때 챔버 네임 넘겨서 받아야함
             //그 이후 각 뷰모델에서 자기 이름과 같으면 bool 반전
-                if (chamber.ChamberName == "Chamber1")
+            if (chamber.ChamberName == "Chamber1")
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
                 {
-                    if (Application.Current.Dispatcher.CheckAccess())
+                    this.IsWafer = !this.IsWafer;
+                    this.StatusText = chamber.State;
+
+                    if (!waferDataDict.ContainsKey(chamber.WaferName))
+                    {
+                        waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
+                        Series.Add(new LineSeries<ObservablePoint>
+                        {
+                            Values = waferDataDict[chamber.WaferName],
+                            Fill = null,
+                            GeometrySize = 0,
+                            Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                            Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
+                        });
+                    }
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         this.IsWafer = !this.IsWafer;
                         this.StatusText = chamber.State;
@@ -195,29 +215,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                                 Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                             });
                         }
-                    }
-                    else
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            this.IsWafer = !this.IsWafer;
-                            this.StatusText = chamber.State;
-
-                            if (!waferDataDict.ContainsKey(chamber.WaferName))
-                            {
-                                waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
-                                Series.Add(new LineSeries<ObservablePoint>
-                                {
-                                    Values = waferDataDict[chamber.WaferName],
-                                    Fill = null,
-                                    GeometrySize = 0,
-                                    Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
-                                    Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
-                                });
-                            }
-                        });
-                    }
+                    });
                 }
+            }
         }
 
         private SKColor GetColorByWaferId(string waferId)
@@ -251,7 +251,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnTempChanged(object? sender, Wafer e)
         {
-            if (e.CurrentLocation == "Chamber1")
+            if (e.CurrentLocation == "Dry Chamber_Chamber1")
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {

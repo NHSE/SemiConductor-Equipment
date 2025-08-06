@@ -88,7 +88,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Update_Carrier_info(Wafer newWaferData)
         {
-            if(SelectedSlots.Count == null)
+            if (SelectedSlots == null || SelectedSlots.Count == 0)
             {
                 return false;
             }
@@ -144,7 +144,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         public bool Check_Running(string cjid)
         {
-            if (SelectedSlots.Count == null)
+            if (SelectedSlots == null || SelectedSlots.Count == 0)
             {
                 return false;
             }

@@ -76,30 +76,20 @@ namespace SemiConductor_Equipment.Services
 
         public void RemoveWaferFromChamber(string chamberName)
         {
-            lock (_lock)
+            if (_chambers.ContainsKey(chamberName))
             {
-                if (_chambers.ContainsKey(chamberName))
-                {
-                    this._logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
-                    //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
+                this._logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
+                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
 
-                    this.Chamber_State[chamberName] = "IDLE";
-                    lock (_lock)
-                    {
-                        DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], _chambers[chamberName].wafer.Wafer_Num));
-                    }
-                    this._chambers[chamberName] = (null, false);
-                }
+                this.Chamber_State[chamberName] = "IDLE";
+                DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], _chambers[chamberName].wafer.Wafer_Num));
+                this._chambers[chamberName] = (null, false);
             }
         }
 
         public void AddWaferToChamber(string chamberName, Wafer wafer)
         {
-            lock (_lock)
-            {
-                // 웨이퍼 넣기 + 처리중 상태 표시
-                this._chambers[chamberName] = (wafer, false);
-            }
+            this._chambers[chamberName] = (wafer, false);
         }
 
         public async Task StartProcessingAsync(string chamberName, Wafer wafer)
@@ -134,21 +124,22 @@ namespace SemiConductor_Equipment.Services
                 }
                 //Processing
 
-                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp || wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
-                {
+                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp - this._equiptempManager.Allow 
+                    || wafer.RequiredTemperature > this._equiptempManager.Max_Temp + this._equiptempManager.Allow)
                     wafer.Status = "Error";
-                }
+                else
+                    wafer.Status = "Completed";
 
                 lock (_lock)
-                {
-                    // 처리 완료 상태로 변경 (processing = false)
-                    this._chambers[chamberName] = (wafer, true);
-                    this._vIDManager.SetDVID(1001, wafer.RequiredTemperature, wafer.Wafer_Num);
-                    CEIDInfo info = this._eventMessageManager.GetCEID(301);
-                    info.Wafer_number = wafer.Wafer_Num;
-                    info.Loadport_Number = wafer.LoadportId;
-                    this._eventMessageManager.EnqueueEventData(info);
-                }
+                    {
+                        // 처리 완료 상태로 변경 (processing = false)
+                        this._chambers[chamberName] = (wafer, true);
+                        this._vIDManager.SetDVID(1001, wafer.RequiredTemperature, wafer.Wafer_Num);
+                        CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                        info.Wafer_number = wafer.Wafer_Num;
+                        info.Loadport_Number = wafer.LoadportId;
+                        this._eventMessageManager.EnqueueEventData(info);
+                    }
 
                 if (wafer.Status == "Error")
                 {
@@ -156,7 +147,8 @@ namespace SemiConductor_Equipment.Services
                     {
                         CommandType = RobotCommandType.Error,
                         Wafer = wafer,
-                        Location = "LoadPort",
+                        Location = "Dry",
+                        NextLocation = "LoadPort",
                         Completed = chamberName
                     });
                 }
@@ -166,7 +158,8 @@ namespace SemiConductor_Equipment.Services
                     {
                         CommandType = RobotCommandType.MoveTo,
                         Wafer = wafer,
-                        Location = "Buffer",
+                        Location = "Dry",
+                        NextLocation = "LoadPort",
                         Completed = chamberName
                     });
                 }
@@ -190,27 +183,22 @@ namespace SemiConductor_Equipment.Services
 
         public (string ChamberName, Wafer Wafer)? FindCompletedWafer()
         {
-            lock (_lock)
-            {
-                var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing == false);
-                if (completed.Value.wafer == null) return null;
+            var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing == false);
+            if (completed.Value.wafer == null) return null;
 
-                this._chambers[completed.Key] = (null, false);
-                return (completed.Key, completed.Value.wafer);
-            }
+            this._chambers[completed.Key] = (null, false);
+            return (completed.Key, completed.Value.wafer);
         }
 
         public bool TryInsertWafer(string chamberName, Wafer wafer)
         {
-            lock (_lock)
+            if (this._chambers.ContainsKey(chamberName) && this._chambers[chamberName].wafer == null)
             {
-                if (this._chambers.ContainsKey(chamberName) && this._chambers[chamberName].wafer == null)
-                {
-                    this._chambers[chamberName] = (wafer, false);
-                    return true;
-                }
-                return false;
+                this._chambers[chamberName] = (wafer, false);
+                return true;
             }
+            return false;
+            
         }
 
         public bool IsAllChamberEmpty()

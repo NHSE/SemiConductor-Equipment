@@ -55,16 +55,101 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="AUTO"/>
                 </Grid.RowDefinitions>
-                
+
                 <Grid Grid.Row="0">
                     <StackPanel>
-                        <TextBlock Text="Test Setting"
+                        <TextBlock Text="Clean Setting"
+               FontSize="18"
+               FontWeight="Bold"
+               Foreground="White"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"/>
+
+                        <Border Background="DarkGray" CornerRadius="18" Margin="24" Padding="32" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="RPM" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="tbrpm" Text="{Binding ViewModel.Rpm, Mode=TwoWay}"
+                                                FontSize="24"
+                                                FontWeight="Bold"
+                                                Background="#2E3B4E"
+                                                Foreground="White"
+                                                BorderBrush="#3A88FE"
+                                                BorderThickness="2"
+                                                Padding="12,6"
+                                                Width="100"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center"
+                                                CaretBrush="#3A88FE"
+                                                PreviewTextInput="VerPreviewTextInput"
+                                                 Margin="110 0 0 0"
+                                                />
+                                        <TextBlock Text="r/min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Chemical Flow Rate" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="tbchemical" Text="{Binding ViewModel.FlowRate, Mode=TwoWay}"
+                                                FontSize="24"
+                                                FontWeight="Bold"
+                                                Background="#2E3B4E"
+                                                Foreground="White"
+                                                BorderBrush="#3A88FE"
+                                                BorderThickness="2"
+                                                Padding="12,6"
+                                                Width="100"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center"
+                                                CaretBrush="#3A88FE"
+                                                PreviewTextInput="VerPreviewTextInput"
+                                                Margin="100 0 0 0"
+                                                />
+                                        <TextBlock Text="L/min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                    <TextBlock Text="Spray Time" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="tbSpraytime" Text="{Binding ViewModel.Spraytime, Mode=TwoWay}"
+                                                FontSize="24"
+                                                FontWeight="Bold"
+                                                Background="#2E3B4E"
+                                                Foreground="White"
+                                                BorderBrush="#3A88FE"
+                                                BorderThickness="2"
+                                                Padding="12,6"
+                                                Width="100"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center"
+                                                CaretBrush="#3A88FE"
+                                                PreviewTextInput="VerPreviewTextInput"
+                                                Margin="50 0 0 0"
+                                                />
+                                        <TextBlock Text="Min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <StackPanel>
+                        <TextBlock Text="Heating Setting"
                                FontSize="18"
                                FontWeight="Bold"
                                Foreground="White"
                                VerticalAlignment="Center"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 0"/>
 
                         <Border Background="DarkGray" CornerRadius="18" Margin="24" Padding="32" >
                             <Grid>
@@ -144,17 +229,18 @@
                                         VerticalContentAlignment="Center"
                                         CaretBrush="#3A88FE"
                                         PreviewTextInput="VerPreviewTextInput"
+                                        Margin="50 0 0 0"
                                         />
-                                        <TextBlock Text="sec" FontSize="30"/>
+                                        <TextBlock Text="sec" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2">
                     <StackPanel>
-                        <ui:Button Command="{Binding ViewModel.SaveCommand}" Content="Save" VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
+                        <ui:Button Command="{Binding ViewModel.SaveCommand}" Content="Save" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="0 40 0 0"/>
                     </StackPanel>
                 </Grid>
             </Grid>
