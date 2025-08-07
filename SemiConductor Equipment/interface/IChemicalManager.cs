@@ -10,8 +10,11 @@ namespace SemiConductor_Equipment.interfaces
     {
         Dictionary<string, int> Chemical { get; set; }
         void InitConfig();
-        bool UpdateConfigValue(string chambername, int Value);
+        bool ConsumeChemical(string chambername, int Value);
+        void ModifyChemicalValue(string chambername, int Value);
         string GetFilePathAndCreateIfNotExists();
         int GetValue(string chambername);
+
+        event Action ConfigRead;
     }
 }

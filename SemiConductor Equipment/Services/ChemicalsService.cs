@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly string _configDirectory;
+        public event Action ConfigRead;
         #endregion
 
         #region PROPERTIES
@@ -85,12 +86,14 @@ namespace SemiConductor_Equipment.Services
                         Chemical["Chamber6"] = chemical;
                 }
             }
+
+            ConfigRead?.Invoke();
         }
 
         /// <summary>
         /// Config 파일 경로 반환 없을 경우 생성
         /// </summary>
-        public bool UpdateConfigValue(string chambername, int Value)
+        public bool ConsumeChemical(string chambername, int Value)
         {
             string filePath = GetFilePathAndCreateIfNotExists();
             // 파일의 모든 줄을 읽어옵니다.
@@ -125,6 +128,37 @@ namespace SemiConductor_Equipment.Services
                 return false;
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Config 파일 경로 반환 없을 경우 생성
+        /// </summary>
+        public void ModifyChemicalValue(string chambername, int Value)
+        {
+            string filePath = GetFilePathAndCreateIfNotExists();
+            // 파일의 모든 줄을 읽어옵니다.
+            var lines = File.ReadAllLines(filePath);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // 각 줄이 해당 key로 시작하는지 확인
+                if (lines[i].StartsWith(chambername))
+                {
+                    // 구분자(: 또는 =)에 따라 새로운 값으로 줄을 만듭니다.
+                    if (lines[i].Contains("="))
+                    {
+                        lines[i] = $"{chambername} = {Value}";
+                        break;
+                    }
+                }
+            }
+
+            // 수정된 내용을 파일에 다시 씁니다.
+            File.WriteAllLines(filePath, lines);
+
+
+            InitConfig();
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._cleanManager.MultiCupChange += CleanManager_MultiCupChange;
             this._cleanManager.ChemicalChange += CleanManager_ChemicalChange;
 
-            this.Chemical = this._chemicalManager.GetValue("Chamber3");
+            Load_Chemical();
         }
         #endregion
 
@@ -70,6 +70,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 throw new Exception();
             }
+        }
+
+        public void Load_Chemical()
+        {
+            this.Chemical = this._chemicalManager.GetValue("Chamber3");
         }
 
         private void CleanManager_DataEnqueued(object? sender, CleanChamberStatus cleanChamber)
@@ -101,7 +106,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {
-                    if (this._chemicalManager.UpdateConfigValue(cleanChamber.ChamberName, cleanChamber.Chemical))
+                    if (this._chemicalManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Chemical))
                     {
                         cleanChamber.Result = false;
                         this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);
@@ -117,7 +122,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (this._chemicalManager.UpdateConfigValue(cleanChamber.ChamberName, cleanChamber.Chemical))
+                        if (this._chemicalManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Chemical))
                         {
                             cleanChamber.Result = false;
                             this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);

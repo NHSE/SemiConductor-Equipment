@@ -101,6 +101,9 @@ namespace SemiConductor_Equipment.Views.Pages
             locationPositions["LoadPort2"] = new Point(0, 0);
 
             ViewModel.locationPositions = locationPositions;
+
+            ViewModel.Get_Chamber_State();
+            ViewModel.Draw_Color("ALL");
         }
 
         public void Scroll()

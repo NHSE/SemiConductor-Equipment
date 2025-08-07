@@ -55,7 +55,7 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //await ViewModel.OnNavigatedToAsync(2);
+            ViewModel.Load_Chemical();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

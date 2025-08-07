@@ -150,9 +150,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.Equipment_state = "Ready";
             this._vIDManager.SetSVID(100, this.Equipment_state);
 
-            Get_Chamber_State();
-            Draw_Color("ALL");
-
             this._chamberManager.DataEnqueued += Dry_DataEnqueued;
             this._cleanManager.DataEnqueued += Clean_DataEnqueued;
             this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
@@ -243,6 +240,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [RelayCommand]
         private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
+
+        [RelayCommand]
+        private void SubMenuChemicalSetting() => NavigateToPage<ChemicalSettingMenu>();
 
         [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
@@ -336,10 +336,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this._cleanManager.Unable_to_Process[chambername] = true;
                     this._cleanManager.Clean_State[chambername] = "DISAB";
                 }
+                else
+                {
+                    this._cleanManager.Unable_to_Process[chambername] = false;
+                    this._cleanManager.Clean_State[chambername] = "UN USE";
+                }
             }
         }
 
-        private void Draw_Color(string Draw_Type)
+        public void Draw_Color(string Draw_Type)
         {
             if (Draw_Type == "Chamber")
                 Draw_DryChamber_Color();
@@ -352,7 +357,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        private void Get_Chamber_State()
+        public void Get_Chamber_State()
         {
             this.Dry_chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
             this.Dry_chamber2_state = this._chamberManager.Chamber_State["Chamber2"];

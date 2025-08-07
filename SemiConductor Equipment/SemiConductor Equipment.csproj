@@ -47,6 +47,7 @@
     <None Remove="Resources\Buffer_in_wafer.png" />
     <None Remove="Resources\Carrier_in_wafer.png" />
     <None Remove="Resources\Carrier_nothing.png" />
+    <None Remove="Resources\ChemicalTank.png" />
     <None Remove="Resources\Clean_Is_Wafer_MultiCupDown.png" />
     <None Remove="Resources\Clean_Is_Wafer_MultiCupUp.png" />
     <None Remove="Resources\Clean_Nothing_Wafer_MultiCupDown.png" />
@@ -62,6 +63,7 @@
     <Resource Include="Resources\Buffer_in_wafer.png" />
     <Resource Include="Resources\Carrier_in_wafer.png" />
     <Resource Include="Resources\Carrier_nothing.png" />
+    <Resource Include="Resources\ChemicalTank.png" />
     <Resource Include="Resources\Clean_Is_Wafer_MultiCupDown.png" />
     <Resource Include="Resources\Clean_Is_Wafer_MultiCupUp.png" />
     <Resource Include="Resources\Clean_Nothing_Wafer_MultiCupDown.png" />

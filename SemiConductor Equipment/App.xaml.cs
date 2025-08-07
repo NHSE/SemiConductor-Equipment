@@ -88,6 +88,9 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IChemicalManager>(provider =>
                                     new ChemicalsService(@"C:\Configs"));
 
+                services.AddSingleton<ChemicalSettingMenu>();
+                services.AddSingleton<ChemicalMenusViewModel>();
+
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();
                 services.AddSingleton<Chamber2_ViewModel>();
