@@ -88,9 +88,9 @@ namespace SemiConductor_Equipment.Views.Menus
                 switch (textBox.Name)
                 {
                     case "tbchemical":
-                        if (value > 99)
+                        if (value > 10)
                         {
-                            this._messageBox.Show("입력 초과", "해당 입력은 99 이하만 가능합니다.");
+                            this._messageBox.Show("입력 초과", "해당 입력은 10 이하만 가능합니다.");
                             e.Handled = true;
                         }
                         break;
@@ -107,6 +107,22 @@ namespace SemiConductor_Equipment.Views.Menus
                         if (value > 1000)
                         {
                             this._messageBox.Show("입력 초과", "해당 입력은 1000 이하만 가능합니다.");
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case "tbpreclean":
+                        if (value > 10)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 10 이하만 가능합니다.");
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case "tbpreCleanSpraytime":
+                        if (value > 60)
+                        {
+                            this._messageBox.Show("입력 초과", "해당 입력은 60 이하만 가능합니다.");
                             e.Handled = true;
                         }
                         break;

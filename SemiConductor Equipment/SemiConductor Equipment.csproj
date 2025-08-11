@@ -52,6 +52,7 @@
     <None Remove="Resources\Clean_Is_Wafer_MultiCupUp.png" />
     <None Remove="Resources\Clean_Nothing_Wafer_MultiCupDown.png" />
     <None Remove="Resources\LoadPort.png" />
+    <None Remove="Resources\Tank.png" />
     <None Remove="Resources\test.png" />
     <None Remove="Resources\test2.png" />
   </ItemGroup>

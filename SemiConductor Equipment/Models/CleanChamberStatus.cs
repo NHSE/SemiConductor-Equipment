@@ -21,14 +21,26 @@ namespace SemiConductor_Equipment.Models
     public partial class ChemicalStatus
     {
         public string ChamberName { get; }
-        public int Chemical { get; }
+        public int Solution { get; }
 
         public bool Result { get; set; }
 
         public ChemicalStatus(string value1, int value2)
         {
             ChamberName = value1;
-            Chemical = value2;
+            Solution = value2;
+        }
+    }
+
+    public partial class ChamberData
+    {
+        public string ChamberName { get; }
+        public Wafer wafer { get; }
+
+        public ChamberData(string value1, Wafer value2)
+        {
+            ChamberName = value1;
+            wafer = value2;
         }
     }
 }

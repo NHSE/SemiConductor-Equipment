@@ -73,6 +73,8 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="RPM" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
@@ -85,14 +87,14 @@
                                                 BorderBrush="#3A88FE"
                                                 BorderThickness="2"
                                                 Padding="12,6"
-                                                Width="100"
+                                                Width="80"
                                                 HorizontalContentAlignment="Center"
                                                 VerticalContentAlignment="Center"
                                                 CaretBrush="#3A88FE"
                                                 PreviewTextInput="VerPreviewTextInput"
-                                                 Margin="110 0 0 0"
+                                                 Margin="60 0 0 0"
                                                 />
-                                        <TextBlock Text="r/min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                        <TextBlock Text="rpm" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
@@ -106,18 +108,39 @@
                                                 BorderBrush="#3A88FE"
                                                 BorderThickness="2"
                                                 Padding="12,6"
-                                                Width="100"
+                                                Width="60"
                                                 HorizontalContentAlignment="Center"
                                                 VerticalContentAlignment="Center"
                                                 CaretBrush="#3A88FE"
                                                 PreviewTextInput="VerPreviewTextInput"
-                                                Margin="100 0 0 0"
+                                                Margin="50 0 0 0"
                                                 />
-                                        <TextBlock Text="L/min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                        <TextBlock Text="L/sec" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="Spray Time" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Pre-Clean Flow Rate" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="tbpreclean" Text="{Binding ViewModel.PreClean_FlowRate, Mode=TwoWay}"
+                                                 FontSize="24"
+                                                 FontWeight="Bold"
+                                                 Background="#2E3B4E"
+                                                 Foreground="White"
+                                                 BorderBrush="#3A88FE"
+                                                 BorderThickness="2"
+                                                 Padding="12,6"
+                                                 Width="60"
+                                                 HorizontalContentAlignment="Center"
+                                                 VerticalContentAlignment="Center"
+                                                 CaretBrush="#3A88FE"
+                                                 PreviewTextInput="VerPreviewTextInput"
+                                                 Margin="50 0 0 0"
+                                                 />
+                                        <TextBlock Text="L/sec" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                                    <TextBlock Text="Chemical Spray Time" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBox x:Name="tbSpraytime" Text="{Binding ViewModel.Spraytime, Mode=TwoWay}"
                                                 FontSize="24"
@@ -127,14 +150,35 @@
                                                 BorderBrush="#3A88FE"
                                                 BorderThickness="2"
                                                 Padding="12,6"
-                                                Width="100"
+                                                Width="60"
                                                 HorizontalContentAlignment="Center"
                                                 VerticalContentAlignment="Center"
                                                 CaretBrush="#3A88FE"
                                                 PreviewTextInput="VerPreviewTextInput"
-                                                Margin="50 0 0 0"
+                                                Margin="20 0 0 0"
                                                 />
-                                        <TextBlock Text="Min" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Sec" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="Pre-Clean Spray Time" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="tbpreCleanSpraytime" Text="{Binding ViewModel.PreClean_Spraytime, Mode=TwoWay}"
+                                                 FontSize="24"
+                                                 FontWeight="Bold"
+                                                 Background="#2E3B4E"
+                                                 Foreground="White"
+                                                 BorderBrush="#3A88FE"
+                                                 BorderThickness="2"
+                                                 Padding="12,6"
+                                                 Width="60"
+                                                 HorizontalContentAlignment="Center"
+                                                 VerticalContentAlignment="Center"
+                                                 CaretBrush="#3A88FE"
+                                                 PreviewTextInput="VerPreviewTextInput"
+                                                 Margin="20 0 0 0"
+                                                 />
+                                        <TextBlock Text="Sec" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

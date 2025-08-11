@@ -14,26 +14,25 @@ using System.Windows.Shapes;
 namespace SemiConductor_Equipment.Views.Pages
 {
     /// <summary>
-    /// Buffer2_Page.xaml에 대한 상호 작용 논리
+    /// Buffer4_Page.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class CleanChamber2_Page : Page
+    public partial class CleanChamber6_Page : Page
     {
         #region FIELDS
-        public CleanChamber2_ViewModel ViewModel { get; set; }
+        public CleanChamber6_ViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public CleanChamber2_Page(CleanChamber2_ViewModel viewModel)
+        public CleanChamber6_Page(CleanChamber6_ViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
         }
         #endregion
 

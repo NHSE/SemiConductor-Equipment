@@ -18,14 +18,16 @@ namespace SemiConductor_Equipment.Services
         private readonly IChamberManager _chamberManager;
         private readonly ICleanManager _cleanManager;
         private readonly IRobotArmManager _robotArmManager;
+        private readonly IMessageBox _messageBoxManager;
         private readonly RunningStateService _runningStateService;
 
-        public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, RunningStateService runningStateService)
+        public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
-            _chamberManager = chamberManager;
-            _cleanManager = cleanManager;
-            _robotArmManager = robotArmManager;
-            _runningStateService = runningStateService;
+            this._chamberManager = chamberManager;
+            this._cleanManager = cleanManager;
+            this._robotArmManager = robotArmManager;
+            this._messageBoxManager = messageBoxManager;
+            this._runningStateService = runningStateService;
         }
 
         public async Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token)
@@ -46,10 +48,17 @@ namespace SemiConductor_Equipment.Services
                     if (isAllDone)
                         break;
 
-                    // 모든 챔버 내 Chemical이 부족하다면 테스트 시작 안함
+                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함
                     if(_cleanManager.IsAllDisableChamber() && waferQueue.Count > 0)
                     {
-                        waferQueue.Clear(); 
+                        while(waferQueue.Count != 0)
+                        {
+                            var wafer = waferQueue.Dequeue();
+                            wafer.Status = "Not Process";
+                        }
+                        this._messageBoxManager.Show("예외 발생", "Soultion이 부족합니다.\n설정 후 다시 진행해주세요.");
+                        //메세지 박스
+                        waferQueue.Clear();
                     }
 
                     // 1. 챔버에 빈 자리가 있는지 확인

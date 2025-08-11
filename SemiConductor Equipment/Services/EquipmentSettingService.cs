@@ -23,6 +23,8 @@ namespace SemiConductor_Equipment.Services
         public int RPM { get; set; }
         public int Flow_Rate { get; set; }
         public int Spray_Time { get; set; }
+        public int PreClean_Flow_Rate { get; set; }
+        public int PreClean_Spray_Time { get; set; }
         #endregion
 
         #region CONSTRUCTOR
@@ -52,7 +54,7 @@ namespace SemiConductor_Equipment.Services
             foreach (string line in lines)
             {
                 // 각 줄에서 '=' 또는 ':' 기준으로 키와 값을 분리
-                if (line.StartsWith("Spray Time"))
+                if (line.StartsWith("Chemical Spray Time"))
                 {
                     if (int.TryParse(line.Split('=')[1].Trim(), out int sprayTime))
                         Spray_Time = sprayTime;
@@ -66,6 +68,16 @@ namespace SemiConductor_Equipment.Services
                 {
                     if (int.TryParse(line.Split('=')[1].Trim(), out int flowrate))
                         Flow_Rate = flowrate;
+                }
+                else if (line.StartsWith("Pre-Clean Flow Rate"))
+                {
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int flowrate))
+                        PreClean_Flow_Rate = flowrate;
+                }
+                else if (line.StartsWith("Pre-Clean Spray Time"))
+                {
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int sprayTime))
+                        PreClean_Spray_Time = sprayTime;
                 }
                 else if(line.StartsWith("Max Temperature"))
                 {
@@ -129,7 +141,7 @@ namespace SemiConductor_Equipment.Services
             // 파일이 없으면 생성하면서 내용도 쓴다
             if (!File.Exists(filePath))
             {
-                string content = "RPM = 60\nChemical Flow Rate = 2\nSpray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nAllow = 5\nChamber Time = 10";
+                string content = "RPM = 60\nChemical Flow Rate = 2\nChemical Spray Time = 1\nPre-Clean Flow Rate = 2\nPre-Clean Spray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nAllow = 5\nChamber Time = 10";
                 File.WriteAllText(filePath, content);
             }
 

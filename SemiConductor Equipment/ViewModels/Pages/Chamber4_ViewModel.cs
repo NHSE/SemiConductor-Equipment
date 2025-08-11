@@ -86,7 +86,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
-            this._logManager.Subscribe($"Chamber4", OnLogUpdated);
+            this._logManager.Subscribe($"Dry_Chamber4", OnLogUpdated);
 
             LoadInitialLogs();
             SetupLogFileWatcher();
@@ -115,7 +115,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void SetupLogFileWatcher()
         {
             var logDirectory = @"C:\Logs";
-            var logFileName = $"Chamber4_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
+            var logFileName = $"Dry_Chamber4_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
 
             _logFileWatcher = new FileSystemWatcher
             {
@@ -157,7 +157,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void LoadInitialLogs()
         {
-            var logPath = Path.Combine(@"C:\Logs", $"Chamber4_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
+            var logPath = Path.Combine(@"C:\Logs", $"Dry_Chamber4_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
             if (File.Exists(logPath))
             {
                 LogText = File.ReadAllText(logPath);

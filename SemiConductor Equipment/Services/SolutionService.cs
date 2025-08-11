@@ -10,7 +10,7 @@ using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class ChemicalsService : IChemicalManager
+    public class SolutionService : ISolutionManager
     {
         #region FIELDS
         private readonly string _configDirectory;
@@ -27,10 +27,20 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = 0,
             ["Chamber6"] = 0,
         };
+
+        public Dictionary<string, int> PreClean { get; set; } = new Dictionary<string, int>()
+        {
+            ["Chamber1"] = 0,
+            ["Chamber2"] = 0,
+            ["Chamber3"] = 0,
+            ["Chamber4"] = 0,
+            ["Chamber5"] = 0,
+            ["Chamber6"] = 0,
+        };
         #endregion
 
         #region CONSTRUCTOR
-        public ChemicalsService(string configDirectory)
+        public SolutionService(string configDirectory)
         {
             _configDirectory = configDirectory;
             if (!Directory.Exists(_configDirectory))
@@ -52,38 +62,24 @@ namespace SemiConductor_Equipment.Services
             string filePath = GetFilePathAndCreateIfNotExists();
             string[] lines = File.ReadAllLines(filePath);
 
-            foreach (string line in lines)
+            Chemical = new Dictionary<string, int>();
+            PreClean = new Dictionary<string, int>();
+
+            for (int i = 0; i < lines.Length; i += 3)
             {
-                // 각 줄에서 '=' 또는 ':' 기준으로 키와 값을 분리
-                if (line.StartsWith("Chamber1"))
+                string chamberName = lines[i].Trim();
+
+                var chemicalParts = lines[i + 1].Split('=');
+                if (chemicalParts.Length == 2 && int.TryParse(chemicalParts[1].Trim(), out int chemical))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber1"] = chemical;
+                    Chemical[chamberName] = chemical;
                 }
-                else if (line.StartsWith("Chamber2"))
+
+                // 3. Pre Clean 값 파싱
+                var preCleanParts = lines[i + 2].Split('=');
+                if (preCleanParts.Length == 2 && int.TryParse(preCleanParts[1].Trim(), out int preClean))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber2"] = chemical;
-                }
-                else if (line.StartsWith("Chamber3"))
-                {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber3"] = chemical;
-                }
-                else if (line.StartsWith("Chamber4"))
-                {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber4"] = chemical;
-                }
-                else if (line.StartsWith("Chamber5"))
-                {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber5"] = chemical;
-                }
-                else if (line.StartsWith("Chamber6"))
-                {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int chemical))
-                        Chemical["Chamber6"] = chemical;
+                    PreClean[chamberName] = preClean;
                 }
             }
 
@@ -105,25 +101,28 @@ namespace SemiConductor_Equipment.Services
                 newValue = 0;
             }
 
-            for (int i = 0; i < lines.Length; i++)
+            ModifyChamberValue(chambername, "Chemical", newValue);
+
+            if (newValue == 0)
+                return false;
+
+            return true;
+        }
+
+        public bool ConsumePreClean(string chambername, int Value)
+        {
+            string filePath = GetFilePathAndCreateIfNotExists();
+            // 파일의 모든 줄을 읽어옵니다.
+            var lines = File.ReadAllLines(filePath);
+
+            int newValue = this.PreClean[chambername] - Value;
+            if (newValue <= 0)
             {
-                // 각 줄이 해당 key로 시작하는지 확인
-                if (lines[i].StartsWith(chambername))
-                {
-                    // 구분자(: 또는 =)에 따라 새로운 값으로 줄을 만듭니다.
-                    if (lines[i].Contains("="))
-                    {
-                        lines[i] = $"{chambername} = {newValue}";
-                        break;
-                    }
-                }
+                newValue = 0;
             }
 
-            // 수정된 내용을 파일에 다시 씁니다.
-            File.WriteAllLines(filePath, lines);
+            ModifyChamberValue(chambername, "Pre Clean", newValue);
 
-
-            InitConfig();
             if (newValue == 0)
                 return false;
 
@@ -136,28 +135,37 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public void ModifyChemicalValue(string chambername, int Value)
         {
+            ModifyChamberValue(chambername, "Chemical", Value);
+        }
+
+        public void ModifyPreCleanValue(string chambername, int Value)
+        {
+            ModifyChamberValue(chambername, "Pre Clean", Value);
+        }
+
+        public void ModifyChamberValue(string chamberName, string propertyName, int value)
+        {
             string filePath = GetFilePathAndCreateIfNotExists();
-            // 파일의 모든 줄을 읽어옵니다.
             var lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++)
             {
-                // 각 줄이 해당 key로 시작하는지 확인
-                if (lines[i].StartsWith(chambername))
+                if (lines[i].Trim().Equals(chamberName, StringComparison.OrdinalIgnoreCase))
                 {
-                    // 구분자(: 또는 =)에 따라 새로운 값으로 줄을 만듭니다.
-                    if (lines[i].Contains("="))
+                    // 다음 두 줄: Chemical, Pre Clean 값
+                    for (int j = i + 1; j <= i + 2 && j < lines.Length; j++)
                     {
-                        lines[i] = $"{chambername} = {Value}";
-                        break;
+                        if (lines[j].Trim().StartsWith(propertyName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lines[j] = $"{propertyName} = {value}";
+                            break;
+                        }
                     }
+                    break;
                 }
             }
 
-            // 수정된 내용을 파일에 다시 씁니다.
             File.WriteAllLines(filePath, lines);
-
-
             InitConfig();
         }
 
@@ -166,13 +174,15 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetFilePathAndCreateIfNotExists()
         {
-            string fileName = $".Chemical.config";
+            string fileName = $".Solution.config";
             string filePath = Path.Combine(_configDirectory, fileName);
 
             // 파일이 없으면 생성하면서 내용도 쓴다
             if (!File.Exists(filePath))
             {
-                string content = "Chamber1 = 100\nChamber2 = 100\nChamber3 = 100\nChamber4 = 100\nChamber5 = 100\nChamber6 = 100\n";
+                string content = "Chamber1\nChemical = 100\nPre Clean = 100\nChamber2\nChemical = 100\nPre Clean = 100" +
+                    "\nChamber3\nChemical = 100\nPre Clean = 100\nChamber4\nChemical = 100\nPre Clean = 100\nChamber5\nChemical = 100\nPre Clean = 100\n" +
+                    "Chamber6\nChemical = 100\nPre Clean = 100\n";
                 File.WriteAllText(filePath, content);
             }
 
@@ -182,6 +192,11 @@ namespace SemiConductor_Equipment.Services
         public int GetValue(string chambername)
         {
             return this.Chemical[chambername];
+        }
+
+        public int GetPreCleanValue(string chambername)
+        {
+            return this.PreClean[chambername];
         }
         #endregion
     }

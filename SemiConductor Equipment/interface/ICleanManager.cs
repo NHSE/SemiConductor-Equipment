@@ -16,12 +16,11 @@ namespace SemiConductor_Equipment.interfaces
         Dictionary<string, bool> Unable_to_Process { get; set; }
 
         event EventHandler<CleanChamberStatus> DataEnqueued;
-
         event EventHandler<RobotCommand> Enque_Robot;
-
         event EventHandler<CleanChamberStatus> MultiCupChange;
-
         event EventHandler<ChemicalStatus> ChemicalChange;
+        event EventHandler<ChemicalStatus> PreCleanChange;
+        event EventHandler<ChamberData> CleanChamberChange;
 
         string? FindEmptySlot();
 
@@ -36,5 +35,6 @@ namespace SemiConductor_Equipment.interfaces
 
         bool IsAllCleanChamberEmpty();
         bool IsAllDisableChamber();
+        bool CleanChamberEmpty(string chambername);
     }
 }

@@ -23,6 +23,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [ObservableProperty]
         private int _spraytime;
         [ObservableProperty]
+        private int _preClean_FlowRate;
+        [ObservableProperty]
+        private int _preClean_Spraytime;
+        [ObservableProperty]
         private int _chambertime;
         [ObservableProperty]
         private int _max_temperature;
@@ -53,7 +57,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         {
             _configManager.UpdateConfigValue("RPM", this.Rpm);
             _configManager.UpdateConfigValue("Chemical Flow Rate", this.FlowRate);
-            _configManager.UpdateConfigValue("Spray Time", this.Spraytime);
+            _configManager.UpdateConfigValue("Chemical Spray Time", this.Spraytime);
+            _configManager.UpdateConfigValue("Pre-Clean Flow Rate", this.PreClean_FlowRate);
+            _configManager.UpdateConfigValue("Pre-Clean Spray Time", this.PreClean_Spraytime);
 
             _configManager.UpdateConfigValue("Max Temperature", this.Max_temperature);
             _configManager.UpdateConfigValue("Min Temperature", this.Min_temperature);
@@ -70,6 +76,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             this.Rpm = _configManager.RPM;
             this.FlowRate = _configManager.Flow_Rate;
             this.Spraytime = _configManager.Spray_Time;
+            this.PreClean_FlowRate = _configManager.PreClean_Flow_Rate;
+            this.PreClean_Spraytime = _configManager.PreClean_Spray_Time;
 
             this.Max_temperature = _configManager.Max_Temp;
             this.Min_temperature = _configManager.Min_Temp;

@@ -84,12 +84,14 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<CleanChamber2_Page>();
                 services.AddSingleton<CleanChamber3_Page>();
                 services.AddSingleton<CleanChamber4_Page>();
+                services.AddSingleton<CleanChamber5_Page>();
+                services.AddSingleton<CleanChamber6_Page>();
 
-                services.AddSingleton<IChemicalManager>(provider =>
-                                    new ChemicalsService(@"C:\Configs"));
+                services.AddSingleton<ISolutionManager>(provider =>
+                                    new SolutionService(@"C:\Configs"));
 
                 services.AddSingleton<ChemicalSettingMenu>();
-                services.AddSingleton<ChemicalMenusViewModel>();
+                services.AddSingleton<SolutionMenusViewModel>();
 
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();

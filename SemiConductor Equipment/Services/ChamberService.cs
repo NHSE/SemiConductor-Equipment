@@ -78,7 +78,7 @@ namespace SemiConductor_Equipment.Services
         {
             if (_chambers.ContainsKey(chamberName))
             {
-                this._logManager.WriteLog(chamberName, $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
                 //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
 
                 this.Chamber_State[chamberName] = "IDLE";
@@ -108,7 +108,7 @@ namespace SemiConductor_Equipment.Services
                     this._eventMessageManager.EnqueueEventData(info);
                 }
 
-                this._logManager.WriteLog(chamberName, $"State", $"{wafer.Wafer_Num} in {chamberName}");
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{wafer.Wafer_Num} in {chamberName}");
                 //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
 
                 Random rand = new Random();
@@ -118,7 +118,7 @@ namespace SemiConductor_Equipment.Services
                     double prev_temp = wafer.RequiredTemperature;
                     wafer.RequiredTemperature += rand.Next(1, 6); // 1~5도 증가
                     wafer.RunningTime += 1;
-                    this._logManager.WriteLog(chamberName, $"State", $"Wafer Temperature : {prev_temp} → {wafer.RequiredTemperature}");
+                    this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"Wafer Temperature : {prev_temp} → {wafer.RequiredTemperature}");
                     await Task.Delay(1000); // 1초 대기
                     ChangeTempData?.Invoke(this, wafer);
                 }
@@ -139,7 +139,10 @@ namespace SemiConductor_Equipment.Services
                         info.Wafer_number = wafer.Wafer_Num;
                         info.Loadport_Number = wafer.LoadportId;
                         this._eventMessageManager.EnqueueEventData(info);
-                    }
+                }
+
+                this.Chamber_State[chamberName] = "DONE";
+                DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
 
                 if (wafer.Status == "Error")
                 {
@@ -164,7 +167,7 @@ namespace SemiConductor_Equipment.Services
                     });
                 }
 
-                this._logManager.WriteLog(chamberName, $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
                 //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
             }
             catch (Exception ex)

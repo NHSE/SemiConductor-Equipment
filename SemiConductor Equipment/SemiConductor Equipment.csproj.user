@@ -50,6 +50,12 @@
     <Compile Update="Views\Pages\Chamber6_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\CleanChamber5_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\CleanChamber6_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\LoadPort1_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

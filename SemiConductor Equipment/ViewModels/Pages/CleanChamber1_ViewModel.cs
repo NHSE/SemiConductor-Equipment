@@ -11,6 +11,7 @@ using LiveChartsCore;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using Wpf.Ui.Abstractions.Controls;
+using System.IO;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -18,9 +19,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
     {
         #region FIELDS
         private readonly ICleanManager _cleanManager;
-        private readonly IChemicalManager _chemicalManager;
+        private readonly ISolutionManager _solutionManager;
+        private readonly IEquipmentConfigManager _equipmentConfigManager;
+        private readonly ILogManager _logManager;
         private bool _isInitialized = false;
-        private readonly IDatabase<Chamberlogtable>? _database;
+        private FileSystemWatcher _logFileWatcher;
+        private long lastLogPosition = 0;
         #endregion
 
         #region PROPERTIES
@@ -30,21 +34,45 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private int _isWafer = 0;
         [ObservableProperty]
         private int _chemical = 0;
+        [ObservableProperty]
+        private int _preClean = 0;
+        [ObservableProperty]
+        private string _slotID;
+        [ObservableProperty]
+        private string _state;
+        [ObservableProperty]
+        private int _setting_Flow_Rate;
+        [ObservableProperty]
+        private int _setting_Spray_Time;
+        [ObservableProperty]
+        private int _setting_PreClean_Flow_Rate;
+        [ObservableProperty]
+        private int _setting_PreClean_Spray_Time;
+        [ObservableProperty]
+        private int _setting_RPM;
+        [ObservableProperty]
+        private string? _logText;
 
         #endregion
 
         #region CONSTRUCTOR
-        public CleanChamber1_ViewModel(IDatabase<Chamberlogtable> database, ICleanManager cleanManager, IChemicalManager chemicalManager)
+        public CleanChamber1_ViewModel(ICleanManager cleanManager, ISolutionManager solutionManager, IEquipmentConfigManager equipmentConfigManager, ILogManager logManager)
         {
-            this._database = database;
             this._cleanManager = cleanManager;
-            this._chemicalManager = chemicalManager;
+            this._solutionManager = solutionManager;
+            this._equipmentConfigManager = equipmentConfigManager;
+            this._logManager = logManager;
 
             this._cleanManager.DataEnqueued += CleanManager_DataEnqueued;
             this._cleanManager.MultiCupChange += CleanManager_MultiCupChange;
             this._cleanManager.ChemicalChange += CleanManager_ChemicalChange;
+            this._cleanManager.CleanChamberChange += CleanManager_CleanChamberChange;
+            this._cleanManager.PreCleanChange += CleanManager_PreCleanChange;
 
-            Load_Chemical();
+            this._logManager.Subscribe($"Clean_Chamber1", OnLogUpdated);
+
+            LoadInitialLogs();
+            SetupLogFileWatcher();
         }
 
         #endregion
@@ -53,29 +81,73 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-
-        public async Task OnNavigatedToAsync(int? number)
+        private void OnLogUpdated(string newLog)
         {
-            if (!_isInitialized)
-                await InitializeViewModelAsync(number);
+            // UI 스레드에서 속성 갱신
+            App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
         }
 
-        public Task OnNavigatedFromAsync() => Task.CompletedTask;
-        private async Task InitializeViewModelAsync(int? number)
+        private void SetupLogFileWatcher()
         {
-            try
+            var logDirectory = @"C:\Logs";
+            var logFileName = $"Clean_Chamber1_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
+
+            _logFileWatcher = new FileSystemWatcher
             {
-                this.Logpagetable = await Task.Run(() => this._database?.Search($"Buffer{number}"));
-            }
-            catch (Exception ex)
+                Path = logDirectory,
+                Filter = logFileName,
+                NotifyFilter = NotifyFilters.LastWrite
+            };
+
+            _logFileWatcher.Changed += OnLogFileChanged;
+            _logFileWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnLogFileChanged(object sender, FileSystemEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                throw new Exception();
+                try
+                {
+                    using (var fs = new FileStream(e.FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        fs.Seek(lastLogPosition, SeekOrigin.Begin);
+                        using (var reader = new StreamReader(fs))
+                        {
+                            string newText = reader.ReadToEnd();
+                            if (!string.IsNullOrEmpty(newText))
+                            {
+                                LogText += newText;
+                            }
+                            lastLogPosition = fs.Position;
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    // 파일이 잠겨있을 수 있으니 예외 무시 또는 재시도 로직 추가 가능
+                }
+            });
+        }
+
+        private void LoadInitialLogs()
+        {
+            var logPath = Path.Combine(@"C:\Logs", $"Clean_Chamber1_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
+            if (File.Exists(logPath))
+            {
+                LogText = File.ReadAllText(logPath);
             }
         }
 
         public void Load_Chemical()
         {
-            this.Chemical = this._chemicalManager.GetValue("Chamber1");
+            this.Chemical = this._solutionManager.GetValue("Chamber1");
+            this.PreClean = this._solutionManager.GetPreCleanValue("Chamber1");
+            this.Setting_Spray_Time = this._equipmentConfigManager.Spray_Time;
+            this.Setting_RPM = this._equipmentConfigManager.RPM;
+            this.Setting_Flow_Rate = this._equipmentConfigManager.Flow_Rate;
+            this.Setting_PreClean_Flow_Rate = this._equipmentConfigManager.PreClean_Flow_Rate;
+            this.Setting_PreClean_Spray_Time = this._equipmentConfigManager.PreClean_Spray_Time;
         }
 
         private void CleanManager_DataEnqueued(object? sender, CleanChamberStatus cleanChamber)
@@ -83,6 +155,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             if (cleanChamber.ChamberName == "Chamber1")
             {
                 this.IsWafer = (this.IsWafer + 1) % 2;
+                if(cleanChamber.State != "Running")
+                {
+                    this.SlotID = string.Empty;
+                    this.State = string.Empty;
+                }
             }
         }
 
@@ -101,21 +178,41 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        private void CleanManager_CleanChamberChange(object? sender, ChamberData cleanChamber)
+        {
+            if (cleanChamber.ChamberName == "Chamber1")
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.SlotID = cleanChamber.wafer.SlotId;
+                    this.State = cleanChamber.wafer.Status;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.SlotID = cleanChamber.wafer.SlotId;
+                        this.State = cleanChamber.wafer.Status;
+                    });
+                }
+            }
+        }
+
         private void CleanManager_ChemicalChange(object? sender, ChemicalStatus cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber1")
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {
-                    if (this._chemicalManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Chemical))
+                    if (this._solutionManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Solution))
                     {
                         cleanChamber.Result = false;
-                        this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);
+                        this.Chemical = this._solutionManager.GetValue(cleanChamber.ChamberName);
                     }
                     else
                     {
                         cleanChamber.Result = true;
-                        this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);
+                        this.Chemical = this._solutionManager.GetValue(cleanChamber.ChamberName);
 
                     }
                 }
@@ -123,15 +220,52 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (this._chemicalManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Chemical))
+                        if (this._solutionManager.ConsumeChemical(cleanChamber.ChamberName, cleanChamber.Solution))
                         {
                             cleanChamber.Result = false;
-                            this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);
+                            this.Chemical = this._solutionManager.GetValue(cleanChamber.ChamberName);
                         }
                         else
                         {
                             cleanChamber.Result = true;
-                            this.Chemical = this._chemicalManager.GetValue(cleanChamber.ChamberName);
+                            this.Chemical = this._solutionManager.GetValue(cleanChamber.ChamberName);
+                        }
+                    });
+                }
+            }
+        }
+
+        private void CleanManager_PreCleanChange(object? sender, ChemicalStatus cleanChamber)
+        {
+            if (cleanChamber.ChamberName == "Chamber1")
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    if (this._solutionManager.ConsumePreClean(cleanChamber.ChamberName, cleanChamber.Solution))
+                    {
+                        cleanChamber.Result = false;
+                        this.PreClean = this._solutionManager.GetPreCleanValue(cleanChamber.ChamberName);
+                    }
+                    else
+                    {
+                        cleanChamber.Result = true;
+                        this.PreClean = this._solutionManager.GetPreCleanValue(cleanChamber.ChamberName);
+
+                    }
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (this._solutionManager.ConsumePreClean(cleanChamber.ChamberName, cleanChamber.Solution))
+                        {
+                            cleanChamber.Result = false;
+                            this.PreClean = this._solutionManager.GetPreCleanValue(cleanChamber.ChamberName);
+                        }
+                        else
+                        {
+                            cleanChamber.Result = true;
+                            this.PreClean = this._solutionManager.GetPreCleanValue(cleanChamber.ChamberName);
                         }
                     });
                 }

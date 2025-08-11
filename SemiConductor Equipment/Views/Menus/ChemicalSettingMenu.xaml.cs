@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.ViewModels.Menus;
@@ -19,26 +10,22 @@ using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.Views.Menus
 {
-    /// <summary>
-    /// ChemicalSettingMenu.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class ChemicalSettingMenu : Page
     {
-
         #region FIELDS
-        public ChemicalMenusViewModel ViewModel { get; set; }
+        public SolutionMenusViewModel ViewModel { get; set; }
         public Rectangle ClickArea;
         public Rectangle FillLevel;
-        double maxVolume = 100.0; // 최대 리터
-        double currentVolume;
+        public Rectangle PreClean_ClickArea;
+        public Rectangle PreClean_FillLevel;
+
+        int maxVolume = 100;
+        int currentVolume, currentPreCleanVolume;
         string chamber_name = "Chamber 1";
         #endregion
 
-        #region PROPERTIES
-        #endregion
-
         #region CONSTRUCTOR
-        public ChemicalSettingMenu(ChemicalMenusViewModel viewModel)
+        public ChemicalSettingMenu(SolutionMenusViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
@@ -46,16 +33,11 @@ namespace SemiConductor_Equipment.Views.Menus
         }
         #endregion
 
-        #region COMMAND
-        #endregion
-
         #region METHOD
         void Page_Load(object sender, RoutedEventArgs e)
         {
             ViewModel.Setup_Config();
-
             GetVolume();
-
             UpdateFillLevel();
         }
 
@@ -63,87 +45,166 @@ namespace SemiConductor_Equipment.Views.Menus
         {
             if (chamber_name == "Chamber 1")
             {
-                currentVolume = ViewModel.Chamber1;
+                currentVolume = (int)ViewModel.Chemical_Chamber1;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber1;
                 ClickArea = ClickArea1;
+                PreClean_ClickArea = PreClean_ClickArea1;
                 FillLevel = FillLevel1;
+                PreClean_FillLevel = PreClean_FillLevel1;
             }
             else if (chamber_name == "Chamber 2")
             {
-                currentVolume = ViewModel.Chamber2;
+                currentVolume = (int)ViewModel.Chemical_Chamber2;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber2;
                 ClickArea = ClickArea2;
+                PreClean_ClickArea = PreClean_ClickArea2;
                 FillLevel = FillLevel2;
+                PreClean_FillLevel = PreClean_FillLevel2;
             }
             else if (chamber_name == "Chamber 3")
             {
-                currentVolume = ViewModel.Chamber3;
+                currentVolume = (int)ViewModel.Chemical_Chamber3;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber3;
                 ClickArea = ClickArea3;
+                PreClean_ClickArea = PreClean_ClickArea3;
                 FillLevel = FillLevel3;
+                PreClean_FillLevel = PreClean_FillLevel3;
             }
             else if (chamber_name == "Chamber 4")
             {
-                currentVolume = ViewModel.Chamber4;
+                currentVolume = (int)ViewModel.Chemical_Chamber4;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber4;
                 ClickArea = ClickArea4;
+                PreClean_ClickArea = PreClean_ClickArea4;
                 FillLevel = FillLevel4;
+                PreClean_FillLevel = PreClean_FillLevel4;
             }
             else if (chamber_name == "Chamber 5")
             {
-                currentVolume = ViewModel.Chamber5;
+                currentVolume = (int)ViewModel.Chemical_Chamber5;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber5;
                 ClickArea = ClickArea5;
+                PreClean_ClickArea = PreClean_ClickArea5;
                 FillLevel = FillLevel5;
+                PreClean_FillLevel = PreClean_FillLevel5;
             }
             else if (chamber_name == "Chamber 6")
             {
-                currentVolume = ViewModel.Chamber6;
+                currentVolume = (int)ViewModel.Chemical_Chamber6;
+                currentPreCleanVolume = (int)ViewModel.PreClean_Chamber6;
                 ClickArea = ClickArea6;
+                PreClean_ClickArea = PreClean_ClickArea6;
                 FillLevel = FillLevel6;
+                PreClean_FillLevel = PreClean_FillLevel6;
             }
         }
 
-        private void SetVolume(double newVolume)
+        private void SetVolume(int newVolume)
         {
             if (chamber_name == "Chamber 1")
-                ViewModel.Chamber1 = newVolume;
+                ViewModel.Chemical_Chamber1 = newVolume;
             else if (chamber_name == "Chamber 2")
-                ViewModel.Chamber2 = newVolume;
+                ViewModel.Chemical_Chamber2 = newVolume;
             else if (chamber_name == "Chamber 3")
-                ViewModel.Chamber3 = newVolume;
+                ViewModel.Chemical_Chamber3 = newVolume;
             else if (chamber_name == "Chamber 4")
-                ViewModel.Chamber4 = newVolume;
+                ViewModel.Chemical_Chamber4 = newVolume;
             else if (chamber_name == "Chamber 5")
-                ViewModel.Chamber5 = newVolume;
+                ViewModel.Chemical_Chamber5 = newVolume;
             else if (chamber_name == "Chamber 6")
-                ViewModel.Chamber6 = newVolume;
-        }
-        private void UpdateFillLevel()
-        {
-            double percent = currentVolume / maxVolume;
-            double totalHeight = ClickArea.ActualHeight;
-            FillLevel.Height = percent * totalHeight;
+                ViewModel.Chemical_Chamber6 = newVolume;
         }
 
-        // 마우스로 클릭한 위치에 따라 chemical 양 조정
+        private void UpdateFillLevel()
+        {
+            int totalHeight = (int)ClickArea.ActualHeight;
+            int height = currentVolume * totalHeight / maxVolume; // 정수 연산
+            FillLevel.Height = height; // double로 변환되어 들어감
+
+            totalHeight = (int)PreClean_ClickArea.ActualHeight;
+            height = currentPreCleanVolume * totalHeight / maxVolume; // 정수 연산
+            PreClean_FillLevel.Height = height; // double로 변환되어 들어감
+        }
+
         private void ClickArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            SetVolumeFromMouse(e.GetPosition(ClickArea).Y, ClickArea);
+            SetVolumeFromMouse((int)e.GetPosition(ClickArea).Y, ClickArea);
         }
 
         private void ClickArea_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                SetVolumeFromMouse(e.GetPosition(ClickArea).Y, ClickArea);
+                SetVolumeFromMouse((int)e.GetPosition(ClickArea).Y, ClickArea);
             }
         }
 
-        void SetVolumeFromMouse(double mouseY, Rectangle ClickArea)
+        void SetVolumeFromMouse(int mouseY, Rectangle ClickArea)
         {
-            double height = ClickArea.ActualHeight;
-            double percent = (height - mouseY) / height; // 아래서부터 채움
-            percent = Math.Clamp(percent, 0, 1);
+            double offsetY = -FillLevel.Margin.Top;
+            mouseY -= (int)offsetY;
 
-            currentVolume = Math.Round(percent * maxVolume, 1);
+            int height = (int)ClickArea.ActualHeight;
+            int filledHeight = height - mouseY; // 클릭 지점부터 아래까지 채움
+            if (filledHeight < 0) filledHeight = 0;
+            if (filledHeight > height) filledHeight = height;
+
+            // 비율 → 리터 계산 (정수)
+            currentVolume = filledHeight * maxVolume / height;
             SetVolume(currentVolume);
             UpdateFillLevel();
+        }
+
+        private void PreClean_SetVolume(int newVolume)
+        {
+            if (chamber_name == "Chamber 1")
+                ViewModel.PreClean_Chamber1 = newVolume;
+            else if (chamber_name == "Chamber 2")
+                ViewModel.PreClean_Chamber2 = newVolume;
+            else if (chamber_name == "Chamber 3")
+                ViewModel.PreClean_Chamber3 = newVolume;
+            else if (chamber_name == "Chamber 4")
+                ViewModel.PreClean_Chamber4 = newVolume;
+            else if (chamber_name == "Chamber 5")
+                ViewModel.PreClean_Chamber5 = newVolume;
+            else if (chamber_name == "Chamber 6")
+                ViewModel.PreClean_Chamber6 = newVolume;
+        }
+
+        private void PreClean_ClickArea_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PreClean_SetVolumeFromMouse((int)e.GetPosition(ClickArea).Y, PreClean_ClickArea);
+        }
+
+        private void PreClean_ClickArea_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                PreClean_SetVolumeFromMouse((int)e.GetPosition(ClickArea).Y, PreClean_ClickArea);
+            }
+        }
+
+        void PreClean_SetVolumeFromMouse(int mouseY, Rectangle PreClean_ClickArea)
+        {
+            double offsetY = -FillLevel.Margin.Top;
+            mouseY -= (int)offsetY;
+
+            int height = (int)PreClean_ClickArea.ActualHeight;
+            int filledHeight = height - mouseY; // 클릭 지점부터 아래까지 채움
+            if (filledHeight < 0) filledHeight = 0;
+            if (filledHeight > height) filledHeight = height;
+
+            // 비율 → 리터 계산 (정수)
+            currentPreCleanVolume = filledHeight * maxVolume / height;
+            PreClean_SetVolume(currentPreCleanVolume);
+            PreClean_UpdateFillLevel();
+        }
+
+        private void PreClean_UpdateFillLevel()
+        {
+            int totalHeight = (int)PreClean_ClickArea.ActualHeight;
+            int height = currentPreCleanVolume * totalHeight / maxVolume; // 정수 연산
+            PreClean_FillLevel.Height = height; // double로 변환되어 들어감
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
@@ -159,7 +220,7 @@ namespace SemiConductor_Equipment.Views.Menus
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!this.IsLoaded) return;
-            // 이벤트가 탭컨트롤 Source인지 확인 (종종 다른 컨트롤에서도 이벤트 발생할 수 있음)
+
             if (e.Source is TabControl tabControl)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
@@ -180,9 +241,11 @@ namespace SemiConductor_Equipment.Views.Menus
 
         private void Chemical_Changed(object sender, TextChangedEventArgs e)
         {
-            // 사용자가 텍스트 입력할 때마다 호출됨
             var textBox = sender as TextBox;
-            currentVolume = Convert.ToDouble(textBox.Text);
+            if (int.TryParse(textBox.Text, out int value))
+            {
+                currentVolume = value;
+            }
         }
         #endregion
     }

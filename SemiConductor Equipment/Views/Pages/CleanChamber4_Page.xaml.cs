@@ -8,6 +8,8 @@ using SemiConductor_Equipment.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace SemiConductor_Equipment.Views.Pages
 {
@@ -24,12 +26,6 @@ namespace SemiConductor_Equipment.Views.Pages
         #endregion
 
         #region CONSTRUCTOR
-        #endregion
-
-        #region COMMAND
-        #endregion
-
-        #region METHOD
         public CleanChamber4_Page(CleanChamber4_ViewModel viewModel)
         {
             InitializeComponent();
@@ -37,17 +33,19 @@ namespace SemiConductor_Equipment.Views.Pages
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-            //this.imgChamber.Source = new BitmapImage(new Uri("/Resources/Clean_Nothing_Wafer_MultiCupDown.png", UriKind.Relative));
-
         }
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                this.searchDataLoadingControl.Visibility = Visibility.Visible;
-                this.dtgLogViewer.Visibility = Visibility.Collapsed;
                 var mainPage = App.Services.GetRequiredService<MainPage>();
                 mainWindow.MainFrame.Navigate(mainPage);
             }
@@ -56,19 +54,20 @@ namespace SemiConductor_Equipment.Views.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Load_Chemical();
+            AnimateMultiCupUp();
+            await StartSprayAsync();
+            AnimateMultiCupDown();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case "Logpagetable": // 이벤트로 온 데이터가 View Model에 ObservableProperty로 선언된 무엇이냐
-                    this.searchDataLoadingControl.Visibility = Visibility.Collapsed;
-                    this.dtgLogViewer.Visibility = Visibility.Visible;
-                    break;
-
                 case "IsWafer":
                     Change_Image(ViewModel.IsWafer);
+                    break;
+                case "LogText":
+                    tblog.ScrollToEnd();
                     break;
             }
         }
@@ -90,17 +89,17 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private void Setting_Image(int isChecked)
         {
-            if (isChecked == 1)
+            if (isChecked == 1) // 멀티컵이 올라갈때
             {
-                AnimateMultiCupDown();
+                //AnimateMultiCupUpSequence();
             }
-            else if (isChecked == 2)
+            else if (isChecked == 2) // 멀티컵이 내려갈때
             {
-                AnimateMultiCupUp();
+                //AnimateMultiCupDownSequence();
             }
             else // 웨이퍼 올라갈때
             {
-                //imgChamber.Source = new BitmapImage(new Uri("/Resources/Clean_Nothing_Wafer_MultiCupDown.png", UriKind.Relative));
+                //StartScenario();
             }
         }
 
@@ -108,13 +107,13 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             DoubleAnimation moveUpAnimation = new DoubleAnimation
             {
-                From = 400,       // 시작 Y 위치
-                To = 100,         // 끝 Y 위치 (위로 올라감)
+                From = 80,       // 시작 Y 위치
+                To = 50,         // 끝 Y 위치 (위로 올라감)
                 Duration = TimeSpan.FromSeconds(1.5),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            Storyboard.SetTarget(moveUpAnimation, ImageMutiCup);
+            Storyboard.SetTarget(moveUpAnimation, MutiCup);
             Storyboard.SetTargetProperty(moveUpAnimation, new PropertyPath("(Canvas.Top)"));
 
             Storyboard sb = new Storyboard();
@@ -126,18 +125,62 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             DoubleAnimation moveUpAnimation = new DoubleAnimation
             {
-                From = 100,       // 시작 Y 위치
-                To = 400,         // 끝 Y 위치 (위로 올라감)
+                From = 50,       // 시작 Y 위치
+                To = 80,         // 끝 Y 위치 (위로 올라감)
                 Duration = TimeSpan.FromSeconds(1.5),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            Storyboard.SetTarget(moveUpAnimation, ImageMutiCup);
+            Storyboard.SetTarget(moveUpAnimation, MutiCup);
             Storyboard.SetTargetProperty(moveUpAnimation, new PropertyPath("(Canvas.Top)"));
 
             Storyboard sb = new Storyboard();
             sb.Children.Add(moveUpAnimation);
             sb.Begin();
+        }
+
+        private Random _rand = new Random();
+
+        private async Task StartSprayAsync()
+        {
+            Nozzle.Visibility = Visibility.Visible;
+
+            for (int i = 0; i < 50; i++) // 50개의 물방울 생성
+            {
+                SprayWater();
+                await Task.Delay(50); // 0.05초 간격
+            }
+
+            Nozzle.Visibility = Visibility.Collapsed;
+        }
+
+        private void SprayWater()
+        {
+            Ellipse drop = new Ellipse
+            {
+                Width = 4,
+                Height = 4,
+                Fill = Brushes.LightSkyBlue,
+                Opacity = 0.8
+            };
+
+            // 시작 위치 (SprayCanvas 좌표 기준)
+            Canvas.SetLeft(drop, 150);
+            Canvas.SetTop(drop, 0);
+
+            SprayCanvas.Children.Add(drop);
+
+            // Y 방향 애니메이션
+            var dropAnimY = new DoubleAnimation(0, 150, TimeSpan.FromSeconds(0.5))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+            dropAnimY.Completed += (s, e) => SprayCanvas.Children.Remove(drop);
+            drop.BeginAnimation(Canvas.TopProperty, dropAnimY);
+
+            // X 방향 랜덤 애니메이션
+            var dropAnimX = new DoubleAnimation(150, 100 + _rand.NextDouble() * 100, TimeSpan.FromSeconds(0.5));
+            drop.BeginAnimation(Canvas.LeftProperty, dropAnimX);
         }
         #endregion
     }

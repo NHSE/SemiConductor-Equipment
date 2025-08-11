@@ -30,7 +30,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ISecsGemServer _secsGemServer;
         private readonly IChamberManager _chamberManager;
         private readonly ICleanManager _cleanManager;
-        private readonly IChemicalManager _chemicalManager;
+        private readonly ISolutionManager _chemicalManager;
         private readonly IRobotArmManager _robotArmManager;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
@@ -121,7 +121,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
-            , IChemicalManager chemicalManager)
+            , ISolutionManager chemicalManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -207,26 +207,30 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void LoadPort2() => NavigateToPage<LoadPort2_Page>();
 
         [RelayCommand]
-        private void Buffer1() => NavigateToPage<CleanChamber1_Page>();
+        private void CleanChamber1() => NavigateToPage<CleanChamber1_Page>();
         [RelayCommand]
-        private void Buffer2() => NavigateToPage<CleanChamber2_Page>();
+        private void CleanChamber2() => NavigateToPage<CleanChamber2_Page>();
         [RelayCommand]
-        private void Buffer3() => NavigateToPage<CleanChamber3_Page>();
+        private void CleanChamber3() => NavigateToPage<CleanChamber3_Page>();
         [RelayCommand]
-        private void Buffer4() => NavigateToPage<CleanChamber4_Page>();
+        private void CleanChamber4() => NavigateToPage<CleanChamber4_Page>();
+        [RelayCommand]
+        private void CleanChamber5() => NavigateToPage<CleanChamber5_Page>();
+        [RelayCommand]
+        private void CleanChamber6() => NavigateToPage<CleanChamber6_Page>();
 
         [RelayCommand]
-        private void Chamber1() => NavigateToPage<Chamber1_Page>();
+        private void DryChamber1() => NavigateToPage<Chamber1_Page>();
         [RelayCommand]
-        private void Chamber2() => NavigateToPage<Chamber2_Page>();
+        private void DryChamber2() => NavigateToPage<Chamber2_Page>();
         [RelayCommand]
-        private void Chamber3() => NavigateToPage<Chamber3_Page>();
+        private void DryChamber3() => NavigateToPage<Chamber3_Page>();
         [RelayCommand]
-        private void Chamber4() => NavigateToPage<Chamber4_Page>();
+        private void DryChamber4() => NavigateToPage<Chamber4_Page>();
         [RelayCommand]
-        private void Chamber5() => NavigateToPage<Chamber5_Page>();
+        private void DryChamber5() => NavigateToPage<Chamber5_Page>();
         [RelayCommand]
-        private void Chamber6() => NavigateToPage<Chamber6_Page>();
+        private void DryChamber6() => NavigateToPage<Chamber6_Page>();
 
         [RelayCommand]
         private void SubMenuLog()
@@ -336,10 +340,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this._cleanManager.Unable_to_Process[chambername] = true;
                     this._cleanManager.Clean_State[chambername] = "DISAB";
                 }
+                else if(this._chemicalManager.GetPreCleanValue(chambername) == 0)
+                {
+                    this._cleanManager.Unable_to_Process[chambername] = true;
+                    this._cleanManager.Clean_State[chambername] = "DISAB";
+                }
                 else
                 {
+                    if (this._cleanManager.CleanChamberEmpty(chambername))
+                    {
+                        this._cleanManager.Clean_State[chambername] = "IDLE";
+                    }
                     this._cleanManager.Unable_to_Process[chambername] = false;
-                    this._cleanManager.Clean_State[chambername] = "UN USE";
                 }
             }
         }
@@ -377,66 +389,102 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void Draw_CleanChamber_Color()
         {
-            if (this.Clean_chamber1_state == "UN USE")
+            if (this.Clean_chamber1_state == "IDLE")
                 this.Clean_chamber1_color = Brushes.DarkGray;
-            else
+            else if (this.Clean_chamber1_state == "DONE")
+                this.Clean_chamber1_color = Brushes.LightGreen;
+            else if (this.Clean_chamber1_state == "Running")
                 this.Clean_chamber1_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber1_color = Brushes.Red;
 
-            if (this.Clean_chamber2_state == "UN USE")
+            if (this.Clean_chamber2_state == "IDLE")
                 this.Clean_chamber2_color = Brushes.DarkGray;
-            else
+            else if (this.Clean_chamber2_state == "DONE")
+                this.Clean_chamber2_color = Brushes.LightGreen;
+            else if (this.Clean_chamber2_state == "Running")
                 this.Clean_chamber2_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber2_color = Brushes.Red;
 
-            if (this.Clean_chamber3_state == "UN USE")
+            if (this.Clean_chamber3_state == "IDLE")
                 this.Clean_chamber3_color = Brushes.DarkGray;
-            else
+            else if (this.Clean_chamber3_state == "DONE")
+                this.Clean_chamber3_color = Brushes.LightGreen;
+            else if (this.Clean_chamber3_state == "Running")
                 this.Clean_chamber3_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber3_color = Brushes.Red;
 
-            if (this.Clean_chamber4_state == "UN USE")
+            if (this.Clean_chamber4_state == "IDLE")
                 this.Clean_chamber4_color = Brushes.DarkGray;
-            else
+            else if (this.Clean_chamber4_state == "DONE")
+                this.Clean_chamber4_color = Brushes.LightGreen;
+            else if (this.Clean_chamber4_state == "Running")
                 this.Clean_chamber4_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber4_color = Brushes.Red;
 
-            if (this.Clean_chamber5_state == "UN USE")
+            if (this.Clean_chamber5_state == "IDLE")
                 this.Clean_chamber5_color = Brushes.DarkGray;
-            else
+            else if (this.Clean_chamber5_state == "DONE")
+                this.Clean_chamber5_color = Brushes.LightGreen;
+            else if (this.Clean_chamber5_state == "Running")
                 this.Clean_chamber5_color = Brushes.DarkOrange;
-
-            if (this.Clean_chamber6_state == "UN USE")
-                this.Clean_chamber6_color = Brushes.DarkGray;
             else
+                this.Clean_chamber5_color = Brushes.Red;
+
+            if (this.Clean_chamber6_state == "IDLE")
+                this.Clean_chamber6_color = Brushes.DarkGray;
+            else if (this.Clean_chamber6_state == "DONE")
+                this.Clean_chamber6_color = Brushes.LightGreen;
+            else if (this.Clean_chamber6_state == "Running")
                 this.Clean_chamber6_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber6_color = Brushes.Red;
         }
 
         private void Draw_DryChamber_Color()
         {
             if (this.Dry_chamber1_state == "IDLE")
                 this.Dry_chamber1_color = Brushes.DarkGray;
+            else if (this.Dry_chamber1_state == "DONE")
+                this.Dry_chamber1_color = Brushes.LightGreen;
             else
                 this.Dry_chamber1_color = Brushes.DarkOrange;
 
             if (this.Dry_chamber2_state == "IDLE")
                 this.Dry_chamber2_color = Brushes.DarkGray;
+            else if (this.Dry_chamber2_state == "DONE")
+                this.Dry_chamber2_color = Brushes.LightGreen;
             else
                 this.Dry_chamber2_color = Brushes.DarkOrange;
 
             if (this.Dry_chamber3_state == "IDLE")
                 this.Dry_chamber3_color = Brushes.DarkGray;
+            else if (this.Dry_chamber3_state == "DONE")
+                this.Dry_chamber3_color = Brushes.LightGreen;
             else
                 this.Dry_chamber3_color = Brushes.DarkOrange;
 
             if (this.Dry_chamber4_state == "IDLE")
                 this.Dry_chamber4_color = Brushes.DarkGray;
+            else if (this.Dry_chamber4_state == "DONE")
+                this.Dry_chamber4_color = Brushes.LightGreen;
             else
                 this.Dry_chamber4_color = Brushes.DarkOrange;
 
             if (this.Dry_chamber5_state == "IDLE")
                 this.Dry_chamber5_color = Brushes.DarkGray;
+            else if (this.Dry_chamber5_state == "DONE")
+                this.Dry_chamber5_color = Brushes.LightGreen;
             else
                 this.Dry_chamber5_color = Brushes.DarkOrange;
 
             if (this.Dry_chamber6_state == "IDLE")
                 this.Dry_chamber6_color = Brushes.DarkGray;
+            else if (this.Dry_chamber6_state == "DONE")
+                this.Dry_chamber6_color = Brushes.LightGreen;
             else
                 this.Dry_chamber6_color = Brushes.DarkOrange;
         }
