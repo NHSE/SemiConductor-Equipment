@@ -51,7 +51,7 @@
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
                                 <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
                                 <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
-                                <MenuItem Header="Chemical Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
+                                <MenuItem Header="Solutions Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
                                 <MenuItem Header="Event Setting" Command="{Binding ViewModel.SubMenuEventSettingCommand}"/>
                                 <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
                             </ContextMenu>

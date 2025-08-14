@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
     {
         #region FIELDS
         private readonly ISolutionManager _configManager;
+        public event Action FillUpdate;
         #endregion
 
         #region PROPERTIES
@@ -142,6 +143,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             this.PreClean_Chamber4 = (double)this._configManager.PreClean["Chamber4"];
             this.PreClean_Chamber5 = (double)this._configManager.PreClean["Chamber5"];
             this.PreClean_Chamber6 = (double)this._configManager.PreClean["Chamber6"];
+
+            FillUpdate?.Invoke();
         }
         #endregion
     }

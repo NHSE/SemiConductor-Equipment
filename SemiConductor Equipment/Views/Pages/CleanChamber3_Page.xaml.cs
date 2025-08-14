@@ -54,9 +54,6 @@ namespace SemiConductor_Equipment.Views.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Load_Chemical();
-            AnimateMultiCupUp();
-            await StartSprayAsync();
-            AnimateMultiCupDown();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -101,86 +98,6 @@ namespace SemiConductor_Equipment.Views.Pages
             {
                 //StartScenario();
             }
-        }
-
-        private void AnimateMultiCupUp()
-        {
-            DoubleAnimation moveUpAnimation = new DoubleAnimation
-            {
-                From = 80,       // 시작 Y 위치
-                To = 50,         // 끝 Y 위치 (위로 올라감)
-                Duration = TimeSpan.FromSeconds(1.5),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-
-            Storyboard.SetTarget(moveUpAnimation, MutiCup);
-            Storyboard.SetTargetProperty(moveUpAnimation, new PropertyPath("(Canvas.Top)"));
-
-            Storyboard sb = new Storyboard();
-            sb.Children.Add(moveUpAnimation);
-            sb.Begin();
-        }
-
-        private void AnimateMultiCupDown()
-        {
-            DoubleAnimation moveUpAnimation = new DoubleAnimation
-            {
-                From = 50,       // 시작 Y 위치
-                To = 80,         // 끝 Y 위치 (위로 올라감)
-                Duration = TimeSpan.FromSeconds(1.5),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-
-            Storyboard.SetTarget(moveUpAnimation, MutiCup);
-            Storyboard.SetTargetProperty(moveUpAnimation, new PropertyPath("(Canvas.Top)"));
-
-            Storyboard sb = new Storyboard();
-            sb.Children.Add(moveUpAnimation);
-            sb.Begin();
-        }
-
-        private Random _rand = new Random();
-
-        private async Task StartSprayAsync()
-        {
-            Nozzle.Visibility = Visibility.Visible;
-
-            for (int i = 0; i < 50; i++) // 50개의 물방울 생성
-            {
-                SprayWater();
-                await Task.Delay(50); // 0.05초 간격
-            }
-
-            Nozzle.Visibility = Visibility.Collapsed;
-        }
-
-        private void SprayWater()
-        {
-            Ellipse drop = new Ellipse
-            {
-                Width = 4,
-                Height = 4,
-                Fill = Brushes.LightSkyBlue,
-                Opacity = 0.8
-            };
-
-            // 시작 위치 (SprayCanvas 좌표 기준)
-            Canvas.SetLeft(drop, 150);
-            Canvas.SetTop(drop, 0);
-
-            SprayCanvas.Children.Add(drop);
-
-            // Y 방향 애니메이션
-            var dropAnimY = new DoubleAnimation(0, 150, TimeSpan.FromSeconds(0.5))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-            };
-            dropAnimY.Completed += (s, e) => SprayCanvas.Children.Remove(drop);
-            drop.BeginAnimation(Canvas.TopProperty, dropAnimY);
-
-            // X 방향 랜덤 애니메이션
-            var dropAnimX = new DoubleAnimation(150, 100 + _rand.NextDouble() * 100, TimeSpan.FromSeconds(0.5));
-            drop.BeginAnimation(Canvas.LeftProperty, dropAnimX);
         }
         #endregion
     }

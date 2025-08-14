@@ -29,14 +29,22 @@ namespace SemiConductor_Equipment.Views.Menus
         {
             InitializeComponent();
             ViewModel = viewModel;
+            ViewModel.FillUpdate += ViewModel_FillUpdate;
             DataContext = this;
         }
+
         #endregion
 
         #region METHOD
         void Page_Load(object sender, RoutedEventArgs e)
         {
             ViewModel.Setup_Config();
+            GetVolume();
+            UpdateFillLevel();
+        }
+
+        private void ViewModel_FillUpdate()
+        {
             GetVolume();
             UpdateFillLevel();
         }
@@ -246,6 +254,31 @@ namespace SemiConductor_Equipment.Views.Menus
             {
                 currentVolume = value;
             }
+        }
+
+        private void PreClean_ClearClick(object sender, EventArgs e)
+        {
+            currentPreCleanVolume = 0;
+            PreClean_SetVolume(currentPreCleanVolume);
+            PreClean_UpdateFillLevel();
+        }
+        private void PreClean_FillupClick(object sender, EventArgs e)
+        {
+            currentPreCleanVolume = 100;
+            PreClean_SetVolume(currentPreCleanVolume);
+            PreClean_UpdateFillLevel();
+        }
+        private void ClearClick(object sender, EventArgs e)
+        {
+            currentVolume = 0;
+            SetVolume(currentVolume);
+            UpdateFillLevel();
+        }
+        private void FillupClick(object sender, EventArgs e)
+        {
+            currentVolume = 100;
+            SetVolume(currentVolume);
+            UpdateFillLevel();
         }
         #endregion
     }

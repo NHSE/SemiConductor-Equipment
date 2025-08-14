@@ -5,7 +5,7 @@
     <Compile Update="Controls\LoadingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Menus\ChemicalSettingMenu.xaml.cs">
+    <Compile Update="Views\Menus\SolutionSettingMenu.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Menus\EquipMenu.xaml.cs">

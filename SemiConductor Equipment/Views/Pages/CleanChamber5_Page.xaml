@@ -28,8 +28,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="16,0,0,0">
-                    <ui:TextBlock Text="Clean Chamber 4" FontWeight="Bold" FontSize="18" Foreground="White"/>
-                    <ui:TextBlock Text="상태: Ready" Foreground="LightGreen" FontSize="13"/>
+                    <ui:TextBlock Text="Clean Chamber 5" FontWeight="Bold" FontSize="18" Foreground="White"/>
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
                        Grid.Column="1"
@@ -56,47 +55,23 @@
             <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
                 <Grid>
                     <StackPanel>
-                        <ui:TextBlock Text="{Binding ViewModel.Chemical, StringFormat='Chemical Remaining : {0} L'}" Foreground="LightGreen" FontSize="13"/>
-                    <ui:TextBlock Text="{Binding ViewModel.PreClean, StringFormat='Pre-Clean Remaining : {0} L'}" Foreground="LightGreen" FontSize="13"/>
-
-                    <Canvas x:Name="MainCanvas" HorizontalAlignment="Center" VerticalAlignment="Center" Width="640" Height="400">
-                        <Canvas>
-                            <Rectangle
-                                x:Name="MutiCup"
-                                Width="350"
-                                Height="300"
-                                Fill="#26323F"
-                                Stroke="#41506A"
-                                StrokeThickness="6"
-                                Canvas.Left="149"
-                                Canvas.Top="24"
-                                RenderTransformOrigin="0.5,0.5">
-                                <Rectangle.RenderTransform>
-                                    <ScaleTransform x:Name="MutiCupScale" ScaleX="0.6" ScaleY="0.6"/>
-                                </Rectangle.RenderTransform>
-                            </Rectangle>
-                        </Canvas>
-
-                            <Rectangle x:Name="Spinner" Width="130" Height="120" 
-                            Fill="LightGray" Stroke="DarkGray"
-                            Canvas.Left="255" Canvas.Top="150"
-                            RenderTransformOrigin="0.5,0.5" Opacity="0.2" StrokeEndLineCap="Round" StrokeDashCap="Square"/>
-
-                            <Grid Width="130" Height="30" Canvas.Left="255" Canvas.Top="136">
-                                <Ellipse x:Name="Wafer" 
-                                Fill="LightGray" Stroke="DarkGray"
-                                RenderTransformOrigin="0.5,0.5">
-                                </Ellipse>
-                                <TextBlock Text="ssssssssssssssssssssss"/>
-                            </Grid>
-
-                            <Rectangle x:Name="Nozzle" Width="120" Height="80" Fill="#EEE" RadiusX="4" RadiusY="4"
-                  Canvas.Left="500" Canvas.Top="0" Visibility="Collapsed"/>
-
-                            <Canvas x:Name="SprayCanvas" Width="300" Height="200" 
-                                   Canvas.Left="200" Canvas.Top="100"
-                                   IsHitTestVisible="False" />
-                        </Canvas>
+                        <ui:Card Margin="0 10 0 0">
+                            <StackPanel>
+                                <Border Background="#263444">
+                                    <TextBlock Text="Wafer Info" Margin="10 10 0 10" FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="White"/>
+                                </Border>
+                                <UniformGrid Rows="4" Columns="1" Margin="10 50 0 360">
+                                    <ui:TextBlock Text="{Binding ViewModel.LoadPort, StringFormat='LoadPort : {0}'}" FontWeight="Bold" Margin="0 0 0 50"/>
+                                    <ui:TextBlock Text="{Binding ViewModel.CarrierID, StringFormat='Carrier ID : {0}'}" FontWeight="Bold"/>
+                                    <ui:TextBlock Text="{Binding ViewModel.SlotID, StringFormat='Slot ID : {0}'}" FontWeight="Bold"/>
+                                    <ui:TextBlock Text="{Binding ViewModel.CJID, StringFormat='CJID : {0}'}" FontWeight="Bold"/>
+                                    <ui:TextBlock Text="{Binding ViewModel.PJID, StringFormat='PJID : {0}'}" FontWeight="Bold"/>
+                                    <ui:TextBlock Text="{Binding ViewModel.State, StringFormat='Status : {0}'}" FontWeight="Bold"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </ui:Card>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -113,14 +88,13 @@
                     <ui:Card Grid.Row="0" Margin="0 10 0 0" Height="110">
                         <StackPanel>
                             <Border Background="#263444">
-                                <TextBlock Text="Wafer Info" Margin="10 10 0 10" FontSize="20"
-                                           FontWeight="Bold"
-                                           Foreground="White"/>
-                                </Border>
-                                    <UniformGrid Rows="3" Columns="3" Margin="20 10 0 0">
-                                <ui:TextBlock Text="{Binding ViewModel.SlotID, StringFormat='Slot ID : {0}'}" FontWeight="Bold"/>
-                                <ui:TextBlock Text="Solution : " FontWeight="Bold"/>
-                                <ui:TextBlock Text="{Binding ViewModel.State, StringFormat='Status : {0}'}" FontWeight="Bold"/>
+                                <TextBlock Text="Chamber Info" Margin="10 10 0 10" FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="White"/>
+                            </Border>
+                            <UniformGrid Rows="1" Columns="2" Margin="20 10 0 0">
+                                <ui:TextBlock Text="{Binding ViewModel.Chemical, StringFormat='Chemical Remaining : {0} L'}" Foreground="LightGreen" FontSize="13"/>
+                                <ui:TextBlock Text="{Binding ViewModel.PreClean, StringFormat='Pre-Clean Remaining : {0} L'}" Foreground="LightGreen" FontSize="13"/>
                             </UniformGrid>
                         </StackPanel>
                     </ui:Card>

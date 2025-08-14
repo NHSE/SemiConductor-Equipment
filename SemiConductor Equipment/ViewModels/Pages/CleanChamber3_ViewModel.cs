@@ -41,6 +41,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [ObservableProperty]
         private string _state;
         [ObservableProperty]
+        private string _cJID;
+        [ObservableProperty]
+        private string _pJID;
+        [ObservableProperty]
+        private string _loadPort;
+        [ObservableProperty]
+        private string _carrierID;
+        [ObservableProperty]
         private int _setting_Flow_Rate;
         [ObservableProperty]
         private int _setting_Spray_Time;
@@ -157,8 +165,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.IsWafer = (this.IsWafer + 1) % 2;
                 if(cleanChamber.State != "Running")
                 {
-                    this.SlotID = string.Empty;
-                    this.State = string.Empty;
+                    this.CarrierID = "";
+                    this.SlotID = "";
+                    this.CJID = "";
+                    this.PJID = "";
+                    this.LoadPort = "";
+                    this.State = "";
                 }
             }
         }
@@ -184,14 +196,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {
+                    this.CarrierID = cleanChamber.wafer.CarrierId;
                     this.SlotID = cleanChamber.wafer.SlotId;
+                    this.CJID = cleanChamber.wafer.CJId;
+                    this.PJID = cleanChamber.wafer.PJId;
+                    this.LoadPort = cleanChamber.wafer.LoadportId.ToString();
                     this.State = cleanChamber.wafer.Status;
                 }
                 else
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
+                        this.CarrierID = cleanChamber.wafer.CarrierId;
                         this.SlotID = cleanChamber.wafer.SlotId;
+                        this.CJID = cleanChamber.wafer.CJId;
+                        this.PJID = cleanChamber.wafer.PJId;
+                        this.LoadPort = cleanChamber.wafer.LoadportId.ToString();
                         this.State = cleanChamber.wafer.Status;
                     });
                 }
