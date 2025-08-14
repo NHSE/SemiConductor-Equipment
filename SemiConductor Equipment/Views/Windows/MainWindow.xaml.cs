@@ -53,6 +53,12 @@ namespace SemiConductor_Equipment.Views.Windows
                 App.Services.GetRequiredService<Chamber4_Page>();
                 App.Services.GetRequiredService<Chamber5_Page>();
                 App.Services.GetRequiredService<Chamber6_Page>();
+                App.Services.GetRequiredService<CleanChamber1_Page>();
+                App.Services.GetRequiredService<CleanChamber2_Page>();
+                App.Services.GetRequiredService<CleanChamber3_Page>();
+                App.Services.GetRequiredService<CleanChamber4_Page>();
+                //App.Services.GetRequiredService<CleanChamber5_Page>();
+                //App.Services.GetRequiredService<CleanChamber6_Page>();
                 //
 
                 var mainWindow = Application.Current.MainWindow as MainWindow;

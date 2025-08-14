@@ -13,6 +13,7 @@ namespace SemiConductor_Equipment.Commands
         public RobotCommandType CommandType { get; set; }
         public Wafer Wafer { get; set; } = default!;
         public string Location { get; set; } = string.Empty;
+        public string NextLocation { get; set; } = string.Empty;
 
         public string Completed { get; set; } = string.Empty;
     }

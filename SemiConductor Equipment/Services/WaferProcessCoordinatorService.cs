@@ -16,16 +16,18 @@ namespace SemiConductor_Equipment.Services
     public class WaferProcessCoordinatorService
     {
         private readonly IChamberManager _chamberManager;
-        private readonly IBufferManager _bufferManager;
+        private readonly ICleanManager _cleanManager;
         private readonly IRobotArmManager _robotArmManager;
+        private readonly IMessageBox _messageBoxManager;
         private readonly RunningStateService _runningStateService;
 
-        public WaferProcessCoordinatorService(IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager, RunningStateService runningStateService)
+        public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
-            _chamberManager = chamberManager;
-            _bufferManager = bufferManager;
-            _robotArmManager = robotArmManager;
-            _runningStateService = runningStateService;
+            this._chamberManager = chamberManager;
+            this._cleanManager = cleanManager;
+            this._robotArmManager = robotArmManager;
+            this._messageBoxManager = messageBoxManager;
+            this._runningStateService = runningStateService;
         }
 
         public async Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token)
@@ -41,15 +43,28 @@ namespace SemiConductor_Equipment.Services
                 {
                     bool isAllDone = waferQueue.Count == 0
                      && _chamberManager.IsAllChamberEmpty()
-                     && _bufferManager.IsAllBufferEmpty();
+                     && _cleanManager.IsAllCleanChamberEmpty();
 
                     if (isAllDone)
                         break;
 
-                    // 1. 챔버에 빈 자리가 있는지 확인
-                    string? emptyChamber = _chamberManager.FindEmptyChamber();
+                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함
+                    if(_cleanManager.IsAllDisableChamber() && waferQueue.Count > 0)
+                    {
+                        while(waferQueue.Count != 0)
+                        {
+                            var wafer = waferQueue.Dequeue();
+                            wafer.Status = "Not Process";
+                        }
+                        this._messageBoxManager.Show("예외 발생", "Soultion이 부족합니다.\n설정 후 다시 진행해주세요.");
+                        //메세지 박스
+                        waferQueue.Clear();
+                    }
 
-                    if (emptyChamber != null && waferQueue.Count > 0)
+                    // 1. 챔버에 빈 자리가 있는지 확인
+                    string? emptyCleanChamber = _cleanManager.FindEmptySlot();
+
+                    if (emptyCleanChamber != null && waferQueue.Count > 0)
                     {
                         var wafer = waferQueue.Peek(); // ❗일단 꺼내지 말고 Peek
 
@@ -65,15 +80,16 @@ namespace SemiConductor_Equipment.Services
                                 this._runningStateService.Change_State(sender, EquipmentStatusEnum.Running);
                             }
 
-                            wafer.TargetLocation = emptyChamber;
+                            wafer.TargetLocation = emptyCleanChamber;
                             _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                             {
                                 CommandType = RobotCommandType.Place,
                                 Wafer = wafer,
-                                Location = emptyChamber
+                                Location = emptyCleanChamber,
+                                NextLocation = "Clean Chamber"
                             });
 
-                            _chamberManager.AddWaferToChamber(emptyChamber, wafer);
+                            _cleanManager.AddWaferToBuffer(emptyCleanChamber, wafer);
                         }
                     }
 
@@ -84,22 +100,23 @@ namespace SemiConductor_Equipment.Services
                         {
                             if (_robotArmManager.CommandSize_Chamber() == 0) break;
 
-                            string? emptyBuffer = _bufferManager.FindEmptySlot();
-                            if (emptyBuffer != null)
+                            string? emptyDryChamber = _chamberManager.FindEmptyChamber();
+                            if (emptyDryChamber != null)
                             {
                                 var Command = _robotArmManager.DequeueCommand_Chamber();
                                 var completedInChamber = Command.Completed;
 
-                                Command.Wafer.TargetLocation = emptyBuffer;
+                                Command.Wafer.TargetLocation = emptyDryChamber;
 
                                 _robotArmManager.EnqueueCommand_RobotArm(new RobotCommand
                                 {
                                     CommandType = RobotCommandType.Place,
                                     Wafer = Command.Wafer,
                                     Location = Command.Wafer.TargetLocation,
+                                    NextLocation = "Dry Chamber",
                                     Completed = completedInChamber
                                 });
-                                _bufferManager.AddWaferToBuffer(emptyBuffer, Command.Wafer);
+                                _chamberManager.AddWaferToChamber(emptyDryChamber, Command.Wafer);
 
                                 await Task.Delay(300);
                             }
@@ -122,6 +139,7 @@ namespace SemiConductor_Equipment.Services
                                 CommandType = RobotCommandType.Place,
                                 Wafer = Command.Wafer,
                                 Location = Command.Wafer.TargetLocation,
+                                NextLocation = "LoadPort",
                                 Completed = Command.Completed
                             });
                         }

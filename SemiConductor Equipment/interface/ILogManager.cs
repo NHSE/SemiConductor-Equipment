@@ -13,7 +13,8 @@ namespace SemiConductor_Equipment.interfaces
 
         void Subscribe(string logType, Action<string> handler);
 
-        string GetLogFilePath(string logType);
+        string GetDryLogFilePath(string logType);
+        string GetCleanLogFilePath(string logType);
 
         string GetSecsGemLogPath(string logType);
 

@@ -27,9 +27,13 @@ namespace SemiConductor_Equipment.Services
         public void WriteLog(string logType, string messagetype, string message)
         {
             string filePath;
-            if (logType.Contains("Chamber"))
+            if (logType.Contains("Dry_Chamber"))
             {
-                filePath = GetLogFilePath(logType);
+                filePath = GetDryLogFilePath(logType);
+            }
+            else if (logType.Contains("Clean_Chamber"))
+            {
+                filePath = GetCleanLogFilePath(logType);
             }
             else if(logType.Contains("Event"))
             {
@@ -61,7 +65,16 @@ namespace SemiConductor_Equipment.Services
         /// <summary>
         /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
         /// </summary>
-        public string GetLogFilePath(string logType)
+        public string GetDryLogFilePath(string logType)
+        {
+            string fileName = $"{logType}_{LogDataTime}.log";
+            return Path.Combine(_logDirectory, fileName);
+        }
+
+        /// <summary>
+        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// </summary>
+        public string GetCleanLogFilePath(string logType)
         {
             string fileName = $"{logType}_{LogDataTime}.log";
             return Path.Combine(_logDirectory, fileName);

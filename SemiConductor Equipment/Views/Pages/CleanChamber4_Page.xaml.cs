@@ -6,23 +6,27 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Services;
 using SemiConductor_Equipment.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace SemiConductor_Equipment.Views.Pages
 {
     /// <summary>
-    /// Buffer1_Page.xaml에 대한 상호 작용 논리
+    /// Buffer4_Page.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class Buffer1_Page : Page
+    public partial class CleanChamber4_Page : Page
     {
         #region FIELDS
-        public Buffer_ViewModel ViewModel { get; set; }
+        public CleanChamber4_ViewModel ViewModel { get; set; }
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
-        public Buffer1_Page(Buffer_ViewModel viewModel)
+        public CleanChamber4_Page(CleanChamber4_ViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
@@ -42,8 +46,6 @@ namespace SemiConductor_Equipment.Views.Pages
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                this.searchDataLoadingControl.Visibility = Visibility.Visible;
-                this.dtgLogViewer.Visibility = Visibility.Collapsed;
                 var mainPage = App.Services.GetRequiredService<MainPage>();
                 mainWindow.MainFrame.Navigate(mainPage);
             }
@@ -51,17 +53,50 @@ namespace SemiConductor_Equipment.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //await ViewModel.OnNavigatedToAsync(1);
+            ViewModel.Load_Chemical();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case "Logpagetable": // 이벤트로 온 데이터가 View Model에 ObservableProperty로 선언된 무엇이냐
-                    this.searchDataLoadingControl.Visibility = Visibility.Collapsed;
-                    this.dtgLogViewer.Visibility = Visibility.Visible;
+                case "IsWafer":
+                    Change_Image(ViewModel.IsWafer);
                     break;
+                case "LogText":
+                    tblog.ScrollToEnd();
+                    break;
+            }
+        }
+
+        private void Change_Image(int isChecked)
+        {
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                Setting_Image(isChecked);
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Setting_Image(isChecked);
+                });
+            }
+        }
+
+        private void Setting_Image(int isChecked)
+        {
+            if (isChecked == 1) // 멀티컵이 올라갈때
+            {
+                //AnimateMultiCupUpSequence();
+            }
+            else if (isChecked == 2) // 멀티컵이 내려갈때
+            {
+                //AnimateMultiCupDownSequence();
+            }
+            else // 웨이퍼 올라갈때
+            {
+                //StartScenario();
             }
         }
         #endregion

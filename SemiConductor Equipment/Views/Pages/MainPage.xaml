@@ -51,6 +51,7 @@
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
                                 <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
                                 <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
+                                <MenuItem Header="Solutions Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
                                 <MenuItem Header="Event Setting" Command="{Binding ViewModel.SubMenuEventSettingCommand}"/>
                                 <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
                             </ContextMenu>
@@ -92,43 +93,61 @@
                     </Grid.RowDefinitions>
 
                     <!-- 버퍼 -->
-                    <Border Grid.Row="0" Background="#2F3B4C" CornerRadius="12" Width="350" Height="150" Margin="0 0 0 0" Padding="18" Effect="{StaticResource DropShadow}">
+                    <Border Grid.Row="0" Background="#2F3B4C" CornerRadius="12" Width="350" Height="180" Margin="0 0 0 0" Padding="18" Effect="{StaticResource DropShadow}">
                         <StackPanel>
-                            <TextBlock Text="BUFFER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <UniformGrid Rows="2" Columns="4" Margin="0 12 0 0">
-                                <ui:Button x:Name="btnBuffer1" Background="#5D4037" Command="{Binding ViewModel.Buffer1Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                            <TextBlock Text="CLEAN CHAMBER" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <UniformGrid Rows="2" Columns="3" Margin="0 12 0 0">
+                                <ui:Button x:Name="btnCleanChamber1" Background="#5D4037" Command="{Binding ViewModel.CleanChamber1Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
                                     <StackPanel VerticalAlignment="Center" Width="Auto">
-                                        <TextBlock Text="B1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ViewModel.Buffer1_state}"
+                                        <TextBlock Text="CH1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber1_state}"
                                             FontSize="7"
-                                            Foreground="{Binding ViewModel.Buffer1_color}"
+                                            Foreground="{Binding ViewModel.Clean_chamber1_color}"
                                             HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </ui:Button>
-                                <ui:Button x:Name="btnBuffer2" Background="#5D4037" Command="{Binding ViewModel.Buffer2Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                <ui:Button x:Name="btnCleanChamber2" Background="#5D4037" Command="{Binding ViewModel.CleanChamber2Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
                                     <StackPanel VerticalAlignment="Center" Width="Auto">
-                                        <TextBlock Text="B2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ViewModel.Buffer2_state}"
+                                        <TextBlock Text="CH2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber2_state}"
                                             FontSize="7"
-                                            Foreground="{Binding ViewModel.Buffer2_color}"
+                                            Foreground="{Binding ViewModel.Clean_chamber2_color}"
                                             HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </ui:Button>
-                                <ui:Button x:Name="btnBuffer3" Background="#5D4037" Command="{Binding ViewModel.Buffer3Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                <ui:Button x:Name="btnCleanChamber3" Background="#5D4037" Command="{Binding ViewModel.CleanChamber3Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
                                     <StackPanel VerticalAlignment="Center" Width="Auto">
-                                        <TextBlock Text="B3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ViewModel.Buffer3_state}"
+                                        <TextBlock Text="CH3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber3_state}"
                                             FontSize="7"
-                                            Foreground="{Binding ViewModel.Buffer3_color}"
+                                            Foreground="{Binding ViewModel.Clean_chamber3_color}"
                                             HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </ui:Button>
-                                <ui:Button x:Name="btnBuffer4" Background="#5D4037" Command="{Binding ViewModel.Buffer4Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                <ui:Button x:Name="btnCleanChamber4" Background="#5D4037" Command="{Binding ViewModel.CleanChamber4Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
                                     <StackPanel VerticalAlignment="Center" Width="Auto">
-                                        <TextBlock Text="B4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding ViewModel.Buffer4_state}"
+                                        <TextBlock Text="CH4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber4_state}"
                                             FontSize="7"
-                                            Foreground="{Binding ViewModel.Buffer4_color}"
+                                            Foreground="{Binding ViewModel.Clean_chamber4_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button x:Name="btnCleanChamber5" Background="#5D4037" Command="{Binding ViewModel.CleanChamber5Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="CH5" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber5_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Clean_chamber5_color}"
+                                            HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </ui:Button>
+                                <ui:Button x:Name="btnCleanChamber6" Background="#5D4037" Command="{Binding ViewModel.CleanChamber6Command}" Style="{StaticResource ModuleButtonStyle}" Width="66">
+                                    <StackPanel VerticalAlignment="Center" Width="Auto">
+                                        <TextBlock Text="CH6" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ViewModel.Clean_chamber6_state}"
+                                            FontSize="7"
+                                            Foreground="{Binding ViewModel.Clean_chamber6_color}"
                                             HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </ui:Button>
@@ -137,9 +156,9 @@
                     </Border>
 
                     <!-- 로봇 -->
-                    <Border Grid.Row="1" Background="#2F3B4C" CornerRadius="12" Width="350" Height="100" Padding="10" Margin="0 0 0 40" Effect="{StaticResource DropShadow}">
+                    <Border Grid.Row="1" Background="#2F3B4C" CornerRadius="12" Width="350" Height="100" Padding="10" Margin="0 0 0 20" Effect="{StaticResource DropShadow}">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <TextBlock Text="ROBOT Arm" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="TM" Foreground="#B0B7C3" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <ui:Button x:Name="btnRobotArm" Content="ROBOT Arm" Background="#F57C00" Style="{StaticResource ModuleButtonStyle}" Width="180"/>
                         </StackPanel>
                     </Border>
@@ -148,7 +167,7 @@
                 <!-- 우측: 챔버 -->
                 <Border Grid.Column="2" Background="#2F3B4C" CornerRadius="12" Margin="12" Width="200" Height="300" Padding="12" Effect="{StaticResource DropShadow}">
                     <StackPanel>
-                        <TextBlock Text="PROCESS CHAMBER"
+                        <TextBlock Text="DRY CHAMBER"
                    Foreground="#B0B7C3"
                    FontWeight="Bold"
                    FontSize="14"
@@ -156,45 +175,45 @@
                    Margin="0,0,0,10"/>
 
                         <UniformGrid Rows="3" Columns="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <ui:Button x:Name="btnChamber1" Command="{Binding ViewModel.Chamber1Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber1" Command="{Binding ViewModel.DryChamber1Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH1" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber1_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber1_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber1_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber1_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 
-                            <ui:Button x:Name="btnChamber2" Command="{Binding ViewModel.Chamber2Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber2" Command="{Binding ViewModel.DryChamber2Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH2" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber2_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber2_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber2_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber2_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 
-                            <ui:Button x:Name="btnChamber3" Command="{Binding ViewModel.Chamber3Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber3" Command="{Binding ViewModel.DryChamber3Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH3" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber3_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber3_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber3_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber3_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 
-                            <ui:Button x:Name="btnChamber4" Command="{Binding ViewModel.Chamber4Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber4" Command="{Binding ViewModel.DryChamber4Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH4" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber4_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber4_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber4_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber4_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 
-                            <ui:Button x:Name="btnChamber5" Command="{Binding ViewModel.Chamber5Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber5" Command="{Binding ViewModel.DryChamber5Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH5" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber5_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber5_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber5_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber5_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 
-                            <ui:Button x:Name="btnChamber6" Command="{Binding ViewModel.Chamber6Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
+                            <ui:Button x:Name="btnDryChamber6" Command="{Binding ViewModel.DryChamber6Command}" Background="#1565C0" Width="70" Height="70" Margin="5" Style="{StaticResource ModuleButtonStyle}">
                                 <StackPanel VerticalAlignment="Center" Width="Auto">
                                     <TextBlock Text="CH6" FontSize="13" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ViewModel.Chamber6_state}" FontSize="8" Foreground="{Binding ViewModel.Chamber6_color}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ViewModel.Dry_chamber6_state}" FontSize="8" Foreground="{Binding ViewModel.Dry_chamber6_color}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </ui:Button>
 

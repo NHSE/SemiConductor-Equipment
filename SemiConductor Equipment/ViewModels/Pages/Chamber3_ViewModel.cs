@@ -87,7 +87,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
-            this._logManager.Subscribe($"Chamber3", OnLogUpdated);
+            this._logManager.Subscribe($"Dry_Chamber3", OnLogUpdated);
 
             LoadInitialLogs();
             SetupLogFileWatcher();
@@ -116,7 +116,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void SetupLogFileWatcher()
         {
             var logDirectory = @"C:\Logs";
-            var logFileName = $"Chamber3_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
+            var logFileName = $"Dry_Chamber3_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
 
             _logFileWatcher = new FileSystemWatcher
             {
@@ -158,7 +158,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void LoadInitialLogs()
         {
-            var logPath = Path.Combine(@"C:\Logs", $"Chamber3_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
+            var logPath = Path.Combine(@"C:\Logs", $"Dry_Chamber3_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
             if (File.Exists(logPath))
             {
                 LogText = File.ReadAllText(logPath);
@@ -252,7 +252,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnTempChanged(object? sender, Wafer e)
         {
-            if (e.CurrentLocation == "Chamber3")
+            if (e.CurrentLocation == "Dry Chamber_Chamber3")
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {

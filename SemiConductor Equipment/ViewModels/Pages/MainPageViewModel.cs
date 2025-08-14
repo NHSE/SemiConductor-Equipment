@@ -29,7 +29,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IConfigManager _configManager;
         private readonly ISecsGemServer _secsGemServer;
         private readonly IChamberManager _chamberManager;
-        private readonly IBufferManager _bufferManager;
+        private readonly ICleanManager _cleanManager;
+        private readonly ISolutionManager _chemicalManager;
         private readonly IRobotArmManager _robotArmManager;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
@@ -60,46 +61,54 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private bool? _isDisconnected = false;
 
         [ObservableProperty]
-        private string? _chamber1_state;
+        private string? _dry_chamber1_state;
         [ObservableProperty]
-        private Brush? _chamber1_color;
+        private Brush? _dry_chamber1_color;
         [ObservableProperty]
-        private string? _chamber2_state;
+        private string? _dry_chamber2_state;
         [ObservableProperty]
-        private Brush? _chamber2_color;
+        private Brush? _dry_chamber2_color;
         [ObservableProperty]
-        private string? _chamber3_state;
+        private string? _dry_chamber3_state;
         [ObservableProperty]
-        private Brush? _chamber3_color;
+        private Brush? _dry_chamber3_color;
         [ObservableProperty]
-        private string? _chamber4_state;
+        private string? _dry_chamber4_state;
         [ObservableProperty]
-        private Brush? _chamber4_color;
+        private Brush? _dry_chamber4_color;
         [ObservableProperty]
-        private string? _chamber5_state;
+        private string? _dry_chamber5_state;
         [ObservableProperty]
-        private Brush? _chamber5_color;
+        private Brush? _dry_chamber5_color;
         [ObservableProperty]
-        private string? _chamber6_state;
+        private string? _dry_chamber6_state;
         [ObservableProperty]
-        private Brush? _chamber6_color;
+        private Brush? _dry_chamber6_color;
 
         [ObservableProperty]
-        private string? _buffer1_state;
+        private string? _clean_chamber1_state;
         [ObservableProperty]
-        private Brush? _buffer1_color;
+        private Brush? _clean_chamber1_color;
         [ObservableProperty]
-        private string? _buffer2_state;
+        private string? _clean_chamber2_state;
         [ObservableProperty]
-        private Brush? _buffer2_color;
+        private Brush? _clean_chamber2_color;
         [ObservableProperty]
-        private string? _buffer3_state;
+        private string? _clean_chamber3_state;
         [ObservableProperty]
-        private Brush? _buffer3_color;
+        private Brush? _clean_chamber3_color;
         [ObservableProperty]
-        private string? _buffer4_state;
+        private string? _clean_chamber4_state;
         [ObservableProperty]
-        private Brush? _buffer4_color;
+        private Brush? _clean_chamber4_color;
+        [ObservableProperty]
+        private string? _clean_chamber5_state;
+        [ObservableProperty]
+        private Brush? _clean_chamber5_color;
+        [ObservableProperty]
+        private string? _clean_chamber6_state;
+        [ObservableProperty]
+        private Brush? _clean_chamber6_color;
 
         [ObservableProperty]
         private bool? _setting_menu = true;
@@ -111,7 +120,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
-            IChamberManager chamberManager, IBufferManager bufferManager, IRobotArmManager robotArmManager, IVIDManager svIDManager)
+            IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
+            , ISolutionManager chemicalManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -131,30 +141,17 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._configManager = configManager;
             this._secsGemServer = secsGemServer;
             this._chamberManager = chamberManager;
-            this._bufferManager = bufferManager;
+            this._cleanManager = cleanManager;
             this._robotArmManager = robotArmManager;
             this._vIDManager = svIDManager;
+            this._chemicalManager = chemicalManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
             this._vIDManager.SetSVID(100, this.Equipment_state);
 
-            this.Chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
-            this.Chamber2_state = this._chamberManager.Chamber_State["Chamber2"];
-            this.Chamber3_state = this._chamberManager.Chamber_State["Chamber3"];
-            this.Chamber4_state = this._chamberManager.Chamber_State["Chamber4"];
-            this.Chamber5_state = this._chamberManager.Chamber_State["Chamber5"];
-            this.Chamber6_state = this._chamberManager.Chamber_State["Chamber6"];
-
-            this.Buffer1_state = this._bufferManager.Buffer_State["Buffer1"];
-            this.Buffer2_state = this._bufferManager.Buffer_State["Buffer2"];
-            this.Buffer3_state = this._bufferManager.Buffer_State["Buffer3"];
-            this.Buffer4_state = this._bufferManager.Buffer_State["Buffer4"];
-
-            Draw_Color("ALL");
-
-            this._chamberManager.DataEnqueued += Chamber_DataEnqueued;
-            this._bufferManager.DataEnqueued += Buffer_DataEnqueued;
+            this._chamberManager.DataEnqueued += Dry_DataEnqueued;
+            this._cleanManager.DataEnqueued += Clean_DataEnqueued;
             this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
 
             if (this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
@@ -210,26 +207,30 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void LoadPort2() => NavigateToPage<LoadPort2_Page>();
 
         [RelayCommand]
-        private void Buffer1() => NavigateToPage<Buffer1_Page>();
+        private void CleanChamber1() => NavigateToPage<CleanChamber1_Page>();
         [RelayCommand]
-        private void Buffer2() => NavigateToPage<Buffer2_Page>();
+        private void CleanChamber2() => NavigateToPage<CleanChamber2_Page>();
         [RelayCommand]
-        private void Buffer3() => NavigateToPage<Buffer3_Page>();
+        private void CleanChamber3() => NavigateToPage<CleanChamber3_Page>();
         [RelayCommand]
-        private void Buffer4() => NavigateToPage<Buffer4_Page>();
+        private void CleanChamber4() => NavigateToPage<CleanChamber4_Page>();
+        [RelayCommand]
+        private void CleanChamber5() => NavigateToPage<CleanChamber5_Page>();
+        [RelayCommand]
+        private void CleanChamber6() => NavigateToPage<CleanChamber6_Page>();
 
         [RelayCommand]
-        private void Chamber1() => NavigateToPage<Chamber1_Page>();
+        private void DryChamber1() => NavigateToPage<Chamber1_Page>();
         [RelayCommand]
-        private void Chamber2() => NavigateToPage<Chamber2_Page>();
+        private void DryChamber2() => NavigateToPage<Chamber2_Page>();
         [RelayCommand]
-        private void Chamber3() => NavigateToPage<Chamber3_Page>();
+        private void DryChamber3() => NavigateToPage<Chamber3_Page>();
         [RelayCommand]
-        private void Chamber4() => NavigateToPage<Chamber4_Page>();
+        private void DryChamber4() => NavigateToPage<Chamber4_Page>();
         [RelayCommand]
-        private void Chamber5() => NavigateToPage<Chamber5_Page>();
+        private void DryChamber5() => NavigateToPage<Chamber5_Page>();
         [RelayCommand]
-        private void Chamber6() => NavigateToPage<Chamber6_Page>();
+        private void DryChamber6() => NavigateToPage<Chamber6_Page>();
 
         [RelayCommand]
         private void SubMenuLog()
@@ -245,6 +246,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
 
         [RelayCommand]
+        private void SubMenuChemicalSetting() => NavigateToPage<ChemicalSettingMenu>();
+
+        [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
 
         [RelayCommand]
@@ -255,8 +259,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            { 
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
                 if (state == EquipmentStatusEnum.Running)
                 {
                     this.Equipment_color = Brushes.Orange;
@@ -281,7 +285,37 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this.Equipment_state = "Ready";
                     this.Setting_menu = true;
                 }
-            });
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (state == EquipmentStatusEnum.Running)
+                    {
+                        this.Equipment_color = Brushes.Orange;
+                        this.Equipment_state = "Running";
+                        this.Setting_menu = false;
+                    }
+                    else if (state == EquipmentStatusEnum.Completed)
+                    {
+                        this.Equipment_color = Brushes.LimeGreen;
+                        this.Equipment_state = "Completed";
+                        this.Setting_menu = true;
+                    }
+                    else if (state == EquipmentStatusEnum.Error)
+                    {
+                        this.Equipment_color = Brushes.Red;
+                        this.Equipment_state = "Error";
+                        this.Setting_menu = true;
+                    }
+                    else
+                    {
+                        this.Equipment_color = Brushes.LightBlue;
+                        this.Equipment_state = "Ready";
+                        this.Setting_menu = true;
+                    }
+                });
+            }
 
             this._vIDManager?.SetSVID(100, this.Equipment_state);
         }
@@ -296,151 +330,323 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        private void Draw_Color(string Draw_Type)
+        private void Check_CleanChamber_Enable()
         {
-            if (Draw_Type == "Chamber")
-                Draw_Chamber_Color();
-            else if (Draw_Type == "Buffer")
-                Draw_Buffer_Color();
-            else
+            for(int chamber_num = 1; chamber_num < 7; chamber_num++)
             {
-                Draw_Chamber_Color();
-                Draw_Buffer_Color();
+                string chambername = "Chamber" + chamber_num;
+                if(this._chemicalManager.GetValue(chambername) == 0)
+                {
+                    this._cleanManager.Unable_to_Process[chambername] = true;
+                    this._cleanManager.Clean_State[chambername] = "DISAB";
+                }
+                else if(this._chemicalManager.GetPreCleanValue(chambername) == 0)
+                {
+                    this._cleanManager.Unable_to_Process[chambername] = true;
+                    this._cleanManager.Clean_State[chambername] = "DISAB";
+                }
+                else
+                {
+                    if (this._cleanManager.CleanChamberEmpty(chambername))
+                    {
+                        this._cleanManager.Clean_State[chambername] = "IDLE";
+                    }
+                    this._cleanManager.Unable_to_Process[chambername] = false;
+                }
             }
         }
 
-        private void Draw_Buffer_Color()
+        public void Draw_Color(string Draw_Type)
         {
-            if (this.Buffer1_state == "UN USE")
-                this.Buffer1_color = Brushes.DarkGray;
+            if (Draw_Type == "Chamber")
+                Draw_DryChamber_Color();
+            else if (Draw_Type == "Clean")
+                Draw_CleanChamber_Color();
             else
-                this.Buffer1_color = Brushes.DarkOrange;
-
-            if (this.Buffer2_state == "UN USE")
-                this.Buffer2_color = Brushes.DarkGray;
-            else
-                this.Buffer2_color = Brushes.DarkOrange;
-
-            if (this.Buffer3_state == "UN USE")
-                this.Buffer3_color = Brushes.DarkGray;
-            else
-                this.Buffer3_color = Brushes.DarkOrange;
-
-            if (this.Buffer4_state == "UN USE")
-                this.Buffer4_color = Brushes.DarkGray;
-            else
-                this.Buffer4_color = Brushes.DarkOrange;
+            {
+                Draw_DryChamber_Color();
+                Draw_CleanChamber_Color();
+            }
         }
 
-        private void Draw_Chamber_Color()
+        public void Get_Chamber_State()
         {
-            if (this.Chamber1_state == "IDLE")
-                this.Chamber1_color = Brushes.DarkGray;
-            else
-                this.Chamber1_color = Brushes.DarkOrange;
+            this.Dry_chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
+            this.Dry_chamber2_state = this._chamberManager.Chamber_State["Chamber2"];
+            this.Dry_chamber3_state = this._chamberManager.Chamber_State["Chamber3"];
+            this.Dry_chamber4_state = this._chamberManager.Chamber_State["Chamber4"];
+            this.Dry_chamber5_state = this._chamberManager.Chamber_State["Chamber5"];
+            this.Dry_chamber6_state = this._chamberManager.Chamber_State["Chamber6"];
 
-            if (this.Chamber2_state == "IDLE")
-                this.Chamber2_color = Brushes.DarkGray;
-            else
-                this.Chamber2_color = Brushes.DarkOrange;
+            Check_CleanChamber_Enable();
+            this.Clean_chamber1_state = this._cleanManager.Clean_State["Chamber1"];
+            this.Clean_chamber2_state = this._cleanManager.Clean_State["Chamber2"];
+            this.Clean_chamber3_state = this._cleanManager.Clean_State["Chamber3"];
+            this.Clean_chamber4_state = this._cleanManager.Clean_State["Chamber4"];
+            this.Clean_chamber5_state = this._cleanManager.Clean_State["Chamber5"];
+            this.Clean_chamber6_state = this._cleanManager.Clean_State["Chamber6"];
+        }
 
-            if (this.Chamber3_state == "IDLE")
-                this.Chamber3_color = Brushes.DarkGray;
+        private void Draw_CleanChamber_Color()
+        {
+            if (this.Clean_chamber1_state == "IDLE")
+                this.Clean_chamber1_color = Brushes.DarkGray;
+            else if (this.Clean_chamber1_state == "DONE")
+                this.Clean_chamber1_color = Brushes.LightGreen;
+            else if (this.Clean_chamber1_state == "Running")
+                this.Clean_chamber1_color = Brushes.DarkOrange;
             else
-                this.Chamber3_color = Brushes.DarkOrange;
+                this.Clean_chamber1_color = Brushes.Red;
 
-            if (this.Chamber4_state == "IDLE")
-                this.Chamber4_color = Brushes.DarkGray;
+            if (this.Clean_chamber2_state == "IDLE")
+                this.Clean_chamber2_color = Brushes.DarkGray;
+            else if (this.Clean_chamber2_state == "DONE")
+                this.Clean_chamber2_color = Brushes.LightGreen;
+            else if (this.Clean_chamber2_state == "Running")
+                this.Clean_chamber2_color = Brushes.DarkOrange;
             else
-                this.Chamber4_color = Brushes.DarkOrange;
+                this.Clean_chamber2_color = Brushes.Red;
 
-            if (this.Chamber5_state == "IDLE")
-                this.Chamber5_color = Brushes.DarkGray;
+            if (this.Clean_chamber3_state == "IDLE")
+                this.Clean_chamber3_color = Brushes.DarkGray;
+            else if (this.Clean_chamber3_state == "DONE")
+                this.Clean_chamber3_color = Brushes.LightGreen;
+            else if (this.Clean_chamber3_state == "Running")
+                this.Clean_chamber3_color = Brushes.DarkOrange;
             else
-                this.Chamber5_color = Brushes.DarkOrange;
+                this.Clean_chamber3_color = Brushes.Red;
 
-            if (this.Chamber6_state == "IDLE")
-                this.Chamber6_color = Brushes.DarkGray;
+            if (this.Clean_chamber4_state == "IDLE")
+                this.Clean_chamber4_color = Brushes.DarkGray;
+            else if (this.Clean_chamber4_state == "DONE")
+                this.Clean_chamber4_color = Brushes.LightGreen;
+            else if (this.Clean_chamber4_state == "Running")
+                this.Clean_chamber4_color = Brushes.DarkOrange;
             else
-                this.Chamber6_color = Brushes.DarkOrange;
+                this.Clean_chamber4_color = Brushes.Red;
+
+            if (this.Clean_chamber5_state == "IDLE")
+                this.Clean_chamber5_color = Brushes.DarkGray;
+            else if (this.Clean_chamber5_state == "DONE")
+                this.Clean_chamber5_color = Brushes.LightGreen;
+            else if (this.Clean_chamber5_state == "Running")
+                this.Clean_chamber5_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber5_color = Brushes.Red;
+
+            if (this.Clean_chamber6_state == "IDLE")
+                this.Clean_chamber6_color = Brushes.DarkGray;
+            else if (this.Clean_chamber6_state == "DONE")
+                this.Clean_chamber6_color = Brushes.LightGreen;
+            else if (this.Clean_chamber6_state == "Running")
+                this.Clean_chamber6_color = Brushes.DarkOrange;
+            else
+                this.Clean_chamber6_color = Brushes.Red;
+        }
+
+        private void Draw_DryChamber_Color()
+        {
+            if (this.Dry_chamber1_state == "IDLE")
+                this.Dry_chamber1_color = Brushes.DarkGray;
+            else if (this.Dry_chamber1_state == "DONE")
+                this.Dry_chamber1_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber1_color = Brushes.DarkOrange;
+
+            if (this.Dry_chamber2_state == "IDLE")
+                this.Dry_chamber2_color = Brushes.DarkGray;
+            else if (this.Dry_chamber2_state == "DONE")
+                this.Dry_chamber2_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber2_color = Brushes.DarkOrange;
+
+            if (this.Dry_chamber3_state == "IDLE")
+                this.Dry_chamber3_color = Brushes.DarkGray;
+            else if (this.Dry_chamber3_state == "DONE")
+                this.Dry_chamber3_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber3_color = Brushes.DarkOrange;
+
+            if (this.Dry_chamber4_state == "IDLE")
+                this.Dry_chamber4_color = Brushes.DarkGray;
+            else if (this.Dry_chamber4_state == "DONE")
+                this.Dry_chamber4_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber4_color = Brushes.DarkOrange;
+
+            if (this.Dry_chamber5_state == "IDLE")
+                this.Dry_chamber5_color = Brushes.DarkGray;
+            else if (this.Dry_chamber5_state == "DONE")
+                this.Dry_chamber5_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber5_color = Brushes.DarkOrange;
+
+            if (this.Dry_chamber6_state == "IDLE")
+                this.Dry_chamber6_color = Brushes.DarkGray;
+            else if (this.Dry_chamber6_state == "DONE")
+                this.Dry_chamber6_color = Brushes.LightGreen;
+            else
+                this.Dry_chamber6_color = Brushes.DarkOrange;
         }
 
         public void AppendLog(string text)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (Application.Current.Dispatcher.CheckAccess())
             {
                 Secsdatalog += ($"{text}") + "\n";
-            });
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Secsdatalog += ($"{text}") + "\n";
+                });
+            }
         }
 
-        private void Chamber_DataEnqueued(object? sender, ChamberStatus e)
+        private void Dry_DataEnqueued(object? sender, ChamberStatus e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (Application.Current.Dispatcher.CheckAccess())
             {
                 switch (e.ChamberName)
                 {
                     case "Chamber1":
-                        this.Chamber1_state = e.State;
+                        this.Dry_chamber1_state = e.State;
                         break;
 
                     case "Chamber2":
-                        this.Chamber2_state = e.State;
+                        this.Dry_chamber2_state = e.State;
                         break;
 
                     case "Chamber3":
-                        this.Chamber3_state = e.State;
+                        this.Dry_chamber3_state = e.State;
                         break;
 
                     case "Chamber4":
-                        this.Chamber4_state = e.State;
+                        this.Dry_chamber4_state = e.State;
                         break;
 
                     case "Chamber5":
-                        this.Chamber5_state = e.State;
+                        this.Dry_chamber5_state = e.State;
                         break;
 
                     case "Chamber6":
-                        this.Chamber6_state = e.State;
+                        this.Dry_chamber6_state = e.State;
                         break;
                 }
 
                 Draw_Color("Chamber");
-            });
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    switch (e.ChamberName)
+                    {
+                        case "Chamber1":
+                            this.Dry_chamber1_state = e.State;
+                            break;
+
+                        case "Chamber2":
+                            this.Dry_chamber2_state = e.State;
+                            break;
+
+                        case "Chamber3":
+                            this.Dry_chamber3_state = e.State;
+                            break;
+
+                        case "Chamber4":
+                            this.Dry_chamber4_state = e.State;
+                            break;
+
+                        case "Chamber5":
+                            this.Dry_chamber5_state = e.State;
+                            break;
+
+                        case "Chamber6":
+                            this.Dry_chamber6_state = e.State;
+                            break;
+                    }
+
+                    Draw_Color("Chamber");
+                });
+            }
         }
 
-        private void Buffer_DataEnqueued(object? sender, BufferStatus e)
+        private void Clean_DataEnqueued(object? sender, CleanChamberStatus e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (Application.Current.Dispatcher.CheckAccess())
             {
-                switch (e.BufferName)
+                switch (e.ChamberName)
                 {
-                    case "Buffer1":
-                        this.Buffer1_state = e.State;
+                    case "Chamber1":
+                        this.Clean_chamber1_state = e.State;
                         break;
 
-                    case "Buffer2":
-                        this.Buffer2_state = e.State;
+                    case "Chamber2":
+                        this.Clean_chamber2_state = e.State;
                         break;
 
-                    case "Buffer3":
-                        this.Buffer3_state = e.State;
+                    case "Chamber3":
+                        this.Clean_chamber3_state = e.State;
                         break;
 
-                    case "Buffer4":
-                        this.Buffer4_state = e.State;
+                    case "Chamber4":
+                        this.Clean_chamber4_state = e.State;
+                        break;
+
+                    case "Chamber5":
+                        this.Clean_chamber5_state = e.State;
+                        break;
+
+                    case "Chamber6":
+                        this.Clean_chamber6_state = e.State;
                         break;
                 }
-                Draw_Color("Buffer");
-            });
+                Draw_Color("Clean");
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    switch (e.ChamberName)
+                    {
+                        case "Chamber1":
+                            this.Clean_chamber1_state = e.State;
+                            break;
+
+                        case "Chamber2":
+                            this.Clean_chamber2_state = e.State;
+                            break;
+
+                        case "Chamber3":
+                            this.Clean_chamber3_state = e.State;
+                            break;
+
+                        case "Chamber4":
+                            this.Clean_chamber4_state = e.State;
+                            break;
+
+                        case "Chamber5":
+                            this.Clean_chamber5_state = e.State;
+                            break;
+
+                        case "Chamber6":
+                            this.Clean_chamber6_state = e.State;
+                            break;
+                    }
+                    Draw_Color("Clean");
+                });
+            }
         }
 
         private void Wafer_Position_Draw(object? sender, Wafer e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (Application.Current.Dispatcher.CheckAccess())
             {
                 var existingWafer = this.Animation_wafers.FirstOrDefault(w =>
-                    w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId
-                    && w.LoadportId == e.LoadportId);
+                        w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId
+                        && w.LoadportId == e.LoadportId);
 
                 if (existingWafer != null)
                 {
@@ -467,7 +673,42 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         PositionY = locationPositions[e.CurrentLocation].Y
                     });
                 }
-            });
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var existingWafer = this.Animation_wafers.FirstOrDefault(w =>
+                        w.Wafer_Num == e.Wafer_Num && w.CarrierId == e.CarrierId
+                        && w.LoadportId == e.LoadportId);
+
+                    if (existingWafer != null)
+                    {
+                        if (!double.IsNaN(e.PositionX) && !double.IsNaN(e.PositionY))
+                        {
+                            existingWafer.PositionX = locationPositions[e.CurrentLocation].X;
+                            existingWafer.PositionY = locationPositions[e.CurrentLocation].Y;
+
+                            if (e.CurrentLocation == "LoadPort1" || e.CurrentLocation == "LoadPort2")
+                            {
+                                this.Animation_wafers.Remove(existingWafer);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.Animation_wafers.Add(new Wafer
+                        {
+                            LoadportId = e.LoadportId,
+                            Wafer_Num = e.Wafer_Num,
+                            CarrierId = e.CarrierId ?? "",
+                            SlotId = e.SlotId ?? "",
+                            PositionX = locationPositions[e.CurrentLocation].X,
+                            PositionY = locationPositions[e.CurrentLocation].Y
+                        });
+                    }
+                });
+            }
         }
         #endregion
     }

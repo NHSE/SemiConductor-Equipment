@@ -73,12 +73,25 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<RPTIDAddViewModel>();
                 services.AddSingleton<IVIDManager, VIDService>();
 
-                services.AddSingleton<IBufferManager, BufferService>();
-                services.AddTransient<Buffer_ViewModel>();
-                services.AddSingleton<Buffer1_Page>();
-                services.AddSingleton<Buffer2_Page>();
-                services.AddSingleton<Buffer3_Page>();
-                services.AddSingleton<Buffer4_Page>();
+                services.AddSingleton<ICleanManager, CleanService>();
+                services.AddSingleton<CleanChamber1_ViewModel>();
+                services.AddSingleton<CleanChamber2_ViewModel>();
+                services.AddSingleton<CleanChamber3_ViewModel>();
+                services.AddSingleton<CleanChamber4_ViewModel>();
+                services.AddSingleton<CleanChamber5_ViewModel>();
+                services.AddSingleton<CleanChamber6_ViewModel>();
+                services.AddSingleton<CleanChamber1_Page>();
+                services.AddSingleton<CleanChamber2_Page>();
+                services.AddSingleton<CleanChamber3_Page>();
+                services.AddSingleton<CleanChamber4_Page>();
+                services.AddSingleton<CleanChamber5_Page>();
+                services.AddSingleton<CleanChamber6_Page>();
+
+                services.AddSingleton<ISolutionManager>(provider =>
+                                    new SolutionService(@"C:\Configs"));
+
+                services.AddSingleton<ChemicalSettingMenu>();
+                services.AddSingleton<SolutionMenusViewModel>();
 
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();

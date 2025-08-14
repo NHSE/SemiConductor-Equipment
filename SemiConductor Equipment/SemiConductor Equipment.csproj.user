@@ -5,6 +5,9 @@
     <Compile Update="Controls\LoadingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Menus\SolutionSettingMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Menus\EquipMenu.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -17,16 +20,16 @@
     <Compile Update="Views\MessageBox\MessageBoxWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Buffer1_Page.xaml.cs">
+    <Compile Update="Views\Pages\CleanChamber1_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Buffer2_Page.xaml.cs">
+    <Compile Update="Views\Pages\CleanChamber2_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Buffer3_Page.xaml.cs">
+    <Compile Update="Views\Pages\CleanChamber3_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Buffer4_Page.xaml.cs">
+    <Compile Update="Views\Pages\CleanChamber4_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Chamber1_Page.xaml.cs">
@@ -45,6 +48,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Chamber6_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\CleanChamber5_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\CleanChamber6_Page.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\LoadPort1_Page.xaml.cs">
