@@ -1,0 +1,39 @@
+﻿<Window x:Class="SemiConductor_Equipment.Views.Windows.AlarmLogHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SemiConductor_Equipment.Views.Windows"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:controls="clr-namespace:SemiConductor_Equipment.Controls"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:AlarmLogHistoryWindow, IsDesignTimeCreatable=False}"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        Title="AlarmLogHistoryWindow" Height="450" Width="800" Background="#232C39">
+    <Grid>
+        <!-- 본문 카드 -->
+        <Border Background="#1A2233" CornerRadius="12" Margin="18" Padding="18">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <controls:LoadingControl x:Name="searchDataLoadingControl" Visibility="Visible" Margin="306,103,322,87" Grid.RowSpan="2"/>
+                <ui:DataGrid x:Name="dtgLogViewer"
+                         ItemsSource="{Binding ViewModel.Logpagetable, Mode=OneWay}"
+                         Visibility="Collapsed"
+                         Grid.Row="1"
+                         RowHeight="32"
+                         FontSize="13"
+                         Background="#232C39"
+                         Foreground="#F7F7FA"
+                         GridLinesVisibility="Vertical"
+                         BorderThickness="0"
+                         HeadersVisibility="Column"
+                         Margin="0">
+                </ui:DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

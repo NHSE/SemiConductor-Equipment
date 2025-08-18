@@ -38,8 +38,17 @@
         <Grid>
             <!-- 상단 바 -->
             <DockPanel Height="48" Background="#1A2233" LastChildFill="False" VerticalAlignment="Top" Margin="0,12,0,500">
-                <TextBlock Text="Etcher-3000" FontSize="20" Foreground="White" 
+                <TextBlock Text="Cleaning-Machine" FontSize="20" Foreground="White" 
                        Margin="16,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                <ui:Button x:Name="AlarmButton" Content="{Binding ViewModel.AlarmMessage}" Height="30" Width="200" Command="{Binding ViewModel.SubMenuAlarmMonitorCommand}">
+                    <Button.Resources>
+                        <Storyboard x:Key="BlinkStoryboard" RepeatBehavior="Forever" AutoReverse="True">
+                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                            From="Red" To="Transparent"
+                            Duration="0:0:0.5"/>
+                        </Storyboard>
+                    </Button.Resources>
+                </ui:Button>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0,0,16,0">
                     <Ellipse x:Name="elpsstate" Width="16" Height="16" Fill="{Binding ViewModel.Equipment_color}" Margin="8,0" VerticalAlignment="Center"/>
                     <TextBlock x:Name="tbkstate" Text="{Binding ViewModel.Equipment_state}" Foreground="{Binding ViewModel.Equipment_color}" VerticalAlignment="Center"/>
@@ -49,7 +58,6 @@
                     MouseOverBackground="LightGray">
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
-                                <MenuItem Header="LOG" Command="{Binding ViewModel.SubMenuLogCommand}"/>
                                 <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
                                 <MenuItem Header="Solutions Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
                                 <MenuItem Header="Event Setting" Command="{Binding ViewModel.SubMenuEventSettingCommand}"/>

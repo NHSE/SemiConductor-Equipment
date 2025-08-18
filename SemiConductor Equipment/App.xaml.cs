@@ -47,8 +47,6 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<MainPage>();
                 services.AddSingleton<MainPageViewModel>();
 
-                services.AddSingleton<LogPage>();
-                services.AddSingleton<LogPageViewModel>();
                 services.AddSingleton<ILogManager>(provider =>
                                     new LogService(@"C:\Logs"));
 
@@ -87,11 +85,16 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<CleanChamber5_Page>();
                 services.AddSingleton<CleanChamber6_Page>();
 
-                services.AddSingleton<ISolutionManager>(provider =>
-                                    new SolutionService(@"C:\Configs"));
+                services.AddSingleton<ISolutionManager,SolutionService>();
 
-                services.AddSingleton<ChemicalSettingMenu>();
+                services.AddSingleton<SolutionSettingMenu>();
                 services.AddSingleton<SolutionMenusViewModel>();
+
+                services.AddSingleton<AlarmLogMenu>();
+                services.AddSingleton<AlarmLogViewModel>();
+                services.AddSingleton<IAlarmMsgManager, AlarmMessageService>();
+                services.AddSingleton<AlarmLogHistoryWindow>();
+                services.AddSingleton<AlarmLogHistoryViewModel>();
 
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();
@@ -122,7 +125,7 @@ namespace SemiConductor_Equipment
                 });
 
 
-                services.AddSingleton<IDatabase<Chamberlogtable>, LogtableService>();
+                services.AddSingleton<IDatabase<Alarmlogtable>, LogtableService>();
                 services.AddSingleton<IDateTime, DateTimeService>();
                 services.AddSingleton<IThemeService, ThemeService>();
                 // TaskBar manipulation
@@ -151,11 +154,11 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<MessageHandlerService>();
                 services.AddSingleton<ISecsGemServer, SecsGemServer>();
                 services.AddSingleton<WaferService>();
-                services.AddSingleton<WaferProcessCoordinatorService>();
+                services.AddSingleton<IWaferProcessCoordinator ,WaferProcessCoordinatorService>();
                 services.AddSingleton<LoadPortService>();
                 services.AddSingleton<IRobotArmManager, RobotArmService>();
                 services.AddSingleton<RunningStateService>();
-                services.AddSingleton<DbLogHelper>();
+                services.AddSingleton<IDBLogManager, DbLogHelper>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);
@@ -206,25 +209,22 @@ namespace SemiConductor_Equipment
         /// </summary>
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            //messageBoxService.Show("예외 발생", $"[UI 예외]\n{e.Exception.Message}");
-            Console.WriteLine($"[UI 예외]\n{e.Exception.Message}");
+            var AlarmService = Services.GetRequiredService<IAlarmMsgManager>();
+            AlarmService.AlarmMessage_IN($"[UI 예외]\n{e.Exception.Message}");
             e.Handled = true;  // 앱 종료 방지
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = e.ExceptionObject as Exception;
-            var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            messageBoxService.Show("예외 발생", $"[도메인 예외]\n{ex?.Message}");
-            Console.WriteLine($"[도메인 예외]\n{ex?.Message}");
+            var AlarmService = Services.GetRequiredService<IAlarmMsgManager>();
+            AlarmService.AlarmMessage_IN($"[도메인 예외]\n{ex?.Message}");
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            var messageBoxService = Services.GetRequiredService<IMessageBox>();
-            messageBoxService.Show("예외 발생", $"[Task 예외]\n{e.Exception}");
-            Console.WriteLine($"[Task 예외]\n{e.Exception}");
+            var AlarmService = Services.GetRequiredService<IAlarmMsgManager>();
+            AlarmService.AlarmMessage_IN($"[Task 예외]\n{e.Exception}");
             e.SetObserved();
         }
     }

@@ -65,7 +65,7 @@ namespace SemiConductor_Equipment.Views.Menus
             this.tbAllowable.MaxLength = 1;
             this.tbchemical.MaxLength = 2;
             this.tbSpraytime.MaxLength = 2;
-            this.tbrpm.MaxLength = 3;
+            this.tbrpm.MaxLength = 4;
 
             //RPM, Spray, flow rate 최대 길이 정하기
 
@@ -104,9 +104,9 @@ namespace SemiConductor_Equipment.Views.Menus
                         break;
 
                     case "tbrpm":
-                        if (value > 1000)
+                        if (value > 3000)
                         {
-                            this._messageBox.Show("입력 초과", "해당 입력은 1000 이하만 가능합니다.");
+                            this._messageBox.Show("입력 초과", "해당 입력은 3000 이하만 가능합니다.");
                             e.Handled = true;
                         }
                         break;

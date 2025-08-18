@@ -10,7 +10,7 @@ using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.Views.Menus
 {
-    public partial class ChemicalSettingMenu : Page
+    public partial class SolutionSettingMenu : Page
     {
         #region FIELDS
         public SolutionMenusViewModel ViewModel { get; set; }
@@ -25,7 +25,7 @@ namespace SemiConductor_Equipment.Views.Menus
         #endregion
 
         #region CONSTRUCTOR
-        public ChemicalSettingMenu(SolutionMenusViewModel viewModel)
+        public SolutionSettingMenu(SolutionMenusViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
@@ -38,7 +38,7 @@ namespace SemiConductor_Equipment.Views.Menus
         #region METHOD
         void Page_Load(object sender, RoutedEventArgs e)
         {
-            ViewModel.Setup_Config();
+            //ViewModel.Setup_Config();
             GetVolume();
             UpdateFillLevel();
         }
@@ -239,7 +239,7 @@ namespace SemiConductor_Equipment.Views.Menus
                         string header = selectedTab.Header as string;
                         chamber_name = header;
 
-                        ViewModel.Setup_Config();
+                        //ViewModel.Setup_Config();
                         GetVolume();
                         UpdateFillLevel();
                     }

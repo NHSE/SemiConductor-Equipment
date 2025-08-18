@@ -15,7 +15,7 @@ public partial class LogDatabaseContext : DbContext
     {
     }
 
-    public virtual DbSet<Chamberlogtable> Chamberlogtables { get; set; }
+    public virtual DbSet<Alarmlogtable> Alarmlogtables { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -23,32 +23,21 @@ public partial class LogDatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Chamberlogtable>(entity =>
+        modelBuilder.Entity<Alarmlogtable>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("chamberlogtable_pkey");
+            entity
+                .HasKey(e => e.AlarmNumber)
+                .HasName("alarmlogtable_pk");
 
-            entity.ToTable("chamberlogtable");
+            entity.ToTable("Alarmlogtable");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ChamberName)
+            entity.Property(e => e.AlarmMessage)
                 .HasColumnType("character varying")
-                .HasColumnName("chamber_name");
-            entity.Property(e => e.Logdata)
+                .HasColumnName("alarm_message");
+            entity.Property(e => e.AlarmNumber).HasColumnName("alarm_number");
+            entity.Property(e => e.AlarmTime)
                 .HasColumnType("character varying")
-                .HasColumnName("logdata");
-            entity.Property(e => e.LotId)
-                .HasColumnType("character varying")
-                .HasColumnName("lot_id");
-            entity.Property(e => e.Slot).HasColumnName("slot");
-            entity.Property(e => e.State)
-                .HasColumnType("character varying")
-                .HasColumnName("state");
-            entity.Property(e => e.Time)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("time");
-            entity.Property(e => e.WaferId)
-                .HasColumnType("character varying")
-                .HasColumnName("wafer_id");
+                .HasColumnName("alarm_time");
         });
 
         OnModelCreatingPartial(modelBuilder);

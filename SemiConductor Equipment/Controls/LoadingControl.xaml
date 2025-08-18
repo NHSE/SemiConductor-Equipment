@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SemiConductor_Equipment.Controls"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             mc:Ignorable="d" Height="86" Width="117">
+             mc:Ignorable="d" Height="86" Width="90">
     <Viewbox>
         <Grid Margin="0,0,-19,0">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">

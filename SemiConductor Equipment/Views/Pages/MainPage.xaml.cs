@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -76,6 +77,21 @@ namespace SemiConductor_Equipment.Views.Pages
                 this.elpsstate.Fill = ViewModel.Equipment_color;
                 this.tbkstate.Foreground = ViewModel.Equipment_color;
                 this.tbkstate.Text = ViewModel.Equipment_state;
+            }
+            else if(e.PropertyName == "AlarmMessage")
+            {
+
+                Storyboard sb = (Storyboard)AlarmButton.Resources["BlinkStoryboard"];
+
+                if (string.IsNullOrEmpty(ViewModel.AlarmMessage))  // 알람 메시지가 없으면
+                {
+                    sb.Stop(AlarmButton);
+                    AlarmButton.Opacity = 1.0; // 멈췄을 때 버튼 안 보이지 않도록 원래 상태 복구
+                }
+                else // 알람 메시지가 있으면
+                {
+                    sb.Begin(AlarmButton, true);
+                }
             }
         }
 

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Options;
 using Secs4Net;
@@ -20,15 +21,18 @@ namespace SemiConductor_Equipment.Services
         private SecsGem _secs;
         private ISecsConnection _hsmsConnector;
         private IEventMessageManager _eventMessageManager;
+        private readonly IAlarmMsgManager _alarmMsgManager;
         public event EventHandler Connected;
         public event EventHandler Disconnected;
         private readonly MessageHandlerService _messageHandler;
         private CancellationTokenSource? _cts;
+        private CancellationTokenSource _connectingCts;
 
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager)
+        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager, IAlarmMsgManager alarmMsgManager)
         {
-            _messageHandler = messageHandler;
-            _eventMessageManager = eventMessageManager;
+            this._messageHandler = messageHandler;
+            this._eventMessageManager = eventMessageManager;
+            this._alarmMsgManager = alarmMsgManager;
         }
 
         public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
@@ -112,13 +116,31 @@ namespace SemiConductor_Equipment.Services
             {
                 case ConnectionState.Connecting:
                     _log("[CONNECTING] 연결 시도 중...");
+
+                    /// 이전 타이머 취소
+                    _connectingCts?.Cancel();
+                    _connectingCts = new CancellationTokenSource();
+                    var token = _connectingCts.Token;
+
+                    // 백그라운드에서 5초 감시
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await Task.Delay(5000, token);
+                            _alarmMsgManager?.AlarmMessage_IN("SECS/GEM communication failure detected.");
+                        }
+                        catch (TaskCanceledException) { }
+                    });
                     break;
                 case ConnectionState.Connected:
                     _log("[CONNECTED] 호스트 연결됨");
+                    _connectingCts?.Cancel();
                     OnConnected();
                     break;
                 case ConnectionState.Selected:
                     _log("[SELECTED] 통신 세션 선택됨");
+                    _connectingCts?.Cancel();
                     break;
                 case ConnectionState.Retry:
                     _log("[DISCONNECTING] 호스트 연결 해제됨...");
@@ -139,11 +161,11 @@ namespace SemiConductor_Equipment.Services
             }
             catch (OperationCanceledException)
             {
-                _log("[INFO] Primary message receiving cancelled.");
+                _alarmMsgManager?.AlarmMessage_IN("[INFO] Primary message receiving cancelled.");
             }
             catch (Exception ex)
             {
-                _log($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
+                _alarmMsgManager?.AlarmMessage_IN($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
             }
         }
     }

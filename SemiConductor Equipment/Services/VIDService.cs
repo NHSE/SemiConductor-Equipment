@@ -15,7 +15,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
-        private readonly List<int> vid_list = new List<int> { 1, 3, 7, 8, 9, 10, 11, 1001, 1002, 1003, 1004, 1005 };
+        private readonly List<int> vid_list = new List<int> { 100, 101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010 };
         #endregion
 
         #region PROPERTIES
@@ -34,6 +34,9 @@ namespace SemiConductor_Equipment.Services
         public string?[] PJID { get; set; } = new string?[3] {"Nothing", "Nothing", "Nothing" };
         public string?[] CJID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
         public string?[] CarrierID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
+
+        public int?[] Chemical { get; set; } = new int?[6];
+        public int?[] Pre_Clean { get; set; } = new int?[6];
 
         #endregion
 
@@ -54,15 +57,20 @@ namespace SemiConductor_Equipment.Services
             var RPTID_data = this._eventConfigManager.RPTID[rptid];
 
             var vidItems = new List<Item>();
+            int arrNum = -1;
             foreach (var vid in RPTID_data.VIDs)
             {
                 object vidData;
-                int arrNum = 0;
+                bool solution_flag = false;
 
-                if (vid != 1002 && vid != 102 && vid < 1008)
+                if (vid != 1002 && vid != 102 && vid < 1008 && (vid != 104 && vid != 105))
                 {
                     if (wafer_number is int wNum)
                         arrNum = wNum;
+                }
+                else if(vid == 104 || vid == 105)
+                {
+                    solution_flag = true;
                 }
                 else
                 {
@@ -102,19 +110,36 @@ namespace SemiConductor_Equipment.Services
                         continue;
                 }
 
-                else if (vid != 1001 && vid < 1000)
+                else if (vid != 1001 && vid < 1000 && (vid != 104 && vid != 105))
                     vidData = this.GetSVID(vid, arrNum);
+                else if(solution_flag && (vid == 104 || vid == 105))
+                {
+                    for(int chamber = 0; chamber < 6; chamber++)
+                    {
+                        vidData = this.GetSVID(vid, chamber);
+                        vidItems.Add(
+                                        L(
+                                            U4((uint)rptid),
+                                            L(
+                                                A($"Chamber{chamber + 1}"),
+                                                A(vidData?.ToString() ?? "")
+                                            )
+                                        )
+                                    );
+                    }
+                    continue;
+                }
                 else
                     vidData = this.GetDVID(vid, arrNum);
 
                 vidItems.Add(
-                    L(
-                        U4((uint)rptid),
-                        L(
-                            A(vidData?.ToString() ?? "")
-                        )
-                    )
-                );
+                                L(
+                                    U4((uint)rptid),
+                                    L(
+                                        A(vidData?.ToString() ?? "")
+                                    )
+                                )
+                            );
             }
             return vidItems;
         }
@@ -127,6 +152,8 @@ namespace SemiConductor_Equipment.Services
                 101 => RobotStatus,
                 102 => LoadportDoorStatus[array_data],
                 103 => SWVersion,
+                104 => Chemical[array_data],
+                105 => Pre_Clean[array_data],
                 _ => null
             };
         }
@@ -168,6 +195,14 @@ namespace SemiConductor_Equipment.Services
 
                 case 103:
                     SWVersion = data.ToString();
+                    break;
+
+                case 104:
+                    Chemical[array_data] = Convert.ToInt32(data);
+                    break;
+
+                case 105:
+                    Pre_Clean[array_data] = Convert.ToInt32(data);
                     break;
             }
         }

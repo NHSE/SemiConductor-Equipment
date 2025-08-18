@@ -9,32 +9,24 @@ using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Helpers
 {
-    public class DbLogHelper
+    public class DbLogHelper : IDBLogManager
     {
-        private readonly IDatabase<Chamberlogtable> _database;
+        private readonly IDatabase<Alarmlogtable> _database;
         private readonly ILogManager _logManager;
 
-        public DbLogHelper(IDatabase<Chamberlogtable> database, ILogManager logManager)
+        public DbLogHelper(IDatabase<Alarmlogtable> database, ILogManager logManager)
         {
             _database = database;
             _logManager = logManager;
         }
 
-        public void WriteDbLog(string chamberName, Wafer wafer, string state)
+        public void WriteDbLog(string Alarm_Msg)
         {
-        	if (wafer == null) return;
-
-			string num = string.Empty;
-            TimeZoneInfo koreaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time");
-            var log = new Chamberlogtable
+            string Alarm_Time = DateTime.Now.ToString(); // alarm num는 serial4 형식으로 바꾸고 시퀀스로 자동 증가하도록 설정해야함
+            var log = new Alarmlogtable
             {
-				ChamberName = chamberName,
-                Time = TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.UtcNow.UtcDateTime, koreaTimeZone),
-                WaferId = wafer.Wafer_Num.ToString(),
-                Slot = short.TryParse(wafer.SlotId, out var slotValue) ? slotValue : (short?)null,
-                LotId = wafer.LotId,
-                State = state,
-                Logdata = $"{wafer.CarrierId} : Wafer : {wafer.Wafer_Num} {state} {chamberName}"
+                AlarmTime = Alarm_Time,
+                AlarmMessage = Alarm_Msg
             };
             _database.Create(log);
         }

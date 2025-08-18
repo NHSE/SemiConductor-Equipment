@@ -9,7 +9,7 @@ using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class LogtableService : IDatabase<Chamberlogtable>
+    public class LogtableService : IDatabase<Alarmlogtable>
     {
         private readonly LogDatabaseContext? _logDatabaseContext;
 
@@ -17,9 +17,9 @@ namespace SemiConductor_Equipment.Services
         {
             this._logDatabaseContext = logDatabaseContext;
         }
-        public void Create(Chamberlogtable entity)
+        public void Create(Alarmlogtable entity)
         {
-            this._logDatabaseContext.Chamberlogtables.Add(entity);
+            this._logDatabaseContext.Alarmlogtables.Add(entity);
             this._logDatabaseContext.SaveChanges();
         }
 
@@ -28,33 +28,37 @@ namespace SemiConductor_Equipment.Services
             throw new NotImplementedException();
         }
 
-        public List<Chamberlogtable>? Get()
+        public List<Alarmlogtable>? Get()
         {
-            return this._logDatabaseContext?.Chamberlogtables.ToList();
+            return this._logDatabaseContext?.Alarmlogtables.ToList();
         }
 
-        public List<Chamberlogtable> Search(string? chamberName, DateTime? logTime = null)
+        public List<Alarmlogtable> Search(string? chamberName, DateTime? logTime = null)
         {
-            var query = _logDatabaseContext?.Chamberlogtables.AsQueryable();
+            /*
+            var query = _logDatabaseContext?.Alarmlogtables.AsQueryable();
 
             if(chamberName == "ALL")
-                return query?.ToList() ?? new List<Chamberlogtable>();
+                return query?.ToList() ?? new List<Alarmlogtable>();
 
             if (!string.IsNullOrWhiteSpace(chamberName))
-                query = query.Where(c => c.ChamberName == chamberName);
+                query = query.Where(c => c. == chamberName);
 
             if (logTime.HasValue)
                 query = query.Where(c => c.Time == logTime.Value);
 
-            return query?.ToList() ?? new List<Chamberlogtable>();
+            return query?.ToList() ?? new List<Alarmlogtable>();
+            */
+            List<Alarmlogtable> a = new List<Alarmlogtable>();
+            return a;
         }
 
-        public void Update(Chamberlogtable entity)
+        public void Update(Alarmlogtable entity)
         {
             throw new NotImplementedException();
         }
 
-        List<string>? IDatabase<Chamberlogtable>.SearchChamberField(string chamberFieldName)
+        List<string>? IDatabase<Alarmlogtable>.SearchChamberField(string chamberFieldName)
         {
             throw new NotImplementedException();
         }

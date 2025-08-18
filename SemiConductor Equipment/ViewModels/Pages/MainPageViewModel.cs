@@ -32,6 +32,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ICleanManager _cleanManager;
         private readonly ISolutionManager _chemicalManager;
         private readonly IRobotArmManager _robotArmManager;
+        private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
         private readonly RunningStateService _runningStateService;
@@ -44,6 +45,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private string? _currenttime;
         [ObservableProperty]
         private string? _secsdatalog;
+
+        [ObservableProperty]
+        private string? _alarmMessage;
 
         [ObservableProperty]
         private string? _loadport1imagepath;
@@ -115,13 +119,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private ObservableCollection<Wafer> _animation_wafers = new();
+
+        [ObservableProperty]
+        private string? _errorlog;
         #endregion
 
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
-            , ISolutionManager chemicalManager)
+            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -145,6 +152,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._robotArmManager = robotArmManager;
             this._vIDManager = svIDManager;
             this._chemicalManager = chemicalManager;
+            this._alarmMsgManager = alarmMsgManager;
+
+            Console.WriteLine($"MAIN {_alarmMsgManager.GetHashCode()}"); // SolutionService 내부
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
@@ -153,6 +163,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager.DataEnqueued += Dry_DataEnqueued;
             this._cleanManager.DataEnqueued += Clean_DataEnqueued;
             this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
+            this._alarmMsgManager.AlarmData += AlarmMsgManager_AlarmData;
 
             if (this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
             {
@@ -233,26 +244,19 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void DryChamber6() => NavigateToPage<Chamber6_Page>();
 
         [RelayCommand]
-        private void SubMenuLog()
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.MainFrame.Source = new Uri("../Menus/LogPage.xaml", UriKind.Relative);
-            }
-        }
-
-        [RelayCommand]
         private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
 
         [RelayCommand]
-        private void SubMenuChemicalSetting() => NavigateToPage<ChemicalSettingMenu>();
+        private void SubMenuChemicalSetting() => NavigateToPage<SolutionSettingMenu>();
 
         [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
 
         [RelayCommand]
         private void SubMenuEventSetting() => NavigateToPage<EventMenu>();
+
+        [RelayCommand]
+        private void SubMenuAlarmMonitor() => NavigateToPage<AlarmLogMenu>();
         #endregion
 
         #region METHODS
@@ -327,6 +331,21 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 var page = App.Services.GetRequiredService<TPage>();
                 mainWindow.MainFrame.Navigate(page);
+            }
+        }
+
+        private void AlarmMsgManager_AlarmData(object? sender, string e)
+        {
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                this.AlarmMessage = e;
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    this.AlarmMessage = e;
+                });
             }
         }
 

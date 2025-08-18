@@ -93,10 +93,6 @@ namespace SemiConductor_Equipment.Services
 
         public async Task ProcessCommandQueueAsync(CancellationToken token)
         {
-            if (_isProcessing)
-                return;
-
-            _isProcessing = false;
             string prev_Loacation = string.Empty;
 
             try
@@ -108,8 +104,6 @@ namespace SemiConductor_Equipment.Services
                     {
                         if (_RobotArmcommandQueue.Count > 0)
                         {
-                            if (_isProcessing) continue;
-
                             command = _RobotArmcommandQueue.Dequeue();
                             if (command == null) continue;
 
@@ -125,8 +119,6 @@ namespace SemiConductor_Equipment.Services
                             info.Wafer_number = command.Wafer.Wafer_Num;
                             info.Loadport_Number = command.Wafer.LoadportId;
                             _eventMessageManager.EnqueueEventData(info);
-
-                            _isProcessing = true;
 
                             if(command.Wafer.Status == "Ready")
                             {
@@ -220,12 +212,10 @@ namespace SemiConductor_Equipment.Services
                     }
                     await Task.Delay(1000); // 모션 처리 시간 시뮬레이션
                     //Thread.Sleep(1000);
-                    _isProcessing = false;
                 }
             }
             finally
             {
-                _isProcessing = false;
             }
         }
 
@@ -237,6 +227,8 @@ namespace SemiConductor_Equipment.Services
 
             _cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
             var token = _cts.Token;
+
+            _isProcessing = true;
 
             Task.Run(async () =>
             {
@@ -263,6 +255,7 @@ namespace SemiConductor_Equipment.Services
                 }
                 _cts.Cancel();
                 _RobotArmcommandQueue.Clear();
+                _isProcessing = false;
             }
         }
     }

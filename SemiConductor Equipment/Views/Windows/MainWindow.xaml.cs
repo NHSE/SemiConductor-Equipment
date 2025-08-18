@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.ViewModels.Menus;
 using SemiConductor_Equipment.ViewModels.Windows;
 using SemiConductor_Equipment.Views.Menus;
 using SemiConductor_Equipment.Views.MessageBox;
@@ -47,6 +48,7 @@ namespace SemiConductor_Equipment.Views.Windows
 
                 // 앱 실행 시 인스턴스 생성
                 App.Services.GetRequiredService<MessageBoxWindow>();
+                App.Services.GetRequiredService<MainPage>();
                 App.Services.GetRequiredService<Chamber1_Page>();
                 App.Services.GetRequiredService<Chamber2_Page>();
                 App.Services.GetRequiredService<Chamber3_Page>();
@@ -57,8 +59,10 @@ namespace SemiConductor_Equipment.Views.Windows
                 App.Services.GetRequiredService<CleanChamber2_Page>();
                 App.Services.GetRequiredService<CleanChamber3_Page>();
                 App.Services.GetRequiredService<CleanChamber4_Page>();
-                //App.Services.GetRequiredService<CleanChamber5_Page>();
-                //App.Services.GetRequiredService<CleanChamber6_Page>();
+                App.Services.GetRequiredService<CleanChamber5_Page>();
+                App.Services.GetRequiredService<CleanChamber6_Page>();
+                App.Services.GetRequiredService<AlarmLogMenu>();
+                App.Services.GetRequiredService<SolutionSettingMenu>();
                 //
 
                 var mainWindow = Application.Current.MainWindow as MainWindow;

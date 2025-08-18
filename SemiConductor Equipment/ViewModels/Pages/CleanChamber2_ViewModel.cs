@@ -29,7 +29,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         #region PROPERTIES
         [ObservableProperty]
-        private IEnumerable<Chamberlogtable>? _logpagetable;
+        private IEnumerable<Alarmlogtable>? _logpagetable;
         [ObservableProperty]
         private int _isWafer = 0;
         [ObservableProperty]

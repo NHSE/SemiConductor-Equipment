@@ -27,6 +27,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly RunningStateService _runningStateService;
         private readonly IVIDManager _vIDManager;
         private readonly IEventMessageManager _eventMessageManager;
+        private readonly IWaferProcessCoordinator _processManager;
         public byte LoadPortId => 1;
         #endregion
 
@@ -51,16 +52,19 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
+        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager VIDManager, 
+            IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateService = runningStateService;
             this._vIDManager = VIDManager;
             this._eventMessageManager = eventMessageManager;
+            this._processManager = processManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
             this._runningStateService.DataChange += OnEquipment_State_Change;
+            this._processManager.Process += ProcessChange;
 
             PropertyChanged += OnPropertyChanged;
         }
@@ -273,6 +277,20 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             if (e.LoadportId == this.LoadPortId)
             {
                 RemoveRequested?.Invoke(this, e);
+            }
+        }
+
+        private void ProcessChange(object? sender, string e)
+        {
+            if(e == "Start")
+            {
+                this.IsSetupEnabled = false;
+                this.IsCancelEnabled = false;
+            }
+            else
+            {
+                this.IsSetupEnabled = false;
+                this.IsCancelEnabled = true;
             }
         }
         #endregion

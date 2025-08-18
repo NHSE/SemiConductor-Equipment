@@ -22,4 +22,11 @@ namespace SemiConductor_Equipment.Dtos
 
         public string? Logdata { get; set; }
     }
+
+    public class AlarmlogDisplayDto
+    {
+        public int? Alarm_Number { get; set; }
+        public string? Alarm_Time { get; set; }
+        public string? Alarm_Message { get; set; }
+    }
 }

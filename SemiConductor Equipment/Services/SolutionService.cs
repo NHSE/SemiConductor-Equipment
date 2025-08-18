@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
@@ -14,6 +15,7 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly string _configDirectory;
+        private readonly IAlarmMsgManager _alarmMsgManager;
         public event Action ConfigRead;
         #endregion
 
@@ -40,13 +42,12 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public SolutionService(string configDirectory)
+        public SolutionService(IAlarmMsgManager alarmMsgManager)
         {
-            _configDirectory = configDirectory;
+            _configDirectory = @"C:\Configs";
+            this._alarmMsgManager = alarmMsgManager;
             if (!Directory.Exists(_configDirectory))
                 Directory.CreateDirectory(_configDirectory);
-
-            InitConfig();
         }
         #endregion
 
@@ -73,6 +74,10 @@ namespace SemiConductor_Equipment.Services
                 if (chemicalParts.Length == 2 && int.TryParse(chemicalParts[1].Trim(), out int chemical))
                 {
                     Chemical[chamberName] = chemical;
+                    if(chemical < 11)
+                    {
+                        this._alarmMsgManager.AlarmMessage_IN($"[{chamberName}] Chemical 용액이 10%이하입니다.");
+                    }
                 }
 
                 // 3. Pre Clean 값 파싱
@@ -80,6 +85,10 @@ namespace SemiConductor_Equipment.Services
                 if (preCleanParts.Length == 2 && int.TryParse(preCleanParts[1].Trim(), out int preClean))
                 {
                     PreClean[chamberName] = preClean;
+                    if (preClean < 11)
+                    {
+                        this._alarmMsgManager.AlarmMessage_IN($"[{chamberName}] Pre_Clen 용액이 10%이하입니다.");
+                    }
                 }
             }
 
@@ -136,11 +145,23 @@ namespace SemiConductor_Equipment.Services
         public void ModifyChemicalValue(string chambername, int Value)
         {
             ModifyChamberValue(chambername, "Chemical", Value);
+            Chemical[chambername] = Value;
+            if (Value < 11)
+            {
+                this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] Chemical 용액이 10%이하입니다.");
+            }
+            ConfigRead?.Invoke();
         }
 
         public void ModifyPreCleanValue(string chambername, int Value)
         {
             ModifyChamberValue(chambername, "Pre Clean", Value);
+            PreClean[chambername] = Value;
+            if (Value < 11)
+            {
+                this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] Pre_Clen 용액이 10%이하입니다.");
+            }
+            ConfigRead?.Invoke();
         }
 
         public void ModifyChamberValue(string chamberName, string propertyName, int value)
@@ -164,9 +185,13 @@ namespace SemiConductor_Equipment.Services
                     break;
                 }
             }
-
             File.WriteAllLines(filePath, lines);
-            InitConfig();
+
+            if (propertyName == "Pre Clean")
+                PreClean[chamberName] = value;
+            else
+                Chemical[chamberName] = value;
+            ConfigRead?.Invoke();
         }
 
         /// <summary>

@@ -14,12 +14,12 @@ namespace SemiConductor_Equipment.ViewModels.Menus
     {
         #region FIELDS
         private bool _isInitialized = false;
-        private readonly IDatabase<Chamberlogtable>? _database;
+        private readonly IDatabase<Alarmlogtable>? _database;
         #endregion
 
         #region PROPERTIES
         [ObservableProperty]
-        private IEnumerable<ChamberlogDisplayDto>? _logpagetable;
+        private IEnumerable<Alarmlogtable>? _logpagetable;
 
         [ObservableProperty]
         private List<string>? _chambername;
@@ -36,7 +36,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
-        public LogPageViewModel(IDatabase<Chamberlogtable> database)
+        public LogPageViewModel(IDatabase<Alarmlogtable> database)
         {
             this._database = database;
             this.Chambername = new List<string> { "ALL", "Loadport1", "Loadport2", "Chamber1", "Chamber2", "Chamber3", 
@@ -53,7 +53,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
                 var data = this._database?.Search(this.SelectChamberName);
                 if (data != null)
                 {
-                    this.Logpagetable = data.Select(d => new ChamberlogDisplayDto
+                    /*this.Logpagetable = data.Select(d => new ChamberlogDisplayDto
                     {
                         ChamberName = d.ChamberName,
                         Time = d.Time,
@@ -63,7 +63,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
                         LotId = d.LotId,
                         State = d.State,
                         
-                    });
+                    });*/
+                    throw new Exception();
                 }
                 else
                 {
@@ -89,7 +90,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
                 var logList = await Task.Run(() => _database.Get());
 
                 // DTO로 변환
-                this.Logpagetable = logList.Select(log => new ChamberlogDisplayDto
+                /*this.Logpagetable = logList.Select(log => new ChamberlogDisplayDto
                 {
                     ChamberName = log.ChamberName,
                     Time = log.Time,
@@ -99,7 +100,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus
                     LotId = log.LotId,
                     State = log.State,
                     // 필요한 필드 계속 매핑
-                }).ToList();
+                }).ToList();*/
+                throw new Exception();
 
                 _isInitialized = true;
             }

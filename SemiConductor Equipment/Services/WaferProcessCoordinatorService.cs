@@ -13,14 +13,21 @@ using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class WaferProcessCoordinatorService
+    public class WaferProcessCoordinatorService : IWaferProcessCoordinator
     {
+        #region FIELDS
         private readonly IChamberManager _chamberManager;
         private readonly ICleanManager _cleanManager;
         private readonly IRobotArmManager _robotArmManager;
         private readonly IMessageBox _messageBoxManager;
         private readonly RunningStateService _runningStateService;
+        public event EventHandler<string> Process;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
             this._chamberManager = chamberManager;
@@ -29,7 +36,12 @@ namespace SemiConductor_Equipment.Services
             this._messageBoxManager = messageBoxManager;
             this._runningStateService = runningStateService;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public async Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token)
         {
             bool isError = false;
@@ -37,6 +49,7 @@ namespace SemiConductor_Equipment.Services
             string sender = "";
             _robotArmManager.StartProcessing(cts.Token);
             _chamberManager.ProcessStart();
+            Process?.Invoke(this, "Start");
             try
             {
                 while (!token.IsCancellationRequested)
@@ -157,7 +170,10 @@ namespace SemiConductor_Equipment.Services
                     this._runningStateService.Change_State(sender, EquipmentStatusEnum.Error);
 
                 await _robotArmManager.StopProcessing();
+
+                Process?.Invoke(this, "END");
             }
         }
+        #endregion
     }
 }

@@ -87,14 +87,14 @@
                                                 BorderBrush="#3A88FE"
                                                 BorderThickness="2"
                                                 Padding="12,6"
-                                                Width="80"
+                                                Width="85"
                                                 HorizontalContentAlignment="Center"
                                                 VerticalContentAlignment="Center"
                                                 CaretBrush="#3A88FE"
                                                 PreviewTextInput="VerPreviewTextInput"
                                                  Margin="60 0 0 0"
                                                 />
-                                        <TextBlock Text="rpm" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                        <TextBlock Text="rpm" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">

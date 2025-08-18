@@ -15,6 +15,7 @@ using System.Data;
 using static SemiConductor_Equipment.Models.EventInfo;
 using System.Windows.Interop;
 using Secs4Net.Sml;
+using SemiConductor_Equipment.Enums;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -24,10 +25,12 @@ namespace SemiConductor_Equipment.Services
         private readonly ILogManager _logManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
+        private readonly IAlarmMsgManager _alarmMsgManager;
+        private readonly IMessageBox messageBoxManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
         private readonly WaferService _waferService;
-        private readonly WaferProcessCoordinatorService _coordinator;
+        private readonly IWaferProcessCoordinator _processManager;
         private readonly LoadPortService _loadPortService;
         private readonly RunningStateService _runningStateService;
 
@@ -47,17 +50,20 @@ namespace SemiConductor_Equipment.Services
 
         #region CONSTRUCTOR
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
-            WaferService waferService, WaferProcessCoordinatorService coordinator, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
-            IVIDManager vIDManager)
+            WaferService waferService, IWaferProcessCoordinator processManager, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
+            IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
-            _logManager = logManager;
-            _logAction = logAction;
-            _loadPortFactory = loadPortFactory;
-            _waferService = waferService;
-            _coordinator = coordinator;
-            _loadPortService = loadPortService;
-            _eventMessageManager = eventMessageManager;
-            _vIDManager = vIDManager;
+            this._logManager = logManager;
+            this._logAction = logAction;
+            this._loadPortFactory = loadPortFactory;
+            this._waferService = waferService;
+            this._processManager = processManager;
+            this._loadPortService = loadPortService;
+            this._eventMessageManager = eventMessageManager;
+            this._vIDManager = vIDManager;
+            this._alarmMsgManager = alarmMsgManager;
+            this.messageBoxManager = messageBoxManager;
+            this._runningStateService = runningStateService;
         }
         #endregion
 
@@ -196,6 +202,19 @@ namespace SemiConductor_Equipment.Services
             }
             else if (msg.S == 14 && msg.F == 9)// CJ Create //수정 필
             {
+
+                if (this._alarmMsgManager.IsAlarm)
+                {
+                    this.messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
+                    goto error_msg;
+                }
+
+                if (this._runningStateService.Get_State() == EquipmentStatusEnum.Running)
+                {
+                    this._alarmMsgManager.AlarmMessage_IN("Currently Testing this");
+                    goto error_msg;
+                }
+
                 if (msg.SecsItem[1] != null)
                     cmd = msg?.SecsItem?[1].GetString();
                 else goto error_msg;
@@ -272,7 +291,7 @@ namespace SemiConductor_Equipment.Services
                                 var cts = new CancellationTokenSource();
                                 var cancellationToken = cts.Token;
                                 _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss_HHmmss");
-                                await _coordinator.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
+                                await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
                             }
                         });
                     }
