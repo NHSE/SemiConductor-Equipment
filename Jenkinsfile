@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('Prepare'){
             steps {
-                git credentialsId : '{SemiConductor-Equipment}',
-                    branch : '{master}',
+                git credentialsId : 'SemiConductor-Equipment',
+                    branch : 'master',
                     url : 'https://github.com/NHSE/SemiConductor-Equipment.git'
             }
         }
