@@ -66,12 +66,7 @@
     <Resource Include="Resources\Carrier_in_wafer.png" />
     <Resource Include="Resources\Carrier_nothing.png" />
     <Resource Include="Resources\ChemicalTank.png" />
-    <Resource Include="Resources\Clean_Is_Wafer_MultiCupDown.png" />
-    <Resource Include="Resources\Clean_Is_Wafer_MultiCupUp.png" />
-    <Resource Include="Resources\Clean_Nothing_Wafer_MultiCupDown.png" />
     <Resource Include="Resources\LoadPort.png" />
-    <Resource Include="Resources\test.png" />
-    <Resource Include="Resources\test2.png" />
     <Resource Include="Resources\Wafer.png" />
   </ItemGroup>
 
