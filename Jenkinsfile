@@ -15,6 +15,15 @@ pipeline {
             }
         }
 
+stage('Restore') {
+    steps {
+        echo 'Restoring NuGet packages...'
+        dir('SemiConductor Equipment') {
+            bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" restore \"SemiConductor Equipment.sln\""
+        }
+    }
+}
+
 stage('Test') {
     steps {
         echo 'Running unit tests...'
