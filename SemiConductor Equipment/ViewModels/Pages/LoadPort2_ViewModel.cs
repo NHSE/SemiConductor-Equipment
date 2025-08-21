@@ -83,9 +83,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             if (e.PropertyName == "IsSetupEnabled")
             {
-                if (!this.IsSetupEnabled)
+                if (!this.IsSetupEnabled && _waferinfo.Count > 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort2_in_wafer" });
-                else
+                else if (this.IsSetupEnabled && _waferinfo.Count > 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort2" });
             }
         }

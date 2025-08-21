@@ -154,8 +154,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chemicalManager = chemicalManager;
             this._alarmMsgManager = alarmMsgManager;
 
-            Console.WriteLine($"MAIN {_alarmMsgManager.GetHashCode()}"); // SolutionService 내부
-
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
             this._vIDManager.SetSVID(100, this.Equipment_state);

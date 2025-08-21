@@ -10,9 +10,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
@@ -29,6 +31,12 @@ namespace SemiConductor_Equipment.Views.Pages
     {
         #region FIELDS
         public Chamber4_ViewModel ViewModel { get; set; }
+        private Random rand = new Random();
+        private bool test = false;
+        private double _currentAngle = 0;
+        private double _currentRpm = 60;
+        private DateTime _lastFrameTime;
+        private bool _spinning = false;
         #endregion
 
         #region PROPERTIES
@@ -42,8 +50,6 @@ namespace SemiConductor_Equipment.Views.Pages
             DataContext = this;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
-            this.imgChamber4.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
         }
         #endregion
 
@@ -61,7 +67,57 @@ namespace SemiConductor_Equipment.Views.Pages
             {
                 Change_Image(ViewModel.IsWafer);
             }
+            else if(e.PropertyName == "WaferRPM")
+            {
+                if (!test)
+                {
+                    StartSpin();
+                    SetRpm(ViewModel.WaferRPM);
+                }
+                else
+                    SetRpm(ViewModel.WaferRPM);
+
+            }
+            else if (e.PropertyName == "WaferColor")
+            {
+                
+            }
         }
+
+        public void SetRpm(double rpm)
+        {
+            _currentRpm = Math.Max(1, rpm);
+        }
+
+        private void StartSpin()
+        {
+            if (_spinning) return;
+            _spinning = true;
+            _lastFrameTime = DateTime.Now;
+            CompositionTarget.Rendering += MotorTick;
+        }
+
+        private void MotorTick(object? sender, EventArgs e)
+        {
+            var now = DateTime.Now;
+            double deltaTime = (now - _lastFrameTime).TotalSeconds;
+            _lastFrameTime = now;
+
+            if (_currentRpm <= 0)
+            {
+                _spinning = false;
+                CompositionTarget.Rendering -= MotorTick;
+                return;
+            }
+
+            // deltaAngle = 초당 회전 각 * 경과 시간
+            double degreesPerSecond = _currentRpm * 360.0 / 60.0;
+            _currentAngle += degreesPerSecond * deltaTime;
+            _currentAngle %= 360;
+
+            WaferRotate.Angle = _currentAngle;
+        }
+
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -77,14 +133,13 @@ namespace SemiConductor_Equipment.Views.Pages
         {
             if (isChecked)
             {
-                imgChamber4.Source = new BitmapImage(new Uri("/Resources/Buffer_in_wafer.png", UriKind.Relative));
+                WaferGroup.Visibility = Visibility.Visible;
             }
             else
             {
-                imgChamber4.Source = new BitmapImage(new Uri("/Resources/Buffer.png", UriKind.Relative));
+                WaferGroup.Visibility = Visibility.Collapsed;
             }
         }
-
         #endregion
     }
 }

@@ -35,6 +35,7 @@ namespace SemiConductor_Equipment.Services
 
         public event EventHandler<ChamberStatus> DataEnqueued;
         public event EventHandler<Wafer> ChangeTempData;
+        public event EventHandler<ChamberRPMValue> ChangeRPMData;
         public event EventHandler<RobotCommand> Enque_Robot;
         public event Action ProcessHandled;
 
@@ -109,10 +110,36 @@ namespace SemiConductor_Equipment.Services
                 }
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{wafer.Wafer_Num} in {chamberName}");
-                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "IN");
 
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Start Spin");
+
+                float current_rpm = 0;
+                int target_rpm = this._equiptempManager.Dry_RPM;
+                int max_random = this._equiptempManager.Dry_RPM / 10;
+                int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
                 Random rand = new Random();
 
+                while (Math.Abs(current_rpm - target_rpm) > 1)  // 목표와 1 이하 차이면 종료
+                {
+                    if (current_rpm < target_rpm)
+                    {
+                        current_rpm += rand.Next(min_random, max_random);
+                        if (current_rpm > target_rpm) current_rpm = target_rpm; // 오버런 방지
+                    }
+                    else if (current_rpm > target_rpm)
+                    {
+                        current_rpm += rand.Next(min_random, max_random);
+                        if (current_rpm < target_rpm) current_rpm = target_rpm;
+                    }
+
+                    this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
+                    ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
+                    await Task.Delay(1000);
+                }
+
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Spin");
+
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Start Gas");
                 for (int i = 0; i < this._equiptempManager.Chamber_Time; i++) // 설정된 시간 동안
                 {
                     double prev_temp = wafer.RequiredTemperature;
@@ -122,23 +149,37 @@ namespace SemiConductor_Equipment.Services
                     await Task.Delay(1000); // 1초 대기
                     ChangeTempData?.Invoke(this, wafer);
                 }
+
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Gas");
                 //Processing
 
-                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp - this._equiptempManager.Allow 
-                    || wafer.RequiredTemperature > this._equiptempManager.Max_Temp + this._equiptempManager.Allow)
+                if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp || wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
                     wafer.Status = "Error";
                 else
                     wafer.Status = "Completed";
 
-                lock (_lock)
+                while (current_rpm > 0)
+                {
+                    current_rpm -= rand.Next(min_random, max_random);
+                    if (current_rpm < 0)
                     {
-                        // 처리 완료 상태로 변경 (processing = false)
-                        this._chambers[chamberName] = (wafer, true);
-                        this._vIDManager.SetDVID(1001, wafer.RequiredTemperature, wafer.Wafer_Num);
-                        CEIDInfo info = this._eventMessageManager.GetCEID(301);
-                        info.Wafer_number = wafer.Wafer_Num;
-                        info.Loadport_Number = wafer.LoadportId;
-                        this._eventMessageManager.EnqueueEventData(info);
+                        current_rpm = 0;
+                    }
+                    this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
+                    ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
+                    await Task.Delay(1000);
+                }
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Spin Stop");
+
+                lock (_lock)
+                {
+                    // 처리 완료 상태로 변경 (processing = false)
+                    this._chambers[chamberName] = (wafer, true);
+                    this._vIDManager.SetDVID(1001, wafer.RequiredTemperature, wafer.Wafer_Num);
+                    CEIDInfo info = this._eventMessageManager.GetCEID(301);
+                    info.Wafer_number = wafer.Wafer_Num;
+                    info.Loadport_Number = wafer.LoadportId;
+                    this._eventMessageManager.EnqueueEventData(info);
                 }
 
                 this.Chamber_State[chamberName] = "DONE";
@@ -168,7 +209,6 @@ namespace SemiConductor_Equipment.Services
                 }
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
-                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "DONE");
             }
             catch (Exception ex)
             {

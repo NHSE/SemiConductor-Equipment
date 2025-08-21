@@ -152,7 +152,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.Chemical = this._solutionManager.GetValue("Chamber5");
             this.PreClean = this._solutionManager.GetPreCleanValue("Chamber5");
             this.Setting_Spray_Time = this._equipmentConfigManager.Spray_Time;
-            this.Setting_RPM = this._equipmentConfigManager.RPM;
+            this.Setting_RPM = this._equipmentConfigManager.Clean_RPM;
             this.Setting_Flow_Rate = this._equipmentConfigManager.Flow_Rate;
             this.Setting_PreClean_Flow_Rate = this._equipmentConfigManager.PreClean_Flow_Rate;
             this.Setting_PreClean_Spray_Time = this._equipmentConfigManager.PreClean_Spray_Time;

@@ -20,6 +20,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Defaults;
+using System.Windows.Media;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -32,6 +33,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private FileSystemWatcher _logFileWatcher;
         private readonly object _itemLock1 = new object();
         private long lastLogPosition = 0;
+        private double previousTemp = 0;
         #endregion
 
         #region PROPERTIES
@@ -79,6 +81,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private double _graphtime;
+
+        [ObservableProperty]
+        private double _waferRPM;
+
+        [ObservableProperty]
+        private byte _waferColor;
         #endregion
 
         #region CONSTRUCTOR
@@ -99,6 +107,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager.DataEnqueued += OnDataEnqueued;
             this._chamberManager.ChangeTempData += OnTempChanged;
             this._chamberManager.ProcessHandled += OnProcess;
+            this._chamberManager.ChangeRPMData += OnRPMData;
 
             this._equipmentConfigManager = equipmentConfigManager;
             this._equipmentConfigManager.ConfigRead += ChangeTempData;
@@ -180,8 +189,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {
-                    this.IsWafer = !this.IsWafer;
+                    if(chamber.State == "Running")
+                    {
+                        this.IsWafer = true;
+                    }
+                    else if(chamber.State == "DONE")
+                    {
+                        this.IsWafer = false;
+                    }
+
                     this.StatusText = chamber.State;
+
+                    this.Series.Clear();
 
                     if (!waferDataDict.ContainsKey(chamber.WaferName))
                     {
@@ -200,8 +219,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        this.IsWafer = !this.IsWafer;
-                        this.StatusText = chamber.State;
+                        if (chamber.State == "Running")
+                        {
+                            this.IsWafer = true;
+                        }
+                        else if (chamber.State == "DONE")
+                        {
+                            this.IsWafer = false;
+                        }
+
+                        this.Series.Clear();
 
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
                         {
@@ -249,6 +276,24 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        private void OnRPMData(object? sender, ChamberRPMValue e)
+        {
+            if (e.ChamberName == "Chamber1")
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.WaferRPM = e.RPM;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.WaferRPM = e.RPM;
+                    });
+                }
+            }
+        }
+
         private void OnTempChanged(object? sender, Wafer e)
         {
             if (e.CurrentLocation == "Dry Chamber_Chamber1")
@@ -267,6 +312,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         }
                         waferDataDict[e.Wafer_Num].Add(new ObservablePoint(xValue, yValue));
                     }
+
+                    double delta = 255 / (this._equipmentConfigManager.Chamber_Time + 1);
+                    WaferColor += (byte)delta;
                 }
                 else
                 {
@@ -284,6 +332,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             }
                             waferDataDict[e.Wafer_Num].Add(new ObservablePoint(xValue, yValue));
                         }
+
+                        double delta = 255 / (this._equipmentConfigManager.Chamber_Time + 1);
+                        WaferColor += (byte)delta;
+
                     });
                 }
             }

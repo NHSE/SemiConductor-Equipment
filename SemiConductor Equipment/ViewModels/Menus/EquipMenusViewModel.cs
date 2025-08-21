@@ -17,7 +17,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
         #region PROPERTIES
         [ObservableProperty]
-        private int _rpm;
+        private int _clean_rpm;
         [ObservableProperty]
         private int _flowRate;
         [ObservableProperty]
@@ -33,7 +33,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [ObservableProperty]
         private int _min_temperature;
         [ObservableProperty]
-        private int _allowable;
+        private int _dry_Rpm;
         #endregion
 
         #region CONSTRUCTOR
@@ -55,7 +55,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [RelayCommand]
         private void Save()
         {
-            _configManager.UpdateConfigValue("RPM", this.Rpm);
+            _configManager.UpdateConfigValue("Clean RPM", this.Clean_rpm);
             _configManager.UpdateConfigValue("Chemical Flow Rate", this.FlowRate);
             _configManager.UpdateConfigValue("Chemical Spray Time", this.Spraytime);
             _configManager.UpdateConfigValue("Pre-Clean Flow Rate", this.PreClean_FlowRate);
@@ -63,7 +63,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
             _configManager.UpdateConfigValue("Max Temperature", this.Max_temperature);
             _configManager.UpdateConfigValue("Min Temperature", this.Min_temperature);
-            _configManager.UpdateConfigValue("Allowable", this.Allowable);
+            _configManager.UpdateConfigValue("Dry RPM", this.Dry_Rpm);
             _configManager.UpdateConfigValue("Chamber Time", this.Chambertime);
 
             _configManager.InitConfig();
@@ -73,7 +73,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #region METHOD
         private void OnConfigRead()
         {
-            this.Rpm = _configManager.RPM;
+            this.Clean_rpm = _configManager.Clean_RPM;
             this.FlowRate = _configManager.Flow_Rate;
             this.Spraytime = _configManager.Spray_Time;
             this.PreClean_FlowRate = _configManager.PreClean_Flow_Rate;
@@ -81,7 +81,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
             this.Max_temperature = _configManager.Max_Temp;
             this.Min_temperature = _configManager.Min_Temp;
-            this.Allowable = _configManager.Allow;
+            this.Dry_Rpm = _configManager.Dry_RPM;
             this.Chambertime = _configManager.Chamber_Time;
         }
         #endregion

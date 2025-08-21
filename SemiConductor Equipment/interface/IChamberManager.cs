@@ -26,6 +26,7 @@ namespace SemiConductor_Equipment.interfaces
         event EventHandler<ChamberStatus> DataEnqueued;
         event EventHandler<RobotCommand> Enque_Robot;
         event EventHandler<Wafer> ChangeTempData;
+        event EventHandler<ChamberRPMValue> ChangeRPMData;
         event Action ProcessHandled;
     }
 }

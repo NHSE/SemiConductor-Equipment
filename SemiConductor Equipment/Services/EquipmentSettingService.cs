@@ -18,9 +18,9 @@ namespace SemiConductor_Equipment.Services
         #region PROPERTIES
         public int Max_Temp { get; set; }
         public int Min_Temp { get; set; }
-        public int Allow { get; set; }
+        public int Dry_RPM { get; set; }
         public int Chamber_Time { get; set; }
-        public int RPM { get; set; }
+        public int Clean_RPM { get; set; }
         public int Flow_Rate { get; set; }
         public int Spray_Time { get; set; }
         public int PreClean_Flow_Rate { get; set; }
@@ -59,10 +59,10 @@ namespace SemiConductor_Equipment.Services
                     if (int.TryParse(line.Split('=')[1].Trim(), out int sprayTime))
                         Spray_Time = sprayTime;
                 }
-                else if (line.StartsWith("RPM"))
+                else if (line.StartsWith("Clean RPM"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int rpm))
-                        RPM = rpm;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int cleanrpm))
+                        Clean_RPM = cleanrpm;
                 }
                 else if (line.StartsWith("Chemical Flow Rate"))
                 {
@@ -89,10 +89,10 @@ namespace SemiConductor_Equipment.Services
                     if (int.TryParse(line.Split('=')[1].Trim(), out int tempValue))
                         Min_Temp = tempValue;
                 }
-                else if (line.StartsWith("Allowable"))
+                else if (line.StartsWith("Dry RPM"))
                 {
-                    if (int.TryParse(line.Split('=')[1].Trim(), out int allowValue))
-                        Allow = allowValue;
+                    if (int.TryParse(line.Split('=')[1].Trim(), out int dryrpm))
+                        Dry_RPM = dryrpm;
                 }
                 else if (line.StartsWith("Chamber Time"))
                 {
@@ -141,7 +141,7 @@ namespace SemiConductor_Equipment.Services
             // 파일이 없으면 생성하면서 내용도 쓴다
             if (!File.Exists(filePath))
             {
-                string content = "RPM = 60\nChemical Flow Rate = 2\nChemical Spray Time = 1\nPre-Clean Flow Rate = 2\nPre-Clean Spray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nAllow = 5\nChamber Time = 10";
+                string content = "Clean RPM = 60\nChemical Flow Rate = 2\nChemical Spray Time = 1\nPre-Clean Flow Rate = 2\nPre-Clean Spray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nDry RPM = 5\nChamber Time = 10";
                 File.WriteAllText(filePath, content);
             }
 

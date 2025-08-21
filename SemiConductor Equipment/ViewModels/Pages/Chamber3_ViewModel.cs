@@ -80,6 +80,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         [ObservableProperty]
         private double _graphtime;
+
+        [ObservableProperty]
+        private double _waferRPM;
+
+        [ObservableProperty]
+        private byte _waferColor;
         #endregion
 
         #region CONSTRUCTOR
@@ -100,6 +106,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager.DataEnqueued += OnDataEnqueued;
             this._chamberManager.ChangeTempData += OnTempChanged;
             this._chamberManager.ProcessHandled += OnProcess;
+            this._chamberManager.ChangeRPMData += OnRPMData;
 
             this._equipmentConfigManager = equipmentConfigManager;
             this._equipmentConfigManager.ConfigRead += ChangeTempData;
@@ -179,10 +186,44 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             //그 이후 각 뷰모델에서 자기 이름과 같으면 bool 반전
                 if (chamber.ChamberName == "Chamber3")
                 {
-                    if (Application.Current.Dispatcher.CheckAccess())
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    if(chamber.State == "Running")
                     {
-                        this.IsWafer = !this.IsWafer;
-                        this.StatusText = chamber.State;
+                        this.IsWafer = true;
+                    }
+                    else if(chamber.State == "DONE")
+                    {
+                        this.IsWafer = false;
+                    }
+
+                    this.StatusText = chamber.State;
+
+                    if (!waferDataDict.ContainsKey(chamber.WaferName))
+                    {
+                        waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
+                        Series.Add(new LineSeries<ObservablePoint>
+                        {
+                            Values = waferDataDict[chamber.WaferName],
+                            Fill = null,
+                            GeometrySize = 0,
+                            Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                            Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
+                        });
+                    }
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (chamber.State == "Running")
+                        {
+                            this.IsWafer = true;
+                        }
+                        else if (chamber.State == "DONE")
+                        {
+                            this.IsWafer = false;
+                        }
 
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
                         {
@@ -196,29 +237,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                                 Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                             });
                         }
-                    }
-                    else
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            this.IsWafer = !this.IsWafer;
-                            this.StatusText = chamber.State;
-
-                            if (!waferDataDict.ContainsKey(chamber.WaferName))
-                            {
-                                waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
-                                Series.Add(new LineSeries<ObservablePoint>
-                                {
-                                    Values = waferDataDict[chamber.WaferName],
-                                    Fill = null,
-                                    GeometrySize = 0,
-                                    Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
-                                    Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
-                                });
-                            }
-                        });
-                    }
+                    });
                 }
+            }
         }
 
         private SKColor GetColorByWaferId(string waferId)
@@ -247,6 +268,24 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     this.waferDataDict.Clear();
                     this.Series.Clear();
                 });
+            }
+        }
+
+        private void OnRPMData(object? sender, ChamberRPMValue e)
+        {
+            if (e.ChamberName == "Chamber3")
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.WaferRPM = e.RPM;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.WaferRPM = e.RPM;
+                    });
+                }
             }
         }
 

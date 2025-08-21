@@ -59,7 +59,67 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="#1A2233" CornerRadius="12" Margin="12" Padding="18">
-                <ui:Image x:Name="imgChamber2"/>
+                <Grid>
+                    <Rectangle Width="300" Height="300" HorizontalAlignment="Center" StrokeThickness="5">
+                        <Rectangle.Stroke>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#4B5C6B" Offset="0"/>
+                                <GradientStop Color="#2B3642" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Stroke>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#2B3642" Offset="0"/>
+                                <GradientStop Color="#232C39" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <Rectangle Width="250" Height="250" HorizontalAlignment="Center" StrokeThickness="8">
+                        <Rectangle.Stroke>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#5C6D7E" Offset="0"/>
+                                <GradientStop Color="#344455" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Stroke>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#344455" Offset="0"/>
+                                <GradientStop Color="#232C39" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <!-- 웨이퍼 그릇 -->
+                    <Ellipse Width="200" Height="200" HorizontalAlignment="Center" StrokeThickness="10">
+                        <Ellipse.Stroke>
+                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                <GradientStop Color="#9AB3C8" Offset="0"/>
+                                <GradientStop Color="#4B5C6B" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Stroke>
+                        <Ellipse.Fill>
+                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                <GradientStop Color="#5C6D7E" Offset="0"/>
+                                <GradientStop Color="#232C39" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <!-- 원 + 텍스트를 함께 돌릴 Grid -->
+                    <Grid x:Name="WaferGroup" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+                        <Image x:Name="WaferImage" Width="200" Height="200" Source="/Resources/Wafer.png">
+                            <Image.RenderTransform>
+                                <RotateTransform x:Name="WaferRotate" Angle="0" CenterX="100" CenterY="100"/>
+                            </Image.RenderTransform>
+                        </Image>
+                        <TextBlock Text="WAFER"
+                   Foreground="White"
+                   FontWeight="Bold"
+                   FontSize="16"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+                    </Grid>
+                </Grid>
             </Border>
 
             <!-- 하단: 웨이퍼 상세 목록 -->

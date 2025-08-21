@@ -101,9 +101,9 @@ namespace SemiConductor_Equipment.Services
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Spin");
 
             float current_rpm = 0;
-            int target_rpm = this._equiptempManager.RPM;
-            int max_random = this._equiptempManager.RPM / 10;
-            int min_random = (this._equiptempManager.RPM / 50) == 0 ? 1 : this._equiptempManager.RPM / 50;
+            int target_rpm = this._equiptempManager.Clean_RPM;
+            int max_random = this._equiptempManager.Clean_RPM / 10;
+            int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
             Random rand = new Random();
 
             while (Math.Abs(current_rpm - target_rpm) > 1)  // 목표와 1 이하 차이면 종료

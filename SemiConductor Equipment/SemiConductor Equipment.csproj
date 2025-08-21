@@ -55,6 +55,7 @@
     <None Remove="Resources\Tank.png" />
     <None Remove="Resources\test.png" />
     <None Remove="Resources\test2.png" />
+    <None Remove="Resources\Wafer.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -71,6 +72,7 @@
     <Resource Include="Resources\LoadPort.png" />
     <Resource Include="Resources\test.png" />
     <Resource Include="Resources\test2.png" />
+    <Resource Include="Resources\Wafer.png" />
   </ItemGroup>
 
 </Project>

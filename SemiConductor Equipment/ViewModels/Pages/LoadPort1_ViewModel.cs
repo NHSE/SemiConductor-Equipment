@@ -29,6 +29,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IWaferProcessCoordinator _processManager;
         public byte LoadPortId => 1;
+        private bool imgflag = false;
         #endregion
 
         #region PROPERTIES
@@ -85,9 +86,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             if (e.PropertyName == "IsSetupEnabled")
             {
-                if (!this.IsSetupEnabled)
+                if (!this.IsSetupEnabled && _waferinfo.Count > 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
-                else
+                else if (this.IsSetupEnabled && _waferinfo.Count > 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
             }
         }

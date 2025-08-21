@@ -79,7 +79,7 @@
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="RPM" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox x:Name="tbrpm" Text="{Binding ViewModel.Rpm, Mode=TwoWay}"
+                                        <TextBox x:Name="tbCleanrpm" Text="{Binding ViewModel.Clean_rpm, Mode=TwoWay}"
                                                 FontSize="24"
                                                 FontWeight="Bold"
                                                 Background="#2E3B4E"
@@ -92,7 +92,7 @@
                                                 VerticalContentAlignment="Center"
                                                 CaretBrush="#3A88FE"
                                                 PreviewTextInput="VerPreviewTextInput"
-                                                 Margin="60 0 0 0"
+                                                 Margin="53 0 0 0"
                                                 />
                                         <TextBlock Text="rpm" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
@@ -187,7 +187,7 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <StackPanel>
-                        <TextBlock Text="Heating Setting"
+                        <TextBlock Text="Dry Setting"
                                FontSize="18"
                                FontWeight="Bold"
                                Foreground="White"
@@ -203,26 +203,10 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="Min Temperature" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                                    <TextBox Text="{Binding ViewModel.Min_temperature, Mode=TwoWay}"
-                                        FontSize="24"
-                                        FontWeight="Bold"
-                                        Background="#2E3B4E"
-                                        Foreground="White"
-                                        BorderBrush="#3A88FE"
-                                        BorderThickness="2"
-                                        Padding="12,6"
-                                        Width="180"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        CaretBrush="#3A88FE"
-                                        PreviewTextInput="VerPreviewTextInput"
-                                        />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                    <TextBlock Text="Max Temperature" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                                        <TextBox Text="{Binding ViewModel.Max_temperature, Mode=TwoWay}"
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                <TextBlock Text="RPM" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox x:Name="tbDryrpm" Text="{Binding ViewModel.Dry_Rpm, Mode=TwoWay}"
                                             FontSize="24"
                                             FontWeight="Bold"
                                             Background="#2E3B4E"
@@ -230,18 +214,20 @@
                                             BorderBrush="#3A88FE"
                                             BorderThickness="2"
                                             Padding="12,6"
-                                            Width="180"
+                                            Width="85"
                                             HorizontalContentAlignment="Center"
                                             VerticalContentAlignment="Center"
                                             CaretBrush="#3A88FE"
                                             PreviewTextInput="VerPreviewTextInput"
+                                             Margin="50 0 0 0"
                                             />
+                                    <TextBlock Text="rpm" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="Allowable" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Min Temperature" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="±" FontSize="30"/>
-                                        <TextBox x:Name="tbAllowable" Text="{Binding ViewModel.Allowable, Mode=TwoWay}"
+                                        <TextBox Text="{Binding ViewModel.Min_temperature, Mode=TwoWay}"
                                         FontSize="24"
                                         FontWeight="Bold"
                                         Background="#2E3B4E"
@@ -254,7 +240,30 @@
                                         VerticalContentAlignment="Center"
                                         CaretBrush="#3A88FE"
                                         PreviewTextInput="VerPreviewTextInput"
+                                        Margin="70 0 0 0"
                                         />
+                                        <TextBlock Text="°C" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" Margin="10 0 0 0" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Max Temperature" Foreground="Black" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Text="{Binding ViewModel.Max_temperature, Mode=TwoWay}"
+                                            FontSize="24"
+                                            FontWeight="Bold"
+                                            Background="#2E3B4E"
+                                            Foreground="White"
+                                            BorderBrush="#3A88FE"
+                                            BorderThickness="2"
+                                            Padding="12,6"
+                                            Width="100"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            CaretBrush="#3A88FE"
+                                            PreviewTextInput="VerPreviewTextInput"
+                                            Margin="70 0 0 0"
+                                            />
+                                        <TextBlock Text="°C" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" Margin="10 0 0 0" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="3" HorizontalAlignment="Center">
