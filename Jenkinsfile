@@ -3,9 +3,9 @@ pipeline {
     stages {
         stage('Prepare'){
             steps {
-                git credentialsId : '{credentialId}',
-                    branch : '{branchName}',
-                    url : 'https://github.com/{repoName}/{projectName}.git'
+                git credentialsId : '{SemiConductor-Equipment}',
+                    branch : '{master}',
+                    url : 'https://github.com/NHSE/SemiConductor-Equipment.git'
             }
         }
         stage('test') {
