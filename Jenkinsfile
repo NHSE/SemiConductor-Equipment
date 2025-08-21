@@ -2,46 +2,45 @@ pipeline {
     agent any
 
     environment {
-        SOLUTION = '"SemiConductor Equipment\\SemiConductor-Equipment.sln"'
+        SOLUTION = 'SemiConductor-Equipment.sln'
         CONFIG = 'Release'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                	git credentialsId: 'SemiConductor-Equipment',
-                    	branch: 'master',
-                    	url: 'https://github.com/NHSE/SemiConductor-Equipment.git'
+                git credentialsId: 'SemiConductor-Equipment',
+                    branch: 'master',
+                    url: 'https://github.com/NHSE/SemiConductor-Equipment.git'
             }
         }
 
-stage('Restore') {
-    steps {
-        echo 'Restoring NuGet packages...'
-        dir('SemiConductor Equipment') {
-            bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" restore \"SemiConductor Equipment.sln\""
+        stage('Restore') {
+            steps {
+                echo 'Restoring NuGet packages...'
+                dir('SemiConductor Equipment') {
+                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" restore ${env.SOLUTION}"
+                }
+            }
         }
-    }
-}
 
-stage('Test') {
-    steps {
-        echo 'Running unit tests...'
-        dir('SemiConductor Equipment') {   // .sln이 있는 폴더로 이동
-            bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test \"SemiConductor Equipment.sln\" --configuration %CONFIG%"
+        stage('Test') {
+            steps {
+                echo 'Running unit tests...'
+                dir('SemiConductor Equipment') {
+                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test ${env.SOLUTION} --configuration ${env.CONFIG}"
+                }
+            }
         }
-    }
-}
 
-stage('Build') {
-    steps {
-        echo 'Building project...'
-        dir('SemiConductor Equipment') {
-            bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"SemiConductor Equipment.sln\" /p:Configuration=%CONFIG%"
+        stage('Build') {
+            steps {
+                echo 'Building project...'
+                dir('SemiConductor Equipment') {
+                    bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" ${env.SOLUTION} /p:Configuration=${env.CONFIG}"
+                }
+            }
         }
-    }
-}
-
 
         stage('Docker Build') {
             steps {
