@@ -35,13 +35,12 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                echo 'Building project...'
-                dir("${SOLUTION_DIR}") {
-                    bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"${SOLUTION_FILE}\" /p:Configuration=${CONFIG}"
-                }
-            }
-        }
+    steps {
+        echo 'Building project...'
+        bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\SemiConductor-Equipment_\\SemiConductor Equipment\\SemiConductor Equipment.sln\" /p:Configuration=Release"
+    }
+}
+
 
         stage('Docker Build') {
             steps {
