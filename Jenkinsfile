@@ -16,18 +16,24 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                echo 'Running unit tests...'
-                bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test %SOLUTION% --configuration %CONFIG%"
-            }
+    steps {
+        echo 'Running unit tests...'
+        // 'dir' 블록으로 .sln이 있는 폴더로 이동
+        dir('SemiConductor Equipment') {
+            bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test \"SemiConductor-Equipment.sln\" --configuration %CONFIG%"
         }
+    }
+}
 
-        stage('Build') {
-            steps {
-                echo 'Building project...'
-                bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" %SOLUTION% /p:Configuration=%CONFIG%"
-            }
+stage('Build') {
+    steps {
+        echo 'Building project...'
+        dir('SemiConductor Equipment') {
+            bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"SemiConductor-Equipment.sln\" /p:Configuration=%CONFIG%"
         }
+    }
+}
+
 
         stage('Docker Build') {
             steps {
