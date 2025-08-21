@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        SOLUTION = 'SemiConductor-Equipment.sln'
         CONFIG = 'Release'
     }
 
@@ -19,7 +18,7 @@ pipeline {
             steps {
                 echo 'Restoring NuGet packages...'
                 dir('SemiConductor Equipment') {
-                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" restore ${env.SOLUTION}"
+                    bat '"C:\\Program Files\\dotnet\\dotnet.exe" restore "SemiConductor-Equipment.sln"'
                 }
             }
         }
@@ -28,7 +27,7 @@ pipeline {
             steps {
                 echo 'Running unit tests...'
                 dir('SemiConductor Equipment') {
-                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test ${env.SOLUTION} --configuration ${env.CONFIG}"
+                    bat '"C:\\Program Files\\dotnet\\dotnet.exe" test "SemiConductor-Equipment.sln" --configuration %CONFIG%'
                 }
             }
         }
@@ -37,7 +36,7 @@ pipeline {
             steps {
                 echo 'Building project...'
                 dir('SemiConductor Equipment') {
-                    bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" ${env.SOLUTION} /p:Configuration=${env.CONFIG}"
+                    bat '"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe" "SemiConductor-Equipment.sln" /p:Configuration=%CONFIG%'
                 }
             }
         }
