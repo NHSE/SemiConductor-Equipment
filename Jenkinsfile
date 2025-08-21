@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SOLUTION = 'SemiConductor Equipment\\SemiConductor-Equipment.sln'
+        SOLUTION = '"SemiConductor Equipment\\SemiConductor-Equipment.sln"'
         CONFIG = 'Release'
     }
 
