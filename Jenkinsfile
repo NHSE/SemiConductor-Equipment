@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         CONFIG = 'Release'
+        SOLUTION_DIR = 'SemiConductor Equipment'       // .sln 파일 있는 폴더
+        SOLUTION_FILE = 'SemiConductor Equipment.sln' // 공백 포함 파일명
     }
 
     stages {
@@ -17,8 +19,8 @@ pipeline {
         stage('Restore') {
             steps {
                 echo 'Restoring NuGet packages...'
-                dir('SemiConductor Equipment') {
-                    bat '"C:\\Program Files\\dotnet\\dotnet.exe" restore "SemiConductor-Equipment.sln"'
+                dir("${SOLUTION_DIR}") {
+                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" restore \"${SOLUTION_FILE}\""
                 }
             }
         }
@@ -26,8 +28,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running unit tests...'
-                dir('SemiConductor Equipment') {
-                    bat '"C:\\Program Files\\dotnet\\dotnet.exe" test "SemiConductor-Equipment.sln" --configuration %CONFIG%'
+                dir("${SOLUTION_DIR}") {
+                    bat "\"C:\\Program Files\\dotnet\\dotnet.exe\" test \"${SOLUTION_FILE}\" --configuration ${CONFIG}\""
                 }
             }
         }
@@ -35,8 +37,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building project...'
-                dir('SemiConductor Equipment') {
-                    bat '"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe" "SemiConductor-Equipment.sln" /p:Configuration=%CONFIG%'
+                dir("${SOLUTION_DIR}") {
+                    bat "\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"${SOLUTION_FILE}\" /p:Configuration=${CONFIG}"
                 }
             }
         }
