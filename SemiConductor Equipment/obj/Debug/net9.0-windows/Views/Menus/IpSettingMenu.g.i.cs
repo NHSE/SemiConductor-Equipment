@@ -71,7 +71,7 @@ namespace SemiConductor_Equipment.Views.Menus {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;V1.0.0.0;component/views/menus/ipsettingmenu.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;component/views/menus/ipsettingmenu.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Menus\IpSettingMenu.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

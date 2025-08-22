@@ -50,6 +50,9 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<ILogManager>(provider =>
                                     new LogService(@"C:\Logs"));
 
+                services.AddSingleton<IResultFileManager>(provider =>
+                                    new ResultFileService(@"C:\Logs\ResultLog"));
+
                 services.AddSingleton<IpSettingMenu>();
                 services.AddSingleton<IpSettingViewModel>();
                 services.AddSingleton<IConfigManager>(provider => 

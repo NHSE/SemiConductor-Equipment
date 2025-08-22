@@ -920,6 +920,15 @@
           "lib/netstandard1.0/_._": {}
         }
       },
+      "Microsoft.Office.Interop.Excel/15.0.4795.1001": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Office.Interop.Excel.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Office.Interop.Excel.dll": {}
+        }
+      },
       "Microsoft.Win32.Primitives/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -3967,6 +3976,19 @@
         "microsoft.netcore.targets.1.1.0.nupkg.sha512",
         "microsoft.netcore.targets.nuspec",
         "runtime.json"
+      ]
+    },
+    "Microsoft.Office.Interop.Excel/15.0.4795.1001": {
+      "sha512": "cuvqi/U5MYSM0gvR2l90q0m/urRgmg69EiwP5VWp1RcaJ0YT5G26Va5LaOZ3KJFc22FNihS5CUjeePUp2YpGQA==",
+      "type": "package",
+      "path": "microsoft.office.interop.excel/15.0.4795.1001",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net20/Microsoft.Office.Interop.Excel.dll",
+        "lib/netstandard2.0/Microsoft.Office.Interop.Excel.dll",
+        "microsoft.office.interop.excel.15.0.4795.1001.nupkg.sha512",
+        "microsoft.office.interop.excel.nuspec"
       ]
     },
     "Microsoft.Win32.Primitives/4.3.0": {
@@ -7954,6 +7976,7 @@
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.12",
       "Microsoft.Extensions.DependencyInjection >= 9.0.5",
       "Microsoft.Extensions.Hosting >= 9.0.5",
+      "Microsoft.Office.Interop.Excel >= 15.0.4795.1001",
       "Microsoft.Xaml.Behaviors.Wpf >= 1.1.135",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 7.0.11",
       "Npgsql.EntityFrameworkCore.PostgreSQL.Design >= 1.1.0",
@@ -7971,11 +7994,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+      "projectUniqueName": "C:\\Users\\36175\\OneDrive\\문서\\Project\\11-1\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
       "projectName": "SemiConductor Equipment",
-      "projectPath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+      "projectPath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\11-1\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
       "packagesPath": "C:\\Users\\36175\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\obj\\",
+      "outputPath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\11-1\\SemiConductor Equipment\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -8054,6 +8077,10 @@
           "Microsoft.Extensions.Hosting": {
             "target": "Package",
             "version": "[9.0.5, )"
+          },
+          "Microsoft.Office.Interop.Excel": {
+            "target": "Package",
+            "version": "[15.0.4795.1001, )"
           },
           "Microsoft.Xaml.Behaviors.Wpf": {
             "target": "Package",

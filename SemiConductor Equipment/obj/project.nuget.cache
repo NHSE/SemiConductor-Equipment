@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "TJP+8ZBE8So=",
+  "dgSpecHash": "6pIOivrMgv4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\36175\\OneDrive\\문서\\SemiConductor Equipment\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
+  "projectFilePath": "C:\\Users\\36175\\OneDrive\\문서\\Project\\11-1\\SemiConductor Equipment\\SemiConductor Equipment.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\36175\\.nuget\\packages\\communitytoolkit.highperformance\\8.4.0\\communitytoolkit.highperformance.8.4.0.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
@@ -52,6 +52,7 @@
     "C:\\Users\\36175\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.5\\microsoft.extensions.primitives.9.0.5.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\36175\\.nuget\\packages\\microsoft.office.interop.excel\\15.0.4795.1001\\microsoft.office.interop.excel.15.0.4795.1001.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.135\\microsoft.xaml.behaviors.wpf.1.1.135.nupkg.sha512",
     "C:\\Users\\36175\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",

@@ -77,6 +77,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         {
             EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
             this._runningStateService.Change_State("LoadPort1", state);
+            _waferinfo.Clear();
         }
         #endregion
 
@@ -88,7 +89,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 if (!this.IsSetupEnabled && _waferinfo.Count > 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
-                else if (this.IsSetupEnabled && _waferinfo.Count > 0)
+                else if (this.IsSetupEnabled && _waferinfo.Count == 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
             }
         }

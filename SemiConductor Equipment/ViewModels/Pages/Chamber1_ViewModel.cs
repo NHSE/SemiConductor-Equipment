@@ -123,7 +123,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         private void SetupLogFileWatcher()
         {
-            var logDirectory = @"C:\Logs";
+            var logDirectory = @$"C:\Logs";
             var logFileName = $"Dry_Chamber1_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log";
 
             _logFileWatcher = new FileSystemWatcher

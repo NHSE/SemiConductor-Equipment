@@ -54,7 +54,7 @@ namespace SemiConductor_Equipment.Views.Windows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;V1.0.0.0;component/views/windows/rptidmodifywindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;component/views/windows/rptidmodifywindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Windows\RPTIDModifyWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

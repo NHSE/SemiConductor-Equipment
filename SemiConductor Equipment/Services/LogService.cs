@@ -12,7 +12,7 @@ namespace SemiConductor_Equipment.Services
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
 
-        public string LogDataTime { get; set; }
+        public string LogDataTime { get; set; } // S14F9 받은 시점
 
         public LogService(string logDirectory)
         {

@@ -4,16 +4,16 @@
 exe
 C#
 .cs
-C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\obj\Debug\net9.0-windows\
+C:\Users\36175\OneDrive\문서\Project\11-1\SemiConductor Equipment\obj\Debug\net9.0-windows\
 SemiConductor_Equipment
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\36175\OneDrive\문서\SemiConductor Equipment\SemiConductor Equipment\App.xaml
+C:\Users\36175\OneDrive\문서\Project\11-1\SemiConductor Equipment\App.xaml
 29776391820
 1282391436
-1211612381812
-255-1538418297
+124-168950660
+256671789499
 Controls\LoadingControl.xaml;Views\Menus\AlarmLogMenu.xaml;Views\Menus\EquipMenu.xaml;Views\Menus\EventMenu.xaml;Views\Menus\IpSettingMenu.xaml;Views\Menus\LogPage.xaml;Views\Menus\SolutionSettingMenu.xaml;Views\MessageBox\MessageBoxWindow.xaml;Views\Pages\Chamber1_Page.xaml;Views\Pages\Chamber2_Page.xaml;Views\Pages\Chamber3_Page.xaml;Views\Pages\Chamber4_Page.xaml;Views\Pages\Chamber5_Page.xaml;Views\Pages\Chamber6_Page.xaml;Views\Pages\CleanChamber1_Page.xaml;Views\Pages\CleanChamber2_Page.xaml;Views\Pages\CleanChamber3_Page.xaml;Views\Pages\CleanChamber4_Page.xaml;Views\Pages\CleanChamber5_Page.xaml;Views\Pages\CleanChamber6_Page.xaml;Views\Pages\LoadPort1_Page.xaml;Views\Pages\LoadPort2_Page.xaml;Views\Pages\MainPage.xaml;Views\Windows\AlarmLogHistoryWindow.xaml;Views\Windows\CarrierSetupWindow.xaml;Views\Windows\CEIDModifyWindow.xaml;Views\Windows\MainWindow.xaml;Views\Windows\RPTIDAddWindow.xaml;Views\Windows\RPTIDModifyWindow.xaml;
 
 False
