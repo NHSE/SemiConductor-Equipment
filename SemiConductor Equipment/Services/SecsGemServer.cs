@@ -22,17 +22,20 @@ namespace SemiConductor_Equipment.Services
         private ISecsConnection _hsmsConnector;
         private IEventMessageManager _eventMessageManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
+        private readonly ITraceDataManager _traceDataManager;
         public event EventHandler Connected;
         public event EventHandler Disconnected;
         private readonly MessageHandlerService _messageHandler;
         private CancellationTokenSource? _cts;
         private CancellationTokenSource _connectingCts;
 
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager, IAlarmMsgManager alarmMsgManager)
+        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager, 
+            IAlarmMsgManager alarmMsgManager, ITraceDataManager traceDataManager)
         {
             this._messageHandler = messageHandler;
             this._eventMessageManager = eventMessageManager;
             this._alarmMsgManager = alarmMsgManager;
+            this._traceDataManager = traceDataManager;
         }
 
         public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
@@ -64,6 +67,9 @@ namespace SemiConductor_Equipment.Services
 
                 _eventMessageManager.SetSecsGem(_secs);
                 _eventMessageManager.SetConnect(this._hsmsConnector);
+
+                _traceDataManager.SetSecsGem(_secs);
+                _traceDataManager.SetConnect(this._hsmsConnector);
 
                 this._hsmsConnector.ConnectionChanged += OnConnectionChanged;
                 Start();

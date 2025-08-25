@@ -15,7 +15,7 @@ namespace SemiConductor_Equipment.interfaces
         bool IsCEID(uint ceid);
         bool IsRPTIDInCEID(uint ceid, uint rptid);
         bool IsRPTID(uint rptid);
-        bool IsVID(uint rptid, uint vid);
+        bool IsVID(uint vid);
         void CreateRPTID(uint rptid, List<uint> vid);
         void LinkCEID(uint ceid, List<uint> rptid);
         void CEIDStateChange(int ceid, bool state);

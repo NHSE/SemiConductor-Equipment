@@ -261,7 +261,7 @@ namespace SemiConductor_Equipment.Services
                 return true;
         }
 
-        public bool IsVID(uint rptid, uint vid)
+        public bool IsVID(uint vid)
         {
             return this.vid_list.Contains((int)vid);
         }

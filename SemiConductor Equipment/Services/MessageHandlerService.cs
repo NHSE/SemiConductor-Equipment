@@ -28,12 +28,15 @@ namespace SemiConductor_Equipment.Services
         private readonly IVIDManager _vIDManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly IMessageBox _messageBoxManager;
-        private readonly Action<string> _logAction;
-        private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
+        private readonly ITraceDataManager _traceDataManager;
         private readonly WaferService _waferService;
         private readonly IWaferProcessCoordinator _processManager;
         private readonly LoadPortService _loadPortService;
         private readonly RunningStateService _runningStateService;
+
+        private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
+
+        private readonly Action<string> _logAction;
 
         string? cmd;
         string? cjId;
@@ -50,7 +53,7 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
+        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory, ITraceDataManager traceDataManager,
             WaferService waferService, IWaferProcessCoordinator processManager, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
             IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
@@ -65,6 +68,7 @@ namespace SemiConductor_Equipment.Services
             this._alarmMsgManager = alarmMsgManager;
             this._messageBoxManager = messageBoxManager;
             this._runningStateService = runningStateService;
+            this._traceDataManager = traceDataManager;
         }
         #endregion
 
@@ -107,6 +111,11 @@ namespace SemiConductor_Equipment.Services
                 await wrapper.TryReplyAsync(reply);
                 string send_log = send_logMessage + reply.ToSml();
                 _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+
+            else if(msg.S == 2 && msg.F == 23)
+            {
+                await TraceData(msg, wrapper, recv_logMessage);
             }
 
             else if (msg.S == 3 && msg.F == 17)
@@ -203,100 +212,7 @@ namespace SemiConductor_Equipment.Services
             }
             else if (msg.S == 14 && msg.F == 9)// CJ Create //수정 필
             {
-
-                if (this._alarmMsgManager.IsAlarm)
-                {
-                    this._messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
-                    goto error_msg;
-                }
-
-                if (this._runningStateService.Get_State() == EquipmentStatusEnum.Running)
-                {
-                    this._alarmMsgManager.AlarmMessage_IN("Currently Testing this");
-                    goto error_msg;
-                }
-
-                if (msg.SecsItem[1] != null)
-                    cmd = msg?.SecsItem?[1].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][0][1] != null)
-                    cjId = msg?.SecsItem?[2][0][1].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][1][0] != null)
-                    carrier_cmd = msg?.SecsItem?[2][1][0].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][1][1][0] != null)
-                    carrierId = msg?.SecsItem?[2][1][1][0].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][3][0] != null)
-                    pj_cmd = msg?.SecsItem?[2][3][0].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][3][1][0][0] != null)
-                    pjId = msg?.SecsItem?[2][3][1][0][0].GetString();
-                else goto error_msg;
-
-                if (msg.SecsItem[2][4][0] != null)
-                    auto_start = msg?.SecsItem?[2][4][0].GetString();
-                else goto error_msg;
-
-                //bool auto_start_flag = msg?.SecsItem?[2][1][4][1].FirstValue<bool>;
-
-                if(cmd != "ControlJob")
-                {
-                    goto error_msg;
-                }
-
-                string recv_log = recv_logMessage + msg.ToSml();
-                _logManager.WriteLog("SECS", "RECV", recv_log);
-
-                for (byte loadportId = 1; loadportId <= 2; loadportId++)
-                {
-                    var viewModel = _loadPortFactory(loadportId);
-                    if (viewModel != null)
-                    {
-                        if (!viewModel.Check_Running(cjId))
-                        {
-                            continue;
-                        }
-                        // Dispatcher.InvokeAsync를 사용하여 비동기 처리
-                        await Application.Current.Dispatcher.InvokeAsync(async () =>
-                        {
-                            if (viewModel.GetPJId(loadportId) == pjId)
-                            {
-                                var waferData = new Wafer
-                                {
-                                    CJId = cjId
-                                };
-                                viewModel.Update_Carrier_info(waferData);
-                                _vIDManager.SetDVID(1010, cjId, (int)loadportId);
-                                // pjId로 해당 웨이퍼 리스트를 가져옴
-                                var wafers = viewModel.GetAllWaferInfo(pjId);
-
-                                // wafers가 null 또는 비어있는지 체크
-                                if (wafers == null || wafers.Count == 0)
-                                    return;
-
-                                // LoadPortId로 초기화
-                                _loadPortService.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
-
-                                // 각 웨이퍼를 큐에 등록
-                                foreach (var wafer_info in wafers)
-                                {
-                                    _waferService.Enqueue(wafer_info);
-                                }
-                                var cts = new CancellationTokenSource();
-                                var cancellationToken = cts.Token;
-                                this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
-                                await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
-                            }
-                        });
-                    }
-                }
+                await CJCreate(msg, wrapper, recv_logMessage, send_logMessage);
             }
 
             else if (msg.S == 2 && msg.F == 33) // CJ Create //수정 필
@@ -311,9 +227,187 @@ namespace SemiConductor_Equipment.Services
             {
                 await HandleCEIDEnable(msg, wrapper, recv_logMessage);
             }
+        }
+
+        private async Task TraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        {
+            try
+            {
+                string TRID = null, DSPER = null;
+                uint TOTSMP = 0, REPGSZ = 0;
+                List<uint> VID = new List<uint>();
+
+                if (msg.SecsItem[0] != null)
+                    TRID = msg.SecsItem[0].GetString();
+
+                if (msg.SecsItem[1] != null)
+                {
+                    DSPER = msg.SecsItem[1].GetString();
+
+                    bool isValidFormat = System.Text.RegularExpressions.Regex.IsMatch(DSPER, @"^\d{6}$");
+
+                    if (!isValidFormat)
+                    {
+                        goto error_time;
+                    }
+
+                    bool isValidTime = DateTime.TryParseExact(DSPER, "HHmmss",
+                                            System.Globalization.CultureInfo.InvariantCulture,
+                                            System.Globalization.DateTimeStyles.None,
+                                            out var time);
+                    if (!isValidTime)
+                    {
+                        if (msg.ReplyExpected)
+                        {
+                            goto error_time;
+                        }
+                    }
+                }
+
+                if (msg.SecsItem[2] != null)
+                    TOTSMP = msg.SecsItem[2].FirstValue<uint>();
+
+                if (msg.SecsItem[3] != null)
+                    REPGSZ = msg.SecsItem[3].FirstValue<uint>();
 
 
-            // W-bit 응답
+                int size = msg.SecsItem[4].Count;
+                for (int cnt = 0; cnt < size; cnt++)
+                {
+                    uint vid = msg.SecsItem[4][cnt].FirstValue<uint>();
+                    VID.Add(vid);
+                }
+
+                if(!this._traceDataManager.SetTraceData(TRID, DSPER, TOTSMP, REPGSZ, VID))
+                {
+                    goto error_time;
+                }
+            }
+            catch (Exception e)
+            {
+                if (msg.ReplyExpected)
+                {
+                    var reply = new SecsMessage(2, 36)
+                    {
+                        Name = "CEID LINK",
+                        SecsItem = B(2)
+                    };
+
+                    await wrapper.TryReplyAsync(reply);
+                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                }
+            }
+
+        error_time:
+            if (msg.ReplyExpected)
+            {
+                var reply = new SecsMessage(2, 24)
+                {
+                    Name = "Trace Data",
+                    SecsItem = B(3)
+                };
+
+                await wrapper.TryReplyAsync(reply);
+                _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+            }
+        }   
+
+        private async Task CJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
+        {
+            if (this._alarmMsgManager.IsAlarm)
+            {
+                this._messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
+                goto error_msg;
+            }
+
+            if (this._runningStateService.Get_State() == EquipmentStatusEnum.Running)
+            {
+                this._alarmMsgManager.AlarmMessage_IN("Currently Testing this");
+                goto error_msg;
+            }
+
+            if (msg.SecsItem[1] != null)
+                cmd = msg?.SecsItem?[1].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][0][1] != null)
+                cjId = msg?.SecsItem?[2][0][1].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][1][0] != null)
+                carrier_cmd = msg?.SecsItem?[2][1][0].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][1][1][0] != null)
+                carrierId = msg?.SecsItem?[2][1][1][0].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][3][0] != null)
+                pj_cmd = msg?.SecsItem?[2][3][0].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][3][1][0][0] != null)
+                pjId = msg?.SecsItem?[2][3][1][0][0].GetString();
+            else goto error_msg;
+
+            if (msg.SecsItem[2][4][0] != null)
+                auto_start = msg?.SecsItem?[2][4][0].GetString();
+            else goto error_msg;
+
+            //bool auto_start_flag = msg?.SecsItem?[2][1][4][1].FirstValue<bool>;
+
+            if (cmd != "ControlJob")
+            {
+                goto error_msg;
+            }
+
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
+            for (byte loadportId = 1; loadportId <= 2; loadportId++)
+            {
+                var viewModel = _loadPortFactory(loadportId);
+                if (viewModel != null)
+                {
+                    if (!viewModel.Check_Running(cjId))
+                    {
+                        continue;
+                    }
+                    // Dispatcher.InvokeAsync를 사용하여 비동기 처리
+                    await Application.Current.Dispatcher.InvokeAsync(async () =>
+                    {
+                        if (viewModel.GetPJId(loadportId) == pjId)
+                        {
+                            var waferData = new Wafer
+                            {
+                                CJId = cjId
+                            };
+                            viewModel.Update_Carrier_info(waferData);
+                            _vIDManager.SetDVID(1010, cjId, (int)loadportId);
+                            // pjId로 해당 웨이퍼 리스트를 가져옴
+                            var wafers = viewModel.GetAllWaferInfo(pjId);
+
+                            // wafers가 null 또는 비어있는지 체크
+                            if (wafers == null || wafers.Count == 0)
+                                return;
+
+                            // LoadPortId로 초기화
+                            _loadPortService.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
+
+                            // 각 웨이퍼를 큐에 등록
+                            foreach (var wafer_info in wafers)
+                            {
+                                _waferService.Enqueue(wafer_info);
+                            }
+                            var cts = new CancellationTokenSource();
+                            var cancellationToken = cts.Token;
+                            this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
+                            await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
+                        }
+                    });
+                }
+            }
+
             if (msg.ReplyExpected)
             {
                 var reply = new SecsMessage(14, 10)
@@ -342,8 +436,7 @@ namespace SemiConductor_Equipment.Services
                 _logManager.WriteLog("SECS", "SEND", send_log);
             }
 
-
-        error_msg:
+            error_msg:
             var errormsg = new SecsMessage(14, 10)
             {
                 Name = "ControlJob",
@@ -456,7 +549,7 @@ namespace SemiConductor_Equipment.Services
                         {
                             uint vid = msg.SecsItem[1][i][1][j].FirstValue<uint>();
 
-                            if (!this._eventMessageManager.IsVID(rptid, vid))
+                            if (!this._eventMessageManager.IsVID(vid))
                             {
                                 flag = true;
                                 break;

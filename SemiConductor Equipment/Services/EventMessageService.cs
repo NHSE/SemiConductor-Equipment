@@ -66,9 +66,9 @@ namespace SemiConductor_Equipment.Services
             return this._vIDManager.IsRPTID(rptid);
         }
 
-        public bool IsVID(uint rptid, uint vid)
+        public bool IsVID(uint vid)
         {
-            if(!this._vIDManager.IsVID(rptid, vid))
+            if(!this._vIDManager.IsVID(vid))
             {
                 return false;
             }
