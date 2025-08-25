@@ -10,6 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using SemiConductor_Equipment.Commands;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using SemiConductor_Equipment.interfaces;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -72,10 +73,31 @@ namespace SemiConductor_Equipment.Services
                         {
                             var wafer = waferQueue.Dequeue();
                             wafer.Status = "Not Process";
+
+                            //결과 파일에 HasAlarm, Yield 설정 및 ErrorInfo 설정
+                            ResultData result = new ResultData
+                            {
+                                SlotNo = wafer.Wafer_Num,
+                                LoadPort = wafer.LoadportId.ToString(),
+                                CarrierID = wafer.CarrierId,
+                                CJID = wafer.CJId,
+                                PJID = wafer.PJId,
+                                ChamberName = "",
+                                PreClean_Flow = 0,
+                                Chemical_Flow = 0,
+                                RPM = 0,
+                                TargetMaxTemperature = 0,
+                                TargetMinTemperature = 0,
+                                ActualTemperature = (int)wafer.RequiredTemperature,
+                                HasAlarm = true,
+                                ErrorInfo = "No Process",
+                            };
+
+                            this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+                            this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+
                         }
                         this._messageBoxManager.Show("예외 발생", "Soultion이 부족합니다.\n설정 후 다시 진행해주세요.");
-
-                        //결과 파일에 HasAlarm, Yield 설정 및 ErrorInfo 설정
 
                         //메세지 박스
                         waferQueue.Clear();

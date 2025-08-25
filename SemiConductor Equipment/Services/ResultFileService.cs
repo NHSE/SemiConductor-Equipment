@@ -12,19 +12,20 @@ namespace SemiConductor_Equipment.Services
     public class ResultFileService : IResultFileManager
     {
         #region FIELDS
+        private readonly ILogManager _logManager;
         Dictionary<LoadPortWaferKey, ResultData> _reultCleanData = new();
         Dictionary<LoadPortWaferKey, ResultData> _reultDryData = new();
         private readonly string _logDirectory;
         #endregion
 
         #region PROPERTIES
-        public string ProcessTime { get; set; }  // S14F9 받은 시점
         #endregion
 
         #region CONSTRUCTOR
-        public ResultFileService(string logDirectory)
+        public ResultFileService(ILogManager logManager)
         {
-            _logDirectory = logDirectory;
+            this._logManager = logManager;
+            _logDirectory = @"C:\Logs";
             if (!Directory.Exists(_logDirectory))
                 Directory.CreateDirectory(_logDirectory);
         }
@@ -55,11 +56,12 @@ namespace SemiConductor_Equipment.Services
         public void SaveFile(bool isClean)
         {
             string fileName;
-            if (isClean) fileName = ProcessTime + "_Clean_Result.csv";
-            else fileName = ProcessTime + "_Dry_Result.csv";
+            if (isClean) fileName = this._logManager.LogDataTime + "_Clean_Result.csv";
+            else fileName = this._logManager.LogDataTime + "_Dry_Result.csv";
 
-            string folderPath = Path.Combine(_logDirectory, ProcessTime);
-            Directory.CreateDirectory(folderPath);
+            string folderPath = Path.Combine(_logDirectory, this._logManager.LogDataTime);
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
 
             string filePath = Path.Combine(folderPath, fileName);
             SaveDictionaryToCsv(filePath, isClean);
@@ -136,9 +138,9 @@ namespace SemiConductor_Equipment.Services
                         result.CJID,
                         result.PJID,
                         result.ChamberName,
-                        result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        result.ProcessDuration.ToString(@"hh\:mm\:ss"),
+                        result.StartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "",
+                        result.EndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "",
+                        result.ProcessDuration?.ToString(@"hh\:mm\:ss") ?? "",
                         result.PreClean_Flow.ToString(),
                         result.Chemical_Flow.ToString(),
                         result.RPM.ToString(),
@@ -169,9 +171,9 @@ namespace SemiConductor_Equipment.Services
                         result.CJID,
                         result.PJID,
                         result.ChamberName,
-                        result.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        result.EndTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        result.ProcessDuration.ToString(@"hh\:mm\:ss"),
+                        result.StartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "",
+                        result.EndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "",
+                        result.ProcessDuration?.ToString(@"hh\:mm\:ss") ?? "",
                         result.TargetMinTemperature.ToString(),
                         result.TargetMaxTemperature.ToString(),
                         result.ActualTemperature.ToString(),
@@ -186,11 +188,6 @@ namespace SemiConductor_Equipment.Services
             }
 
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
-        }
-
-        public void SetProcessTime(string time)
-        {
-            this.ProcessTime = time;
         }
         #endregion
     }

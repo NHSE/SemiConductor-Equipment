@@ -24,11 +24,11 @@ namespace SemiConductor_Equipment.Models
         [ObservableProperty]
         private string _chamberName;        // Dry, Bake, Etch 등
         [ObservableProperty]
-        private DateTime _startTime;        // 공정 시작 시간
+        private DateTime? _startTime;        // 공정 시작 시간
         [ObservableProperty]
-        private DateTime _endTime;          // 공정 종료 시간
+        private DateTime? _endTime;          // 공정 종료 시간
         [ObservableProperty]
-        private TimeSpan _processDuration;  // 실제 공정 시간
+        private TimeSpan? _processDuration;  // 실제 공정 시간
         [ObservableProperty]
         private int _rPM;                // 회전 속도
         [ObservableProperty]

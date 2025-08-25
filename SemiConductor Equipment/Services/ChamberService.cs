@@ -136,7 +136,7 @@ namespace SemiConductor_Equipment.Services
                 int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
                 Random rand = new Random();
 
-                while (Math.Abs(current_rpm - target_rpm) > 1)
+                while (Math.Abs(current_rpm - target_rpm) > 0)
                 {
                     if (current_rpm < target_rpm)
                     {

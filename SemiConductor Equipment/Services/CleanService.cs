@@ -138,7 +138,7 @@ namespace SemiConductor_Equipment.Services
                 }
                 else if (current_rpm > target_rpm)
                 {
-                    current_rpm += rand.Next(min_random, max_random);
+                    current_rpm -= rand.Next(min_random, max_random);
                     if (current_rpm < target_rpm) current_rpm = target_rpm;
                 }
 
@@ -249,6 +249,26 @@ namespace SemiConductor_Equipment.Services
             {
                 ProcessComplete(chambername, wafer, "LoadPort");
                 this.Clean_State[chambername] = "DISAB";
+
+                ResultData Result = new ResultData
+                {
+                    SlotNo = wafer.Wafer_Num,
+                    LoadPort = wafer.LoadportId.ToString(),
+                    CarrierID = wafer.CarrierId,
+                    CJID = wafer.CJId,
+                    PJID = wafer.PJId,
+                    ChamberName = "",
+                    PreClean_Flow = 0,
+                    Chemical_Flow = 0,
+                    RPM = 0,
+                    TargetMaxTemperature = 0,
+                    TargetMinTemperature = 0,
+                    ActualTemperature = (int)wafer.RequiredTemperature,
+                    HasAlarm = true,
+                    ErrorInfo = "No Process",
+                };
+
+                this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), Result);
             }
 
             DataEnqueued?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));

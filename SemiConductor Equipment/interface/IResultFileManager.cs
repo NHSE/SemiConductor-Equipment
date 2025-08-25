@@ -10,7 +10,6 @@ namespace SemiConductor_Equipment.interfaces
     public interface IResultFileManager
     {
         #region PROPERTIES
-        string ProcessTime { get; set; }
         #endregion
 
         #region METHODS
@@ -19,8 +18,6 @@ namespace SemiConductor_Equipment.interfaces
         void InsertData(string ChamberType, LoadPortWaferKey key, ResultData value);
 
         void SaveFile(bool isClean);
-
-        void SetProcessTime(string time);
         #endregion
     }
 }

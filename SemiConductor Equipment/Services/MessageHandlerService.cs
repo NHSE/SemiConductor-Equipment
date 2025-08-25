@@ -16,6 +16,7 @@ using static SemiConductor_Equipment.Models.EventInfo;
 using System.Windows.Interop;
 using Secs4Net.Sml;
 using SemiConductor_Equipment.Enums;
+using System.Timers;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -27,7 +28,6 @@ namespace SemiConductor_Equipment.Services
         private readonly IVIDManager _vIDManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly IMessageBox _messageBoxManager;
-        private readonly IResultFileManager _resultManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
         private readonly WaferService _waferService;
@@ -50,7 +50,7 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory, IResultFileManager resultFileManager,
+        public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory,
             WaferService waferService, IWaferProcessCoordinator processManager, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
             IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
         {
@@ -65,7 +65,6 @@ namespace SemiConductor_Equipment.Services
             this._alarmMsgManager = alarmMsgManager;
             this._messageBoxManager = messageBoxManager;
             this._runningStateService = runningStateService;
-            this._resultManager = resultFileManager;
         }
         #endregion
 
@@ -292,8 +291,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 var cts = new CancellationTokenSource();
                                 var cancellationToken = cts.Token;
-                                _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss_HHmmss");
-                                this._resultManager.SetProcessTime(_logManager.LogDataTime);
+                                this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
                                 await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
                             }
                         });
