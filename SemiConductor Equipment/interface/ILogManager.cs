@@ -21,5 +21,7 @@ namespace SemiConductor_Equipment.interfaces
         string GetEventLogLogPath(string logType);
 
         string LogDataTime { get; set; }
+
+        void SetTime(string time);
     }
 }

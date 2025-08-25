@@ -10,6 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using SemiConductor_Equipment.Commands;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using SemiConductor_Equipment.interfaces;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -20,6 +21,7 @@ namespace SemiConductor_Equipment.Services
         private readonly ICleanManager _cleanManager;
         private readonly IRobotArmManager _robotArmManager;
         private readonly IMessageBox _messageBoxManager;
+        private readonly IResultFileManager _resultFileManager;
         private readonly RunningStateService _runningStateService;
         public event EventHandler<string> Process;
         #endregion
@@ -28,13 +30,15 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
+        public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, 
+            IMessageBox messageBoxManager, RunningStateService runningStateService, IResultFileManager resultFileManager)
         {
             this._chamberManager = chamberManager;
             this._cleanManager = cleanManager;
             this._robotArmManager = robotArmManager;
             this._messageBoxManager = messageBoxManager;
             this._runningStateService = runningStateService;
+            this._resultFileManager = resultFileManager;
         }
         #endregion
 
@@ -49,6 +53,7 @@ namespace SemiConductor_Equipment.Services
             string sender = "";
             _robotArmManager.StartProcessing(cts.Token);
             _chamberManager.ProcessStart();
+            this._resultFileManager.ClearData();
             Process?.Invoke(this, "Start");
             try
             {
@@ -68,8 +73,32 @@ namespace SemiConductor_Equipment.Services
                         {
                             var wafer = waferQueue.Dequeue();
                             wafer.Status = "Not Process";
+
+                            //결과 파일에 HasAlarm, Yield 설정 및 ErrorInfo 설정
+                            ResultData result = new ResultData
+                            {
+                                SlotNo = wafer.Wafer_Num,
+                                LoadPort = wafer.LoadportId.ToString(),
+                                CarrierID = wafer.CarrierId,
+                                CJID = wafer.CJId,
+                                PJID = wafer.PJId,
+                                ChamberName = "",
+                                PreClean_Flow = 0,
+                                Chemical_Flow = 0,
+                                RPM = 0,
+                                TargetMaxTemperature = 0,
+                                TargetMinTemperature = 0,
+                                ActualTemperature = (int)wafer.RequiredTemperature,
+                                HasAlarm = true,
+                                ErrorInfo = "No Process",
+                            };
+
+                            this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+                            this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+
                         }
                         this._messageBoxManager.Show("예외 발생", "Soultion이 부족합니다.\n설정 후 다시 진행해주세요.");
+
                         //메세지 박스
                         waferQueue.Clear();
                     }
@@ -171,8 +200,19 @@ namespace SemiConductor_Equipment.Services
 
                 await _robotArmManager.StopProcessing();
 
+                SaveResultFile();
+
                 Process?.Invoke(this, "END");
             }
+        }
+
+        private void SaveResultFile()
+        {
+            // Clean Chamber
+            this._resultFileManager.SaveFile(true);
+
+            // Dry Chamber
+            this._resultFileManager.SaveFile(false);
         }
         #endregion
     }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Intrinsics.Arm;
 using System.Threading.Tasks;
+using System.Xml.XPath;
+using CommunityToolkit.HighPerformance;
 using Microsoft.Xaml.Behaviors.Media;
 using SemiConductor_Equipment.Commands;
 using SemiConductor_Equipment.Enums;
@@ -10,6 +13,7 @@ using SemiConductor_Equipment.Helpers;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using static SemiConductor_Equipment.Models.EventInfo;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -19,6 +23,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
+        private readonly IResultFileManager _resultFileManager;
         public event EventHandler<CleanChamberStatus> DataEnqueued;
         public event EventHandler<CleanChamberStatus> MultiCupChange;
         public event EventHandler<RobotCommand> Enque_Robot;
@@ -56,12 +61,14 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE",
         };
 
-        public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager, IAlarmMsgManager alarmMsgManager)
+        public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager,
+            IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager)
         {
             this._eventMessageManager = eventMessageManager;
             this._equiptempManager = equiptempManager;
             this._logManager = logManager;
             this._alarmMsgManager = alarmMsgManager;
+            this._resultFileManager = resultFileManager;    
         }
 
         public string? FindEmptySlot()
@@ -82,14 +89,30 @@ namespace SemiConductor_Equipment.Services
             return (completed.Key, completed.Value.wafer);
         }
 
-        public async Task StartProcessingAsync(string chambername, Wafer wafer)
+        public async Task StartProcessingAsync(string chambername, Wafer wafer) // 로직 캡슐화 필요
         {
+            ResultData result = new ResultData();
+            var sw = Stopwatch.StartNew();
             lock (_lock)
             {
                 // 웨이퍼 넣기 + 처리중 상태 표시
                 this.Clean_State[chambername] = "Running";
                 DataEnqueued?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
                 CleanChamberChange?.Invoke(this, new ChamberData(chambername, wafer));
+
+                result = new ResultData
+                {
+                    StartTime = DateTime.Now,
+                    SlotNo = wafer.Wafer_Num,
+                    LoadPort = wafer.LoadportId.ToString(),
+                    CarrierID = wafer.CarrierId,
+                    CJID = wafer.CJId,
+                    PJID = wafer.PJId,
+                    ChamberName = chambername,
+                    PreClean_Flow = this._equiptempManager.PreClean_Flow_Rate,
+                    Chemical_Flow = this._equiptempManager.Flow_Rate,
+                };
+
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"{wafer.Wafer_Num} in {chambername}");
             }
             //멀티컵 Up
@@ -106,7 +129,7 @@ namespace SemiConductor_Equipment.Services
             int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
             Random rand = new Random();
 
-            while (Math.Abs(current_rpm - target_rpm) > 1)  // 목표와 1 이하 차이면 종료
+            while (Math.Abs(current_rpm - target_rpm) > 1)
             {
                 if (current_rpm < target_rpm)
                 {
@@ -115,13 +138,15 @@ namespace SemiConductor_Equipment.Services
                 }
                 else if (current_rpm > target_rpm)
                 {
-                    current_rpm += rand.Next(min_random, max_random);
+                    current_rpm -= rand.Next(min_random, max_random);
                     if (current_rpm < target_rpm) current_rpm = target_rpm;
                 }
 
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
                 await Task.Delay(1000);
             }
+
+            result.RPM = (int)current_rpm;
 
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] End Spin");
 
@@ -148,6 +173,10 @@ namespace SemiConductor_Equipment.Services
                     Error_flag = true;
                     this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] An error has occurred due to insufficient Pre-Clean Supply");
                     this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] An error has occurred due to insufficient Pre-Clean Supply");
+
+                    result.HasAlarm = true;
+                    result.ErrorInfo = "An error has occurred due to insufficient Pre-Clean Supply";
+
                     break;
                     // 에러 로그 발생
                 }
@@ -158,6 +187,7 @@ namespace SemiConductor_Equipment.Services
             if (!Error_flag)
             {
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] Start Cleaning");
+
                 //Chemical
                 for (int time = 0; time < this._equiptempManager.Spray_Time; time++)
                 {
@@ -176,6 +206,10 @@ namespace SemiConductor_Equipment.Services
                         Error_flag = true;
                         this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] An error has occurred due to insufficient Chemical Supply");
                         this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] An error has occurred due to insufficient Pre-Clean Supply");
+
+                        result.HasAlarm = true;
+                        result.ErrorInfo = "An error has occurred due to insufficient Pre-Clean Supply";
+
                         break;
                         // 에러 로그 발생
                     }
@@ -208,16 +242,44 @@ namespace SemiConductor_Equipment.Services
             {
                 ProcessComplete(chambername, wafer, "Dry Chamber");
                 this.Clean_State[chambername] = "DONE";
+
+                result.Yield = true;
             }
             else
             {
                 ProcessComplete(chambername, wafer, "LoadPort");
                 this.Clean_State[chambername] = "DISAB";
+
+                ResultData Result = new ResultData
+                {
+                    SlotNo = wafer.Wafer_Num,
+                    LoadPort = wafer.LoadportId.ToString(),
+                    CarrierID = wafer.CarrierId,
+                    CJID = wafer.CJId,
+                    PJID = wafer.PJId,
+                    ChamberName = "",
+                    PreClean_Flow = 0,
+                    Chemical_Flow = 0,
+                    RPM = 0,
+                    TargetMaxTemperature = 0,
+                    TargetMinTemperature = 0,
+                    ActualTemperature = (int)wafer.RequiredTemperature,
+                    HasAlarm = true,
+                    ErrorInfo = "No Process",
+                };
+
+                this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), Result);
             }
 
             DataEnqueued?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
 
+            sw.Stop();
+            result.EndTime = DateTime.Now;
+            result.ProcessDuration = sw.Elapsed;
+
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] {wafer.SlotId} process done in {chambername}");
+
+            this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
         }
 
         private void ProcessComplete(string chambername, Wafer wafer, string next)

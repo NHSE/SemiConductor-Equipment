@@ -16,6 +16,7 @@ using static SemiConductor_Equipment.Models.EventInfo;
 using System.Windows.Interop;
 using Secs4Net.Sml;
 using SemiConductor_Equipment.Enums;
+using System.Timers;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -26,7 +27,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
-        private readonly IMessageBox messageBoxManager;
+        private readonly IMessageBox _messageBoxManager;
         private readonly Action<string> _logAction;
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
         private readonly WaferService _waferService;
@@ -62,7 +63,7 @@ namespace SemiConductor_Equipment.Services
             this._eventMessageManager = eventMessageManager;
             this._vIDManager = vIDManager;
             this._alarmMsgManager = alarmMsgManager;
-            this.messageBoxManager = messageBoxManager;
+            this._messageBoxManager = messageBoxManager;
             this._runningStateService = runningStateService;
         }
         #endregion
@@ -205,7 +206,7 @@ namespace SemiConductor_Equipment.Services
 
                 if (this._alarmMsgManager.IsAlarm)
                 {
-                    this.messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
+                    this._messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
                     goto error_msg;
                 }
 
@@ -290,7 +291,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 var cts = new CancellationTokenSource();
                                 var cancellationToken = cts.Token;
-                                _logManager.LogDataTime = DateTime.Now.ToString("yyyyMMddss_HHmmss");
+                                this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
                                 await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
                             }
                         });

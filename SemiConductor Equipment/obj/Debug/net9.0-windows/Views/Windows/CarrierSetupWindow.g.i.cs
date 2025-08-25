@@ -72,8 +72,7 @@ namespace SemiConductor_Equipment.Views.Windows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;V1.0.0.0;component/views/windows/carriersetupwindow.xaml" +
-                    "", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SemiConductor Equipment;component/views/windows/carriersetupwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Windows\CarrierSetupWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

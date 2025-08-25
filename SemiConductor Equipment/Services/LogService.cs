@@ -12,7 +12,7 @@ namespace SemiConductor_Equipment.Services
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
 
-        public string LogDataTime { get; set; }
+        public string LogDataTime { get; set; } // S14F9 받은 시점
 
         public LogService(string logDirectory)
         {
@@ -67,7 +67,7 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetDryLogFilePath(string logType)
         {
-            string fileName = $"{logType}_{LogDataTime}.log";
+            string fileName = $"{LogDataTime}\\{logType}_{LogDataTime}.log";
             return Path.Combine(_logDirectory, fileName);
         }
 
@@ -76,7 +76,7 @@ namespace SemiConductor_Equipment.Services
         /// </summary>
         public string GetCleanLogFilePath(string logType)
         {
-            string fileName = $"{logType}_{LogDataTime}.log";
+            string fileName = $"{LogDataTime}\\{logType}_{LogDataTime}.log";
             return Path.Combine(_logDirectory, fileName);
         }
 
@@ -93,6 +93,14 @@ namespace SemiConductor_Equipment.Services
         {
             string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
             return Path.Combine(_logDirectory, fileName);
+        }
+
+        public void SetTime(string time)
+        {
+            this.LogDataTime = time;
+            string processlogDir = Path.Combine(_logDirectory, LogDataTime);
+            if (!Directory.Exists(processlogDir))
+                Directory.CreateDirectory(processlogDir);
         }
     }
 }

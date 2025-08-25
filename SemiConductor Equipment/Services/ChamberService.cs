@@ -11,6 +11,8 @@ using System.Net.Http.Headers;
 using static SemiConductor_Equipment.Models.EventInfo;
 using Secs4Net;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Xml.XPath;
+using System.Diagnostics;
 
 namespace SemiConductor_Equipment.Services
 {
@@ -18,10 +20,10 @@ namespace SemiConductor_Equipment.Services
     {
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
-        //private readonly DbLogHelper _logHelper;
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
+        private readonly IResultFileManager _resultFileManager; 
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -49,13 +51,14 @@ namespace SemiConductor_Equipment.Services
             ["Chamber6"] = "IDLE"
         };
 
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, 
+            IVIDManager vIDManager, IResultFileManager resultFileManager)
         {
             this._logManager = logManager;
-            //this._logHelper = logHelper;
             this._equiptempManager = equiptempManager;
             this._eventMessageManager = eventMessageManager;
             this._vIDManager = vIDManager;
+            this._resultFileManager = resultFileManager;
         }
 
         public void ProcessStart()
@@ -80,7 +83,6 @@ namespace SemiConductor_Equipment.Services
             if (_chambers.ContainsKey(chamberName))
             {
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{_chambers[chamberName].wafer.Wafer_Num} Out {chamberName}");
-                //this._logHelper.WriteDbLog(chamberName, _chambers[chamberName].wafer, "OUT");
 
                 this.Chamber_State[chamberName] = "IDLE";
                 DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], _chambers[chamberName].wafer.Wafer_Num));
@@ -97,6 +99,8 @@ namespace SemiConductor_Equipment.Services
         {
             try
             {
+                ResultData result = new ResultData(); // 공정 결과 데이터
+                var sw = Stopwatch.StartNew();
                 lock (_lock)
                 {
                     this.Chamber_State[chamberName] = "Running";
@@ -107,6 +111,19 @@ namespace SemiConductor_Equipment.Services
                     info.Wafer_number = wafer.Wafer_Num;
                     info.Loadport_Number = wafer.LoadportId;
                     this._eventMessageManager.EnqueueEventData(info);
+
+                    result = new ResultData
+                    {
+                        StartTime = DateTime.Now,
+                        SlotNo = wafer.Wafer_Num,
+                        LoadPort = wafer.LoadportId.ToString(),
+                        CarrierID = wafer.CarrierId,
+                        CJID = wafer.CJId,
+                        PJID = wafer.PJId,
+                        ChamberName = chamberName,
+                        TargetMinTemperature = this._equiptempManager.Min_Temp,
+                        TargetMaxTemperature = this._equiptempManager.Max_Temp,
+                    };
                 }
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{wafer.Wafer_Num} in {chamberName}");
@@ -119,7 +136,7 @@ namespace SemiConductor_Equipment.Services
                 int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
                 Random rand = new Random();
 
-                while (Math.Abs(current_rpm - target_rpm) > 1)  // 목표와 1 이하 차이면 종료
+                while (Math.Abs(current_rpm - target_rpm) > 0)
                 {
                     if (current_rpm < target_rpm)
                     {
@@ -137,6 +154,8 @@ namespace SemiConductor_Equipment.Services
                     await Task.Delay(1000);
                 }
 
+                result.RPM = (int)current_rpm;
+
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Spin");
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Start Gas");
@@ -150,11 +169,20 @@ namespace SemiConductor_Equipment.Services
                     ChangeTempData?.Invoke(this, wafer);
                 }
 
+                result.ActualTemperature = (int)wafer.RequiredTemperature;
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Gas");
                 //Processing
 
                 if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp || wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
+                {
                     wafer.Status = "Error";
+                    if (wafer.RequiredTemperature < this._equiptempManager.Min_Temp)
+                        result.ErrorInfo = "Wafer temperature did not reach the target minimum temperature.";
+                    else if (wafer.RequiredTemperature > this._equiptempManager.Max_Temp)
+                        result.ErrorInfo = "Wafer temperature exceeded the target maximum temperature.";
+
+                    result.HasAlarm = true;
+                }
                 else
                     wafer.Status = "Completed";
 
@@ -206,9 +234,16 @@ namespace SemiConductor_Equipment.Services
                         NextLocation = "LoadPort",
                         Completed = chamberName
                     });
+                    result.Yield = true;
                 }
 
+                sw.Stop();
+                result.EndTime = DateTime.Now;
+                result.ProcessDuration = sw.Elapsed;
+                
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
+
+                this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
             }
             catch (Exception ex)
             {
