@@ -130,13 +130,13 @@ namespace SemiConductor_Equipment.Services
                     if (command == null)
                     {
                         if (_vidManager.RobotStatus != "IDLE")
-                            _vidManager.SetSVID(101, "IDLE", 0);
+                            _vidManager.SetSVID(101, "IDLE");
                         await Task.Delay(100, token);
                         continue;
                     }
 
                     Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
-                    _vidManager.SetSVID(101, "Running", 0);
+                    _vidManager.SetSVID(101, "Running");
 
                     await Task.Delay(500); // 모션 처리 시간 시뮬레이션
 
@@ -207,7 +207,7 @@ namespace SemiConductor_Equipment.Services
                     // 이동 완료 후 현재 위치 갱신
                     if (command.CommandType == RobotCommandType.Place)
                     {
-                        _vidManager.SetSVID(101, "IDLE", 0);
+                        _vidManager.SetSVID(101, "IDLE");
                         WaferMoveInfo?.Invoke(this, command.Wafer);
                     }
                     await Task.Delay(1000); // 모션 처리 시간 시뮬레이션

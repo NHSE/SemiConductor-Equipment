@@ -52,19 +52,23 @@ namespace SemiConductor_Equipment.Services
             _connection = connection;
         }
 
-        public bool SetTraceData(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID)
+        public int SetTraceData(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID)
         {
+            bool isValid = DateTime.TryParseExact(DSPER, "HHmmss", null, 0, out _);
+            if (!isValid)
+                return 3;
+            
             foreach (var vid in VID)
             {
                 if(!this._vIDManager.IsVID((uint)vid))
                 {
-                    return false;  // <InterLock> 존재하지 않은 VID 설정 시 거부
+                    return 4;  // <InterLock> 존재하지 않은 VID 설정 시 거부
                 }
             }
 
             if (Task_Data != null && Task_Data.ContainsKey(TRID))
             {
-                if (TOTSMP != 0) return false; // <InterLock> Trace Data 종료가 아니면 모두 다 거부
+                if (TOTSMP != 0) return 6; // <InterLock> Trace Data 종료가 아니면 모두 다 거부
 
                 int id = Task_Data[TRID];
                 CancelTask(id);
@@ -74,7 +78,7 @@ namespace SemiConductor_Equipment.Services
             {
                 if(TRID.Count() == 4)
                 {
-                    return false;
+                    return 2;
                 }
                 else
                 {
@@ -95,7 +99,7 @@ namespace SemiConductor_Equipment.Services
                     tasks[id] = RunTask(TRID, DSPER, TOTSMP, REPGSZ, VID, ctsList[id].Token);
                 }
             }
-            return true;
+            return 0;
         }
 
         private async Task RunTask(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID, CancellationToken token)
@@ -116,11 +120,14 @@ namespace SemiConductor_Equipment.Services
                 {
                     await Task.Delay(delayTime);
 
+                    vidItems.Clear();
+                    Items.Clear();
+
                     foreach (var v in VID)
                     {
-                        //var vid = this._vIDManager.GetSVID(v);
+                        var vid = this._vIDManager.GetSVID((int)v);
                         vidItems.Add(
-                                        A(v.ToString() ?? "")
+                                        A(vid.ToString() ?? "")
                                     );
                     }
 
@@ -146,14 +153,13 @@ namespace SemiConductor_Equipment.Services
 
                         await _secs.SendAsync(tracemsg);
                         string send_logMessage = $"[SEND] → S6F1\n{tracemsg.ToSml()}";
-                        _logManager.WriteLog("Event", "SEND", send_logMessage);
+                        _logManager.WriteLog("TraceData", "SEND", send_logMessage);
 
                         vidItems.Clear();
                     }
 
                     if (SMPLN == TOTSMP)
                     {
-                        Task_Data.Remove(TRID);
                         break;
                     }
 

@@ -39,6 +39,10 @@ namespace SemiConductor_Equipment.Services
             {
                 filePath = GetEventLogLogPath(logType);
             }
+            else if (logType.Contains("TraceData"))
+            {
+                filePath = GetSecsGemLogPath(logType);
+            }
             else
             {
                 filePath = GetSecsGemLogPath(logType);
@@ -90,6 +94,12 @@ namespace SemiConductor_Equipment.Services
         }
 
         public string GetEventLogLogPath(string logType)
+        {
+            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
+            return Path.Combine(_logDirectory, fileName);
+        }
+
+        public string GetTraceDataLogPath(string logType)
         {
             string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
             return Path.Combine(_logDirectory, fileName);

@@ -15,7 +15,7 @@ namespace SemiConductor_Equipment.interfaces
         #region METHODS
         void SetSecsGem(ISecsGem secsGem);
         void SetConnect(ISecsConnection connection);
-        bool SetTraceData(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID);
+        int SetTraceData(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID);
         #endregion
     }
 }

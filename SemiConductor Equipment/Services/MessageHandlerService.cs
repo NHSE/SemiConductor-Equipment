@@ -115,7 +115,7 @@ namespace SemiConductor_Equipment.Services
 
             else if(msg.S == 2 && msg.F == 23)
             {
-                await TraceData(msg, wrapper, recv_logMessage);
+                await TraceData(msg, wrapper, recv_logMessage, send_logMessage);
             }
 
             else if (msg.S == 3 && msg.F == 17)
@@ -127,7 +127,7 @@ namespace SemiConductor_Equipment.Services
                     return;
                 if (cmd == "ProceedWithCarrier")
                 {
-                    await HandleProceedWithCarrier(msg, wrapper, recv_logMessage);
+                    await HandleProceedWithCarrier(msg, wrapper, recv_logMessage, send_logMessage);
                 }
             }
 
@@ -217,25 +217,28 @@ namespace SemiConductor_Equipment.Services
 
             else if (msg.S == 2 && msg.F == 33) // CJ Create //수정 필
             {
-                await HandleRPTIDVIDLink(msg, wrapper, recv_logMessage);
+                await HandleRPTIDVIDLink(msg, wrapper, recv_logMessage, send_logMessage);
             }
             else if (msg.S == 2 && msg.F == 35) // CJ Create //수정 필
             {
-                await HandleCEIDLink(msg, wrapper, recv_logMessage);
+                await HandleCEIDLink(msg, wrapper, recv_logMessage, send_logMessage);
             }
             else if (msg.S == 2 && msg.F == 37) // CJ Create //수정 필
             {
-                await HandleCEIDEnable(msg, wrapper, recv_logMessage);
+                await HandleCEIDEnable(msg, wrapper, recv_logMessage, send_logMessage);
             }
         }
 
-        private async Task TraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        private async Task TraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
             {
                 string TRID = null, DSPER = null;
                 uint TOTSMP = 0, REPGSZ = 0;
                 List<uint> VID = new List<uint>();
+
+                string recv_log = recv_logMessage + msg.ToSml();
+                _logManager.WriteLog("SECS", "RECV", recv_log);
 
                 if (msg.SecsItem[0] != null)
                     TRID = msg.SecsItem[0].GetString();
@@ -278,24 +281,74 @@ namespace SemiConductor_Equipment.Services
                     VID.Add(vid);
                 }
 
-                if(!this._traceDataManager.SetTraceData(TRID, DSPER, TOTSMP, REPGSZ, VID))
+                /* result = 0 : PASS
+                 * result = 2 : 이미 4개 trid 진행 중
+                 * result = 3 : DSPER 설정 에러
+                 * result = 4 : 없는 vid
+                 * resuly = 6 : 이미 진행 중인 trid 변경 에러 (멈추기 이외의 동작 선언 시)
+                */
+                int result = this._traceDataManager.SetTraceData(TRID, DSPER, TOTSMP, REPGSZ, VID);
+                if (result == 2)
+                {
+                    goto error_trace;
+                }
+                else if (result == 3)
                 {
                     goto error_time;
+                }
+                else if (result == 4)
+                {
+                    goto error_vid;
+                }
+                else if (result == 6)
+                {
+                    goto error_data;
+                }
+                else
+                {
+                    if (msg.ReplyExpected)
+                    {
+                        var reply = new SecsMessage(2, 24)
+                        {
+                            Name = "Trace Data",
+                            SecsItem = B(0)
+                        };
+
+                        await wrapper.TryReplyAsync(reply);
+                        string send_log = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_log);
+                    }
                 }
             }
             catch (Exception e)
             {
                 if (msg.ReplyExpected)
                 {
-                    var reply = new SecsMessage(2, 36)
+                    var reply = new SecsMessage(2, 24)
                     {
-                        Name = "CEID LINK",
-                        SecsItem = B(2)
+                        Name = "Trace Data",
+                        SecsItem = B(3)
                     };
 
                     await wrapper.TryReplyAsync(reply);
-                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    string send_log = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_log);
                 }
+            }
+
+
+        error_trace:
+            if (msg.ReplyExpected)
+            {
+                var reply = new SecsMessage(2, 24)
+                {
+                    Name = "Trace Data",
+                    SecsItem = B(2)
+                };
+
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
             }
 
         error_time:
@@ -308,12 +361,44 @@ namespace SemiConductor_Equipment.Services
                 };
 
                 await wrapper.TryReplyAsync(reply);
-                _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+
+        error_vid:
+            if (msg.ReplyExpected)
+            {
+                var reply = new SecsMessage(2, 24)
+                {
+                    Name = "Trace Data",
+                    SecsItem = B(4)
+                };
+
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+
+        error_data:
+            if (msg.ReplyExpected)
+            {
+                var reply = new SecsMessage(2, 24)
+                {
+                    Name = "Trace Data",
+                    SecsItem = B(6)
+                };
+
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
             }
         }   
 
         private async Task CJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
             if (this._alarmMsgManager.IsAlarm)
             {
                 this._messageBoxManager.Show("예외 발생", "Alarm이 존재합니다.\nAlarm Clear 후 재 진행하세요.");
@@ -360,9 +445,6 @@ namespace SemiConductor_Equipment.Services
             {
                 goto error_msg;
             }
-
-            string recv_log = recv_logMessage + msg.ToSml();
-            _logManager.WriteLog("SECS", "RECV", recv_log);
 
             for (byte loadportId = 1; loadportId <= 2; loadportId++)
             {
@@ -464,8 +546,11 @@ namespace SemiConductor_Equipment.Services
             _logManager.WriteLog("SECS", "SEND", send_errorlog);
         }
 
-        private async Task HandleProceedWithCarrier(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        private async Task HandleProceedWithCarrier(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
             string? carrierId = msg?.SecsItem?[2]?.GetString();
             if (string.IsNullOrEmpty(carrierId))
                 return;
@@ -486,9 +571,6 @@ namespace SemiConductor_Equipment.Services
                 });
             }
 
-            string recv_log = recv_logMessage + msg.ToSml();
-            _logManager.WriteLog("SECS", "RECV", recv_log);
-
             if (msg.ReplyExpected)
             {
                 var reply = new SecsMessage(3, 18)
@@ -506,13 +588,14 @@ namespace SemiConductor_Equipment.Services
                 };
 
                 await wrapper.TryReplyAsync(reply);
-                _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                string send_errorlog = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_errorlog);
 
                 _vIDManager.SetDVID(1008, carrierId, (int)loadportId);
             }
         }
 
-        private async Task HandleRPTIDVIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        private async Task HandleRPTIDVIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
             {
@@ -537,7 +620,8 @@ namespace SemiConductor_Equipment.Services
                             };
 
                             await wrapper.TryReplyAsync(reply);
-                            _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                            string send_errorlog = send_logMessage + reply.ToSml();
+                            _logManager.WriteLog("SECS", "SEND", send_errorlog);
                         }
                     }
                     else
@@ -581,7 +665,9 @@ namespace SemiConductor_Equipment.Services
                         };
 
                         await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+
+                        string send_errorlog = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_errorlog);
                     }
                 }
                 else
@@ -595,7 +681,8 @@ namespace SemiConductor_Equipment.Services
                         };
 
                         await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        string send_errorlog = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_errorlog);
                     }
                 }
             }
@@ -610,12 +697,13 @@ namespace SemiConductor_Equipment.Services
                     };
 
                     await wrapper.TryReplyAsync(reply);
-                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    string send_errorlog = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_errorlog);
                 }
             }
         }
 
-        private async Task HandleCEIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        private async Task HandleCEIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
             {
@@ -640,7 +728,8 @@ namespace SemiConductor_Equipment.Services
                             };
 
                             await wrapper.TryReplyAsync(reply);
-                            _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                            string send_errorlog = send_logMessage + reply.ToSml();
+                            _logManager.WriteLog("SECS", "SEND", send_errorlog);
                         }
                     }
                     else
@@ -684,7 +773,8 @@ namespace SemiConductor_Equipment.Services
                         };
 
                         await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        string send_errorlog = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_errorlog);
                     }
                 }
                 else
@@ -698,7 +788,8 @@ namespace SemiConductor_Equipment.Services
                         };
 
                         await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        string send_errorlog = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_errorlog);
                     }
                 }
             }
@@ -713,12 +804,13 @@ namespace SemiConductor_Equipment.Services
                     };
 
                     await wrapper.TryReplyAsync(reply);
-                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    string send_errorlog = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_errorlog);
                 }
             }
         }
 
-        private async Task HandleCEIDEnable(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage)
+        private async Task HandleCEIDEnable(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
             {
@@ -767,7 +859,8 @@ namespace SemiConductor_Equipment.Services
                         };
 
                         await wrapper.TryReplyAsync(reply);
-                        _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                        string send_errorlog = send_logMessage + reply.ToSml();
+                        _logManager.WriteLog("SECS", "SEND", send_errorlog);
                     }
                 }
             }
@@ -782,7 +875,8 @@ namespace SemiConductor_Equipment.Services
                     };
 
                     await wrapper.TryReplyAsync(reply);
-                    _logManager.WriteLog("SECS", "RECV", recv_logMessage);
+                    string send_errorlog = send_logMessage + reply.ToSml();
+                    _logManager.WriteLog("SECS", "SEND", send_errorlog);
                 }
             }
         }

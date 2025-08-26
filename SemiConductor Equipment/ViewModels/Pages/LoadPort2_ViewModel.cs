@@ -194,7 +194,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this._vIDManager?.SetDVID(1001, (int)temperature, slot);
             }
             this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
-            this._vIDManager?.SetSVID(102, "CLOSE", LoadPortId);
+            this._vIDManager?.SetSVID(103, "CLOSE");
             LoadPortCompleted();
         }
 
@@ -286,10 +286,15 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.IsSetupEnabled = false;
                 this.IsCancelEnabled = false;
             }
-            else
+            else if(e == "END" && this.LPState == "Completed")
             {
                 this.IsSetupEnabled = false;
                 this.IsCancelEnabled = true;
+            }
+            else
+            {
+                this.IsSetupEnabled = true;
+                this.IsCancelEnabled = false;
             }
         }
         #endregion
