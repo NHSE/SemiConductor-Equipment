@@ -65,6 +65,8 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IEventMessageManager, EventMessageService>();
                 services.AddSingleton<SecsGem>();
 
+                services.AddSingleton<ITraceDataManager, TraceDataService>();
+
                 services.AddSingleton<CEIDModifyWindow>();
                 services.AddSingleton<CEIDModifyViewModel>();
                 services.AddSingleton<RPTIDModifyWindow>();

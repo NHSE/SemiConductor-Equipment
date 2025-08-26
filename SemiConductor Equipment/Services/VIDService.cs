@@ -15,7 +15,8 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
-        private readonly List<int> vid_list = new List<int> { 100, 101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010 };
+        private readonly List<int> vid_list = new List<int> { 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
+                                                                                    1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010 };
         #endregion
 
         #region PROPERTIES
@@ -26,7 +27,8 @@ namespace SemiConductor_Equipment.Services
         public string?[] LotId { get; set; } = new string?[26];
         public string?[] WaferId { get; set; } = new string?[26];
         public string? RobotStatus { get; set; } = "IDLE";
-        public string?[] LoadportDoorStatus { get; set; } = new string?[3] { "OPEN", "OPEN", "OPEN" };
+        public string? Loadport1_DoorStatus { get; set; } = "OPEN";
+        public string? Loadport2_DoorStatus { get; set; } = "OPEN";
         public string? LastAlarmCode { get; set; }
         public string? SWVersion { get; set; }
         public string?[] WaferPosition { get; set; } = new string?[26];
@@ -35,8 +37,18 @@ namespace SemiConductor_Equipment.Services
         public string?[] CJID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
         public string?[] CarrierID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
 
-        public int?[] Chemical { get; set; } = new int?[6];
-        public int?[] Pre_Clean { get; set; } = new int?[6];
+        public int? Chamber1_Chemical { get; set; }
+        public int? Chamber2_Chemical { get; set; }
+        public int? Chamber3_Chemical { get; set; }
+        public int? Chamber4_Chemical { get; set; }
+        public int? Chamber5_Chemical { get; set; }
+        public int? Chamber6_Chemical { get; set; }
+        public int? Chamber1_Pre_Clean { get; set; }
+        public int? Chamber2_Pre_Clean { get; set; }
+        public int? Chamber3_Pre_Clean { get; set; }
+        public int? Chamber4_Pre_Clean { get; set; }
+        public int? Chamber5_Pre_Clean { get; set; }
+        public int? Chamber6_Pre_Clean { get; set; }
 
         #endregion
 
@@ -67,10 +79,6 @@ namespace SemiConductor_Equipment.Services
                 {
                     if (wafer_number is int wNum)
                         arrNum = wNum;
-                }
-                else if(vid == 104 || vid == 105)
-                {
-                    solution_flag = true;
                 }
                 else
                 {
@@ -110,31 +118,16 @@ namespace SemiConductor_Equipment.Services
                         continue;
                 }
 
-                else if (vid != 1001 && vid < 1000 && (vid != 104 && vid != 105))
-                    vidData = this.GetSVID(vid, arrNum);
-                else if(solution_flag && (vid == 104 || vid == 105))
-                {
-                    for(int chamber = 0; chamber < 6; chamber++)
-                    {
-                        vidData = this.GetSVID(vid, chamber);
-                        vidItems.Add(
-                                        L(
-                                            U4((uint)rptid),
-                                            L(
-                                                A($"Chamber{chamber + 1}"),
-                                                A(vidData?.ToString() ?? "")
-                                            )
-                                        )
-                                    );
-                    }
-                    continue;
-                }
+                else if (vid >= 100 && vid <= 116)
+                    vidData = this.GetSVID(vid);
+             
                 else
                     vidData = this.GetDVID(vid, arrNum);
 
                 vidItems.Add(
                                 L(
                                     U4((uint)rptid),
+                                    U4((uint)vid),
                                     L(
                                         A(vidData?.ToString() ?? "")
                                     )
@@ -144,16 +137,27 @@ namespace SemiConductor_Equipment.Services
             return vidItems;
         }
 
-        public object? GetSVID(int svid, int array_data)
+        public object? GetSVID(int svid)
         {
             return svid switch
             {
                 100 => EquipmentStatus,
                 101 => RobotStatus,
-                102 => LoadportDoorStatus[array_data],
-                103 => SWVersion,
-                104 => Chemical[array_data],
-                105 => Pre_Clean[array_data],
+                102 => Loadport1_DoorStatus,
+                103 => Loadport2_DoorStatus,
+                104 => Chamber1_Chemical,
+                105 => Chamber2_Chemical,
+                106 => Chamber3_Chemical,
+                107 => Chamber4_Chemical,
+                108 => Chamber5_Chemical,
+                109 => Chamber6_Chemical,
+                110 => Chamber1_Pre_Clean,
+                111 => Chamber2_Pre_Clean,
+                112 => Chamber3_Pre_Clean,
+                113 => Chamber4_Pre_Clean,
+                114 => Chamber5_Pre_Clean,
+                115 => Chamber6_Pre_Clean,
+                116 => SWVersion,
                 _ => null
             };
         }
@@ -177,7 +181,7 @@ namespace SemiConductor_Equipment.Services
             };
         }
 
-        public void SetSVID(int svid, object data, int array_data = 0)
+        public void SetSVID(int svid, object data)
         {
             switch (svid)
             {
@@ -190,19 +194,59 @@ namespace SemiConductor_Equipment.Services
                     break;
 
                 case 102:
-                    LoadportDoorStatus[array_data] = data.ToString();
+                    Loadport1_DoorStatus = data.ToString();
                     break;
 
                 case 103:
-                    SWVersion = data.ToString();
+                    Loadport2_DoorStatus = data.ToString();
                     break;
 
                 case 104:
-                    Chemical[array_data] = Convert.ToInt32(data);
+                    Chamber1_Chemical = Convert.ToInt32(data);
                     break;
 
                 case 105:
-                    Pre_Clean[array_data] = Convert.ToInt32(data);
+                    Chamber2_Chemical = Convert.ToInt32(data);
+                    break;
+
+                case 106:
+                    Chamber3_Chemical = Convert.ToInt32(data);
+                    break;
+
+                case 107:
+                    Chamber4_Chemical = Convert.ToInt32(data);
+                    break;
+
+                case 108:
+                    Chamber5_Chemical = Convert.ToInt32(data);
+                    break;
+
+                case 109:
+                    Chamber6_Chemical = Convert.ToInt32(data);
+                    break;
+
+                case 110:
+                    Chamber1_Pre_Clean = Convert.ToInt32(data);
+                    break;
+
+                case 111:
+                    Chamber2_Pre_Clean = Convert.ToInt32(data);
+                    break;
+
+                case 112:
+                    Chamber3_Pre_Clean = Convert.ToInt32(data);
+                    break;
+
+                case 113:
+                    Chamber4_Pre_Clean = Convert.ToInt32(data);
+                    break;
+
+                case 114:
+                    Chamber5_Pre_Clean = Convert.ToInt32(data);
+                    break;
+
+                case 115:
+                    Chamber6_Pre_Clean = Convert.ToInt32(data);
                     break;
             }
         }
@@ -261,7 +305,7 @@ namespace SemiConductor_Equipment.Services
                 return true;
         }
 
-        public bool IsVID(uint rptid, uint vid)
+        public bool IsVID(uint vid)
         {
             return this.vid_list.Contains((int)vid);
         }

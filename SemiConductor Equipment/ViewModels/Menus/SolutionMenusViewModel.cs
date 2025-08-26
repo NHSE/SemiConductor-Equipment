@@ -134,19 +134,19 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
         private void SetVID()
         {
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber1, 0);
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber2, 1);
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber3, 2);
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber4, 3);
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber5, 4);
-            this._vIDManager.SetSVID(104, this.Chemical_Chamber6, 5);
+            this._vIDManager.SetSVID(104, this.Chemical_Chamber1);
+            this._vIDManager.SetSVID(105, this.Chemical_Chamber2);
+            this._vIDManager.SetSVID(106, this.Chemical_Chamber3);
+            this._vIDManager.SetSVID(107, this.Chemical_Chamber4);
+            this._vIDManager.SetSVID(108, this.Chemical_Chamber5);
+            this._vIDManager.SetSVID(109, this.Chemical_Chamber6);
 
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber1, 0);
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber2, 1);
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber3, 2);
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber4, 3);
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber5, 4);
-            this._vIDManager.SetSVID(105, this.PreClean_Chamber6, 5);
+            this._vIDManager.SetSVID(110, this.PreClean_Chamber1);
+            this._vIDManager.SetSVID(111, this.PreClean_Chamber2);
+            this._vIDManager.SetSVID(112, this.PreClean_Chamber3);
+            this._vIDManager.SetSVID(113, this.PreClean_Chamber4);
+            this._vIDManager.SetSVID(114, this.PreClean_Chamber5);
+            this._vIDManager.SetSVID(115, this.PreClean_Chamber6);
         }
 
         private void OnConfigRead()
