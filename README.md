@@ -71,7 +71,7 @@ TCP/IP 기반 통신 지원
 
 CSV 데이터 입출력 지원
 
-➡️ [SECS/GEM 통신 상세 문서](docs/COMMUNICATION.md)
+➡️ [사용 방법 상세 문서](docs/COMMUNICATION.md)
 
 ## 🗂 시뮬레이터 결과 파일
 
@@ -90,8 +90,6 @@ CSV 데이터 입출력 지원
 |-----------|------|--------|
 | **Clean/Dry Chamber Log** | 각 챔버 클린/드라이 공정 기록 |{Chamber Type}yyyyMMdd_hhmmss.log|
 | **Wafer Result Log** | 웨이퍼 처리 결과 기록 |yyyyMMdd_hhmmss_{Chamber Type}_Result.csv|
-
-➡️ [SECS/GEM 통신 상세 문서](docs/COMMUNICATION.md)
 
 ## 🗂 프로젝트 구조
 
