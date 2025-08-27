@@ -10,6 +10,7 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/7ef154c6-be1e-4259-8ffd-09bdf2929ad2" width="80%" />
 </p>
+
 ---
 
 ## Wafer 설정 방법
