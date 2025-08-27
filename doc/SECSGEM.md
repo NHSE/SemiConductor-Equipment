@@ -6,6 +6,9 @@
 1. SwingSecsSimulator를 설치 후 실행합니다.
 2. `Set Config` 클릭
 3. 하기의 그림과 같이 설정 후 OK를 눌러줍니다.
+   
+   <img width="459" height="477" alt="image" src="https://github.com/user-attachments/assets/f2d59036-338a-45bc-945a-12d422e2d937" />
+
 
 ---
 
