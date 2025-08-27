@@ -73,7 +73,7 @@ TCP/IP 기반 통신 지원
 
 CSV 데이터 입출력 지원
 
-➡️ [사용 방법 상세 문서](docs/COMMUNICATION.md)
+➡️ [사용 방법 상세 문서](docs/GETTING_STARTED.md)
 
 ## 🗂 시뮬레이터 결과 파일
 
