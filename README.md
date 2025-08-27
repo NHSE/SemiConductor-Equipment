@@ -13,7 +13,7 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 - [시뮬레이터 결과](#시뮬레이터-결과-파일)
 - [프로젝트 구조](#-프로젝트-구조)
   
-https://github.com/user-attachments/assets/acec0fa8-6b2f-455e-abe0-48dcfc81f012
+<img src="![SemiConductor-Equipment](https://github.com/user-attachments/assets/436c2bb8-e451-40b8-9ea6-a51d101abc57)" width="400">
 ---
 
 
