@@ -1,4 +1,4 @@
-# LoadPort
+# LoadPort 화면 구성
 
 (LoadPort 1, LoadPort 2 모두 동일합니다.)
 
