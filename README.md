@@ -67,13 +67,8 @@ SwingSecsSimulator와 연동 가능 (https://kenta-shimizu.github.io/secs-simula
 
 ### 3. 🔌 시뮬레이터 사용 방법
 
-TCP/IP 기반 통신 지원
-
-비동기 Task 기반 내부 이벤트 처리
-
-CSV 데이터 입출력 지원
-
 ➡️ [사용 방법 상세 문서](docs/GETTING_STARTED.md)
+
 
 ## 🗂 시뮬레이터 결과 파일
 
