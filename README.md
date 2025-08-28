@@ -70,6 +70,7 @@ Secs4Net 라이브러리를 이용한 SECS/GEM 구현
 SwingSecsSimulator와 연동 가능 (https://kenta-shimizu.github.io/secs-simulator/index.html)
 
 ➡️ [SECS/GEM 통신 상세 문서](docs/SECSGEM.md)
+➡️ [구현된 CEID/VID LIST](docs/Event_Setting.md)
 
 ### 3. 🔌 시뮬레이터 사용 방법
 
