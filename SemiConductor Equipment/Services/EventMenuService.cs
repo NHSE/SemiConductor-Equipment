@@ -14,7 +14,9 @@ namespace SemiConductor_Equipment.Services
     {
         #region FIELDS
         private readonly string _configDirectory;
-        private readonly IMessageBox messageBoxManager;
+
+        private readonly IMessageBox _messageBoxManager;
+
         public event Action ConfigRead;
         #endregion
 
@@ -33,7 +35,7 @@ namespace SemiConductor_Equipment.Services
 
             InitCEIDConfig();
             InitRPTIDConfig();
-            this.messageBoxManager = messageBoxManager;
+            this._messageBoxManager = messageBoxManager;
         }
         #endregion
 
@@ -269,8 +271,7 @@ namespace SemiConductor_Equipment.Services
             else
             {
                 //msg 박스 생성
-                this.messageBoxManager.Show("예외 발생", "이미 존재하는 RPTID입니다.");
-
+                this._messageBoxManager.Show("예외 발생", "이미 존재하는 RPTID입니다.");
             }
 
             File.WriteAllLines(filePath, lines);
@@ -460,16 +461,6 @@ RPTID = 4
 Name = Process Complete
 State = False
 RPTID = 4
-
-[CEID_600]
-Name = Alarm Occurred
-State = False
-RPTID = 5
-
-[CEID_601]
-Name = Alarm Cleared
-State = False
-RPTID = 5
 ";
                 }
                     File.WriteAllText(filePath, content);

@@ -20,7 +20,6 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Defaults;
-using Secs4Net;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -199,6 +198,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
                     this.StatusText = chamber.State;
 
+                    this.Series.Clear();
+
                     if (!waferDataDict.ContainsKey(chamber.WaferName))
                     {
                         waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
@@ -207,7 +208,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             Values = waferDataDict[chamber.WaferName],
                             Fill = null,
                             GeometrySize = 0,
-                            Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                            Stroke = new SolidColorPaint(SKColors.Red, 2),
                             Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                         });
                     }
@@ -225,6 +226,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             this.IsWafer = false;
                         }
 
+                        this.StatusText = chamber.State;
+
+                        this.Series.Clear();
+
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
                         {
                             waferDataDict[chamber.WaferName] = new ObservableCollection<ObservablePoint>();
@@ -233,7 +238,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                                 Values = waferDataDict[chamber.WaferName],
                                 Fill = null,
                                 GeometrySize = 0,
-                                Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                                Stroke = new SolidColorPaint(SKColors.Red, 2),
                                 Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                             });
                         }

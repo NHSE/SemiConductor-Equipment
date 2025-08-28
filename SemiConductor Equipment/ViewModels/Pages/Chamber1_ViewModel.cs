@@ -20,7 +20,6 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Defaults;
-using System.Windows.Media;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -33,7 +32,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private FileSystemWatcher _logFileWatcher;
         private readonly object _itemLock1 = new object();
         private long lastLogPosition = 0;
-        private double previousTemp = 0;
         #endregion
 
         #region PROPERTIES
@@ -210,7 +208,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             Values = waferDataDict[chamber.WaferName],
                             Fill = null,
                             GeometrySize = 0,
-                            Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                            Stroke = new SolidColorPaint(SKColors.Red, 2),
                             Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                         });
                     }
@@ -228,6 +226,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             this.IsWafer = false;
                         }
 
+                        this.StatusText = chamber.State;
                         this.Series.Clear();
 
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
@@ -238,7 +237,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                                 Values = waferDataDict[chamber.WaferName],
                                 Fill = null,
                                 GeometrySize = 0,
-                                Stroke = new SolidColorPaint(GetColorByWaferId(chamber.WaferName.ToString()), 2),
+                                Stroke = new SolidColorPaint(SKColors.Red, 2),
                                 Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                             });
                         }
@@ -312,9 +311,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         }
                         waferDataDict[e.Wafer_Num].Add(new ObservablePoint(xValue, yValue));
                     }
-
-                    double delta = 255 / (this._equipmentConfigManager.Chamber_Time + 1);
-                    WaferColor += (byte)delta;
                 }
                 else
                 {
@@ -332,10 +328,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             }
                             waferDataDict[e.Wafer_Num].Add(new ObservablePoint(xValue, yValue));
                         }
-
-                        double delta = 255 / (this._equipmentConfigManager.Chamber_Time + 1);
-                        WaferColor += (byte)delta;
-
                     });
                 }
             }

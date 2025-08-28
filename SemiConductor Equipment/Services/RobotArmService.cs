@@ -31,13 +31,15 @@ namespace SemiConductor_Equipment.Services
         private readonly ICleanManager _cleanManager;
         private readonly IVIDManager _vidManager;
         private readonly IEventMessageManager _eventMessageManager;
+        private readonly ILogManager _logManager;
 
-        public RobotArmService(IChamberManager chamberManager, ICleanManager cleanManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager)
+        public RobotArmService(IChamberManager chamberManager, ICleanManager cleanManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager, ILogManager logManager)
         {
             _chamberManager = chamberManager;
             _cleanManager = cleanManager;
             _vidManager = VIDManager;
             _eventMessageManager = eventMessageManager;
+            _logManager = logManager;
 
             _chamberManager.Enque_Robot += OnQueDataInput;
             _cleanManager.Enque_Robot += OnQueDataInput;
@@ -135,7 +137,7 @@ namespace SemiConductor_Equipment.Services
                         continue;
                     }
 
-                    Console.WriteLine($"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
+                    this._logManager.WriteLog("RobotArm", $"State", $"[RobotArm] {command.CommandType} {command.Wafer.Wafer_Num} → {command.Location}");
                     _vidManager.SetSVID(101, "Running");
 
                     await Task.Delay(500); // 모션 처리 시간 시뮬레이션
@@ -159,7 +161,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("[Clean Chamber 예외] " + ex);
+                                    this._logManager.WriteLog("Error", $"State", $"[Clean Chamber] {ex}");
                                 }
                             });
                             break;
@@ -183,7 +185,7 @@ namespace SemiConductor_Equipment.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("[Dry Chamber 예외] " + ex);
+                                    this._logManager.WriteLog("Error", $"State", $"[Dry Chamber] {ex}");
                                 }
                             });
                             break;
@@ -211,7 +213,6 @@ namespace SemiConductor_Equipment.Services
                         WaferMoveInfo?.Invoke(this, command.Wafer);
                     }
                     await Task.Delay(1000); // 모션 처리 시간 시뮬레이션
-                    //Thread.Sleep(1000);
                 }
             }
             finally
@@ -239,8 +240,7 @@ namespace SemiConductor_Equipment.Services
                 }
                 catch (Exception ex)
                 {
-                    // 예외 로깅
-                    Console.WriteLine(ex.ToString());
+                    this._logManager.WriteLog("Error", $"State", $"[RobotArm] {ex}");
                 }
             });
         }

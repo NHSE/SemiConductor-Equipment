@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SemiConductor_Equipment.Enums;
+using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class RunningStateService
+    public class RunningStateService : IRunningStateManger
     {
         private EquipmentStatusEnum _state;
         public event EventHandler<EquipmentStatusEnum> DataChange;

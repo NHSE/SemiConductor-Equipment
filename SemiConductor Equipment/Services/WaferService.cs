@@ -8,11 +8,12 @@ using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class WaferService
+    public class WaferService : IWaferManager
     {
         private Queue<Wafer> _waferQueue = new();
         public event Action<Wafer> WaferEnqueued;

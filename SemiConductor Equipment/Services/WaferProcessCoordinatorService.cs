@@ -22,7 +22,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IRobotArmManager _robotArmManager;
         private readonly IMessageBox _messageBoxManager;
         private readonly IResultFileManager _resultFileManager;
-        private readonly RunningStateService _runningStateService;
+        private readonly IRunningStateManger _runningStateManager;
         public event EventHandler<string> Process;
         #endregion
 
@@ -31,13 +31,13 @@ namespace SemiConductor_Equipment.Services
 
         #region CONSTRUCTOR
         public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, 
-            IMessageBox messageBoxManager, RunningStateService runningStateService, IResultFileManager resultFileManager)
+            IMessageBox messageBoxManager, IRunningStateManger runningStateManager, IResultFileManager resultFileManager)
         {
             this._chamberManager = chamberManager;
             this._cleanManager = cleanManager;
             this._robotArmManager = robotArmManager;
             this._messageBoxManager = messageBoxManager;
-            this._runningStateService = runningStateService;
+            this._runningStateManager = runningStateManager;
             this._resultFileManager = resultFileManager;
         }
         #endregion
@@ -116,10 +116,10 @@ namespace SemiConductor_Equipment.Services
                         {
                             waferQueue.Dequeue(); // 이제 꺼내도 됨
 
-                            if (this._runningStateService.Get_State() != EquipmentStatusEnum.Running)
+                            if (this._runningStateManager.Get_State() != EquipmentStatusEnum.Running)
                             {
                                 sender = wafer.CurrentLocation;
-                                this._runningStateService.Change_State(sender, EquipmentStatusEnum.Running);
+                                this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Running);
                             }
 
                             wafer.TargetLocation = emptyCleanChamber;
@@ -194,9 +194,9 @@ namespace SemiConductor_Equipment.Services
             {
                 waferQueue.Clear();
                 if (!isError)
-                    this._runningStateService.Change_State(sender, EquipmentStatusEnum.Completed);
+                    this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Completed);
                 else
-                    this._runningStateService.Change_State(sender, EquipmentStatusEnum.Error);
+                    this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Error);
 
                 await _robotArmManager.StopProcessing();
 

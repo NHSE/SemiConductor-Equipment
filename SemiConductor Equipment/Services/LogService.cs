@@ -27,25 +27,13 @@ namespace SemiConductor_Equipment.Services
         public void WriteLog(string logType, string messagetype, string message)
         {
             string filePath;
-            if (logType.Contains("Dry_Chamber"))
+            if (logType.Contains("Dry_Chamber") || logType.Contains("Clean_Chamber"))
             {
-                filePath = GetDryLogFilePath(logType);
-            }
-            else if (logType.Contains("Clean_Chamber"))
-            {
-                filePath = GetCleanLogFilePath(logType);
-            }
-            else if(logType.Contains("Event"))
-            {
-                filePath = GetEventLogLogPath(logType);
-            }
-            else if (logType.Contains("TraceData"))
-            {
-                filePath = GetSecsGemLogPath(logType);
+                filePath = GetLogFilePath(logType);
             }
             else
             {
-                filePath = GetSecsGemLogPath(logType);
+                filePath = GetLogPath(logType);
             }
             string logLine = $"{DateTime.Now:HH:mm:ss} {messagetype} ▶ {message}";
             File.AppendAllText(filePath, logLine + Environment.NewLine);
@@ -69,7 +57,7 @@ namespace SemiConductor_Equipment.Services
         /// <summary>
         /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
         /// </summary>
-        public string GetDryLogFilePath(string logType)
+        public string GetLogFilePath(string logType)
         {
             string fileName = $"{LogDataTime}\\{logType}_{LogDataTime}.log";
             return Path.Combine(_logDirectory, fileName);
@@ -78,28 +66,7 @@ namespace SemiConductor_Equipment.Services
         /// <summary>
         /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
         /// </summary>
-        public string GetCleanLogFilePath(string logType)
-        {
-            string fileName = $"{LogDataTime}\\{logType}_{LogDataTime}.log";
-            return Path.Combine(_logDirectory, fileName);
-        }
-
-        /// <summary>
-        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
-        /// </summary>
-        public string GetSecsGemLogPath(string logType)
-        {
-            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
-            return Path.Combine(_logDirectory, fileName);
-        }
-
-        public string GetEventLogLogPath(string logType)
-        {
-            string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
-            return Path.Combine(_logDirectory, fileName);
-        }
-
-        public string GetTraceDataLogPath(string logType)
+        public string GetLogPath(string logType)
         {
             string fileName = $"{logType}_{DateTime.Now:yyyyMMdd}.log";
             return Path.Combine(_logDirectory, fileName);

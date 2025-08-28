@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.ViewModels.Windows
     {
         #region FIELDS
         private readonly DbLogHelper _logHelper;
+        private readonly IMessageBox _messageBoxManager;
         private readonly IDatabase<Alarmlogtable>? _database;
         #endregion
 
@@ -23,9 +24,10 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region CONSTRUCTOR
-        public AlarmLogHistoryViewModel(IDatabase<Alarmlogtable> database)
+        public AlarmLogHistoryViewModel(IDatabase<Alarmlogtable> database, IMessageBox messageBoxManager)
         {
             this._database = database;
+            this._messageBoxManager = messageBoxManager;
         }
         #endregion
 
@@ -44,6 +46,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         {
             try
             {
+                if (_database is null)
+                    throw new InvalidOperationException();
+
                 var logList = await Task.Run(() => _database.Get());
 
                 // DTO로 변환
@@ -57,7 +62,7 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             }
             catch (Exception ex)
             {
-                throw new Exception("로그 초기화 실패", ex);
+                this._messageBoxManager.Show("예외 발생!", "DataBase에 연결되지 않았습니다.");
             }
         }
         #endregion

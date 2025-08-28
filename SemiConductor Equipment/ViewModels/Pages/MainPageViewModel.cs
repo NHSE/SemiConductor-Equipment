@@ -35,7 +35,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly DispatcherTimer _timer;
         private readonly MessageHandlerService _messageHandler;
-        private readonly RunningStateService _runningStateService;
+        private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
         public Dictionary<string, Point> locationPositions = new();
         #endregion
@@ -126,7 +126,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
-            ISecsGemServer secsGemServer, MessageHandlerService messageHandler, RunningStateService runningStateService, 
+            ISecsGemServer secsGemServer, MessageHandlerService messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
             , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager)
         {
@@ -140,8 +140,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _timer.Tick += (s, e) => this.Currenttime = _iDateTime.GetCurrentTime()?.ToString();
             _timer.Start();
 
-            this._runningStateService = runningStateService;
-            this._runningStateService.DataChange += OnEquipment_State_Change;
+            this._runningStateManager = runningStateManager;
+            this._runningStateManager.DataChange += OnEquipment_State_Change;
 
             this._logmanager = logmanager;
             this._messageHandler = messageHandler;

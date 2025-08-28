@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class LoadPortService
+    public class LoadPortService : ILoadPortManager
     {
         private readonly object _lock = new();
 

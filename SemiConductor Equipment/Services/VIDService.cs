@@ -16,21 +16,19 @@ namespace SemiConductor_Equipment.Services
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
         private readonly List<int> vid_list = new List<int> { 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
-                                                                                    1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010 };
+                                                                                    1001, 1002, 1003, 1005, 1007, 1008, 1009, 1010 };
         #endregion
 
         #region PROPERTIES
         public string? EquipmentStatus { get; set; } = "Ready";
         public int?[] WaferTemp { get; set; } = new int?[26];
         public int?[] LoadportWaferCount { get; set; } = new int?[3] { 0, 0, 0 };
-        public string? RecipeData { get; set; }
-        public string?[] LotId { get; set; } = new string?[26];
+        public string? RecipeData { get; set; } = "To Be Update";
         public string?[] WaferId { get; set; } = new string?[26];
         public string? RobotStatus { get; set; } = "IDLE";
         public string? Loadport1_DoorStatus { get; set; } = "OPEN";
         public string? Loadport2_DoorStatus { get; set; } = "OPEN";
-        public string? LastAlarmCode { get; set; }
-        public string? SWVersion { get; set; }
+        public string? SWVersion { get; set; } = "20250830";
         public string?[] WaferPosition { get; set; } = new string?[26];
 
         public string?[] PJID { get; set; } = new string?[3] {"Nothing", "Nothing", "Nothing" };
@@ -169,9 +167,7 @@ namespace SemiConductor_Equipment.Services
                 1001 => WaferTemp[array_data],
                 1002 => LoadportWaferCount[array_data],
                 1003 => RecipeData,
-                1004 => LotId[array_data],
                 1005 => WaferId[array_data],
-                1006 => LastAlarmCode,
                 1007 => WaferPosition[array_data],
                 1008 => PJID[array_data],
                 1009 => CJID[array_data],
@@ -267,16 +263,8 @@ namespace SemiConductor_Equipment.Services
                     RecipeData = data.ToString();
                     break;
 
-                case 1004:
-                    LotId[array_data] = data.ToString();
-                    break;
-
                 case 1005:
                     WaferId[array_data] = data.ToString();
-                    break;
-
-                case 1006:
-                    LastAlarmCode = data.ToString();
                     break;
 
                 case 1007:

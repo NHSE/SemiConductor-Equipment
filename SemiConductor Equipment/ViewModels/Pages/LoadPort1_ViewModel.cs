@@ -24,7 +24,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public event EventHandler<Wafer> RemoveRequested;
         public event EventHandler<Wafer> AddRequested;
         private readonly IRobotArmManager _robotArmManager;
-        private readonly RunningStateService _runningStateService;
+        private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IWaferProcessCoordinator _processManager;
@@ -53,18 +53,18 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, RunningStateService runningStateService, IVIDManager VIDManager, 
+        public LoadPort1_ViewModel(IRobotArmManager robotArmManager, IRunningStateManger runningStateManager, IVIDManager VIDManager, 
             IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager)
         {
             this._robotArmManager = robotArmManager;
-            this._runningStateService = runningStateService;
+            this._runningStateManager = runningStateManager;
             this._vIDManager = VIDManager;
             this._eventMessageManager = eventMessageManager;
             this._processManager = processManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
-            this._runningStateService.DataChange += OnEquipment_State_Change;
+            this._runningStateManager.DataChange += OnEquipment_State_Change;
             this._processManager.Process += ProcessChange;
 
             PropertyChanged += OnPropertyChanged;
@@ -76,7 +76,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private void Cancel()
         {
             EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
-            this._runningStateService.Change_State("LoadPort1", state);
+            this._runningStateManager.Change_State("LoadPort1", state);
+            Event_Send(101);
             _waferinfo.Clear();
         }
         #endregion
@@ -138,10 +139,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     });
                 }
 
-                if(existingWafer.LotId != string.Empty)
-                {
-                    this._vIDManager.SetDVID(1004, existingWafer.LotId, existingWafer.Wafer_Num);
-                }
                 if(existingWafer.SlotId != string.Empty)
                 {
                     this._vIDManager.SetDVID(1005, existingWafer.SlotId, existingWafer.Wafer_Num);
@@ -198,12 +195,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
             this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
             this._vIDManager?.SetSVID(102, "CLOSE");
-            LoadPortCompleted();
+            Event_Send(100);
         }
 
-        private void LoadPortCompleted()
+        private void Event_Send(int ceid)
         {
-            CEIDInfo info = this._eventMessageManager.GetCEID(100);
+            CEIDInfo info = this._eventMessageManager.GetCEID(ceid);
             info.Loadport_Number = this.LoadPortId;
             info.Wafer_List = this.Waferinfo.Select(w => w.Wafer_Num).ToList();
             this._eventMessageManager.EnqueueEventData(info);

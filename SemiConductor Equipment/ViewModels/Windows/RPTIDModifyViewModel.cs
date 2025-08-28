@@ -20,7 +20,7 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #region PROPERTIES
         [ObservableProperty]
         private ObservableCollection<int> allVID = new ObservableCollection<int>{ 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
-                                                                                    1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010 };
+                                                                                    1001, 1002, 1003, 1005, 1007, 1008, 1009, 1010 };
         [ObservableProperty]
         private ObservableCollection<int> selectedSvids = new ObservableCollection<int>();
         [ObservableProperty]

@@ -29,10 +29,10 @@ namespace SemiConductor_Equipment.Services
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly IMessageBox _messageBoxManager;
         private readonly ITraceDataManager _traceDataManager;
-        private readonly WaferService _waferService;
+        private readonly IWaferManager _waferManager;
         private readonly IWaferProcessCoordinator _processManager;
-        private readonly LoadPortService _loadPortService;
-        private readonly RunningStateService _runningStateService;
+        private readonly ILoadPortManager _loadPortManager;
+        private readonly IRunningStateManger _runningStateManager;
 
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
 
@@ -54,20 +54,20 @@ namespace SemiConductor_Equipment.Services
 
         #region CONSTRUCTOR
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory, ITraceDataManager traceDataManager,
-            WaferService waferService, IWaferProcessCoordinator processManager, LoadPortService loadPortService, IEventMessageManager eventMessageManager,
-            IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, RunningStateService runningStateService)
+            IWaferManager waferManager, IWaferProcessCoordinator processManager, ILoadPortManager loadPortManager, IEventMessageManager eventMessageManager,
+            IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, IRunningStateManger runningStateManager)
         {
             this._logManager = logManager;
             this._logAction = logAction;
             this._loadPortFactory = loadPortFactory;
-            this._waferService = waferService;
+            this._waferManager = waferManager;
             this._processManager = processManager;
-            this._loadPortService = loadPortService;
+            this._loadPortManager = loadPortManager;
             this._eventMessageManager = eventMessageManager;
             this._vIDManager = vIDManager;
             this._alarmMsgManager = alarmMsgManager;
             this._messageBoxManager = messageBoxManager;
-            this._runningStateService = runningStateService;
+            this._runningStateManager = runningStateManager;
             this._traceDataManager = traceDataManager;
         }
         #endregion
@@ -115,7 +115,7 @@ namespace SemiConductor_Equipment.Services
 
             else if(msg.S == 2 && msg.F == 23)
             {
-                await TraceData(msg, wrapper, recv_logMessage, send_logMessage);
+                await HandleTraceData(msg, wrapper, recv_logMessage, send_logMessage);
             }
 
             else if (msg.S == 3 && msg.F == 17)
@@ -210,26 +210,26 @@ namespace SemiConductor_Equipment.Services
                 }
 
             }
-            else if (msg.S == 14 && msg.F == 9)// CJ Create //수정 필
+            else if (msg.S == 14 && msg.F == 9)
             {
-                await CJCreate(msg, wrapper, recv_logMessage, send_logMessage);
+                await HandleCJCreate(msg, wrapper, recv_logMessage, send_logMessage);
             }
 
-            else if (msg.S == 2 && msg.F == 33) // CJ Create //수정 필
+            else if (msg.S == 2 && msg.F == 33)
             {
                 await HandleRPTIDVIDLink(msg, wrapper, recv_logMessage, send_logMessage);
             }
-            else if (msg.S == 2 && msg.F == 35) // CJ Create //수정 필
+            else if (msg.S == 2 && msg.F == 35)
             {
                 await HandleCEIDLink(msg, wrapper, recv_logMessage, send_logMessage);
             }
-            else if (msg.S == 2 && msg.F == 37) // CJ Create //수정 필
+            else if (msg.S == 2 && msg.F == 37)
             {
                 await HandleCEIDEnable(msg, wrapper, recv_logMessage, send_logMessage);
             }
         }
 
-        private async Task TraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
+        private async Task HandleTraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
             {
@@ -394,7 +394,7 @@ namespace SemiConductor_Equipment.Services
             }
         }   
 
-        private async Task CJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
+        private async Task HandleCJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             string recv_log = recv_logMessage + msg.ToSml();
             _logManager.WriteLog("SECS", "RECV", recv_log);
@@ -405,7 +405,7 @@ namespace SemiConductor_Equipment.Services
                 goto error_msg;
             }
 
-            if (this._runningStateService.Get_State() == EquipmentStatusEnum.Running)
+            if (this._runningStateManager.Get_State() == EquipmentStatusEnum.Running)
             {
                 this._alarmMsgManager.AlarmMessage_IN("Currently Testing this");
                 goto error_msg;
@@ -474,17 +474,17 @@ namespace SemiConductor_Equipment.Services
                                 return;
 
                             // LoadPortId로 초기화
-                            _loadPortService.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
+                            _loadPortManager.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
 
                             // 각 웨이퍼를 큐에 등록
                             foreach (var wafer_info in wafers)
                             {
-                                _waferService.Enqueue(wafer_info);
+                                _waferManager.Enqueue(wafer_info);
                             }
                             var cts = new CancellationTokenSource();
                             var cancellationToken = cts.Token;
                             this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
-                            await _processManager.StartProcessAsync(_waferService.GetQueue(), cancellationToken);
+                            await _processManager.StartProcessAsync(_waferManager.GetQueue(), cancellationToken);
                         }
                     });
                 }

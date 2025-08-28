@@ -157,11 +157,11 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<Action<string>>(provider => AppendLog);
                 services.AddSingleton<MessageHandlerService>();
                 services.AddSingleton<ISecsGemServer, SecsGemServer>();
-                services.AddSingleton<WaferService>();
+                services.AddSingleton<IWaferManager, WaferService>();
                 services.AddSingleton<IWaferProcessCoordinator ,WaferProcessCoordinatorService>();
-                services.AddSingleton<LoadPortService>();
+                services.AddSingleton<ILoadPortManager, LoadPortService>();
                 services.AddSingleton<IRobotArmManager, RobotArmService>();
-                services.AddSingleton<RunningStateService>();
+                services.AddSingleton<IRunningStateManger, RunningStateService>();
                 services.AddSingleton<IDBLogManager, DbLogHelper>();
             }).Build();
 
