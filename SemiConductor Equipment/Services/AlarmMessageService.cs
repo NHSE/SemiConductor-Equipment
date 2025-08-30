@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.Services
         #region FIELDS
         public event EventHandler<string> AlarmData;
         private readonly IDBLogManager _dblogManager;
+        private readonly ILogManager _logManager;
         public bool IsAlarm { get; set; }
         #endregion
 
@@ -21,9 +22,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
-        public AlarmMessageService(IDBLogManager dBLogManager) 
+        public AlarmMessageService(IDBLogManager dBLogManager, ILogManager logManager) 
         {
             this._dblogManager = dBLogManager;
+            this._logManager = logManager;
             this.IsAlarm = false;
         }
         #endregion
@@ -36,6 +38,7 @@ namespace SemiConductor_Equipment.Services
         {
             AlarmData?.Invoke(this, alarmmsg);
             this._dblogManager.WriteDbLog(alarmmsg);
+            this._logManager.WriteLog("Alarm", $"State", alarmmsg);
             IsAlarm = true;
         }
 

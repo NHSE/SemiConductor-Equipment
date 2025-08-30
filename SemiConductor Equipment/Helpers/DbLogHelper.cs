@@ -22,13 +22,28 @@ namespace SemiConductor_Equipment.Helpers
 
         public void WriteDbLog(string Alarm_Msg)
         {
-            string Alarm_Time = DateTime.Now.ToString(); // alarm num는 serial4 형식으로 바꾸고 시퀀스로 자동 증가하도록 설정해야함
-            var log = new Alarmlogtable
+            try
             {
-                AlarmTime = Alarm_Time,
-                AlarmMessage = Alarm_Msg
-            };
-            _database.Create(log);
+                if (_database == null)
+                {
+                    _logManager.WriteLog("Error", $"State", "Database instance is null. Log not written.");
+                    return;
+                }
+
+                string Alarm_Time = DateTime.Now.ToString();
+                var log = new Alarmlogtable
+                {
+                    AlarmTime = Alarm_Time,
+                    AlarmMessage = Alarm_Msg
+                };
+
+                _database.Create(log); // DB 저장 시도
+            }
+            catch (Exception ex)
+            {
+                // DB 연결 실패 등 예외 발생 시 빠져나오기
+                _logManager.WriteLog("Error", $"State", ex.Message);
+            }
         }
     }
 }
