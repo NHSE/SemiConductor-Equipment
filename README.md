@@ -52,7 +52,7 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 ```bash
 (git, dotnet이 설치가 되어 있지 않다면 설치 후 진행해주세요)
 
-git clone --branch develop https://github.com/NHSE/SemiConductor-Equipment.git
+git clone --branch master https://github.com/NHSE/SemiConductor-Equipment.git
 cd SemiConductor-Equipment/SemiConductor Equipment
 
 2. 빌드
