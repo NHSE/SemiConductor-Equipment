@@ -141,7 +141,7 @@ namespace SemiConductor_Equipment.Services
             // 파일이 없으면 생성하면서 내용도 쓴다
             if (!File.Exists(filePath))
             {
-                string content = "Clean RPM = 60\nChemical Flow Rate = 2\nChemical Spray Time = 1\nPre-Clean Flow Rate = 2\nPre-Clean Spray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nDry RPM = 5\nChamber Time = 10";
+                string content = "Clean RPM = 60\nChemical Flow Rate = 2\nChemical Spray Time = 1\nPre-Clean Flow Rate = 2\nPre-Clean Spray Time = 1\nMin Temperature = 30\nMax Temperature = 120\nDry RPM = 60\nChamber Time = 10";
                 File.WriteAllText(filePath, content);
             }
 

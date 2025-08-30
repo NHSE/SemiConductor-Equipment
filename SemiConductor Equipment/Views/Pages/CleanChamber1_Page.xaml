@@ -118,7 +118,7 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
-                                <RowDefinition Height="310"/>
+                                <RowDefinition Height="290"/>
                             </Grid.RowDefinitions>
                             <Border Background="#263444" Grid.Row="0">
                                 <ui:TextBlock Text="Chamber Log" Margin="10 10 0 10" 

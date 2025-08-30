@@ -104,7 +104,7 @@ namespace SemiConductor_Equipment.Views.Menus
                         break;
 
                     case "tbDryrpm":
-                        if (value > 3000 || value < 10)
+                        if (value > 3000)
                         {
                             this._messageBox.Show("입력 초과", "해당 입력은 10 이상 3000이하만 가능합니다.");
                             e.Handled = true;
@@ -112,7 +112,7 @@ namespace SemiConductor_Equipment.Views.Menus
                             break;
 
                     case "tbCleanrpm":
-                        if (value > 3000 || value < 10)
+                        if (value > 3000)
                         {
                             this._messageBox.Show("입력 초과", "해당 입력은 10 이상 3000이하만 가능합니다.");
                             e.Handled = true;

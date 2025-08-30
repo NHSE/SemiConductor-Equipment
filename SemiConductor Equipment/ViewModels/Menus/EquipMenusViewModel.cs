@@ -13,6 +13,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus
     {
         #region FIELDS
         private readonly IEquipmentConfigManager _configManager;
+        private readonly IMessageBox _messageBoxManager;
         #endregion
 
         #region PROPERTIES
@@ -37,9 +38,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
-        public EquipMenusViewModel(IEquipmentConfigManager configManager)
+        public EquipMenusViewModel(IEquipmentConfigManager configManager, IMessageBox messageBoxManager)
         {
             _configManager = configManager;
+            _messageBoxManager = messageBoxManager;
             _configManager.ConfigRead += OnConfigRead;
             _configManager.InitConfig();
         }
@@ -55,6 +57,12 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         [RelayCommand]
         private void Save()
         {
+            if(this.Clean_rpm < 10 || this.Dry_Rpm < 10)
+            {
+                this._messageBoxManager.Show("입력 오류", "RPM 입력은 10 이상 3000이하만 가능합니다.");
+                return;
+            }
+
             _configManager.UpdateConfigValue("Clean RPM", this.Clean_rpm);
             _configManager.UpdateConfigValue("Chemical Flow Rate", this.FlowRate);
             _configManager.UpdateConfigValue("Chemical Spray Time", this.Spraytime);
