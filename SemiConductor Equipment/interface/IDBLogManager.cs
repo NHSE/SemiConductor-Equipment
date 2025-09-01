@@ -9,6 +9,14 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IDBLogManager
     {
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         void WriteDbLog(string Alarm_Msg);
+        #endregion
+
+        #region EVENTS
+        #endregion
     }
 }

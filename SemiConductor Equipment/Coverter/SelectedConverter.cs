@@ -12,6 +12,19 @@ namespace SemiConductor_Equipment.Coverter
 {
     public class SelectedConverter : IMultiValueConverter
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             var selectedList = values[0] as ObservableCollection<int>;
@@ -44,5 +57,6 @@ namespace SemiConductor_Equipment.Coverter
 
             return null;
         }
+        #endregion
     }
 }

@@ -8,8 +8,15 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IMessageBox
     {
-        void Show(string title, string message);
+        #region PROPERTIES
+        #endregion
 
+        #region METHODS
+        void Show(string title, string message);
+        #endregion
+
+        #region EVENTS
         event EventHandler<List<string>> Message_Show;
+        #endregion
     }
 }

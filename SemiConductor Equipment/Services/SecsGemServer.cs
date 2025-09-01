@@ -17,19 +17,29 @@ namespace SemiConductor_Equipment.Services
 {
     public class SecsGemServer : ISecsGemServer
     {
-        private Action<string> _log;
+        #region FIELDS
         private SecsGem _secs;
+
         private ISecsConnection _hsmsConnector;
         private IEventMessageManager _eventMessageManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly ITraceDataManager _traceDataManager;
-        public event EventHandler Connected;
-        public event EventHandler Disconnected;
-        private readonly MessageHandlerService _messageHandler;
+        private readonly IMessageManager _messageHandler;
+
         private CancellationTokenSource? _cts;
         private CancellationTokenSource _connectingCts;
 
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager, 
+        private Action<string> _log;
+        public event EventHandler Connected;
+        public event EventHandler Disconnected;
+
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        public SecsGemServer(Action<string> logger, IMessageManager messageHandler, IEventMessageManager eventMessageManager,
             IAlarmMsgManager alarmMsgManager, ITraceDataManager traceDataManager)
         {
             this._messageHandler = messageHandler;
@@ -37,8 +47,13 @@ namespace SemiConductor_Equipment.Services
             this._alarmMsgManager = alarmMsgManager;
             this._traceDataManager = traceDataManager;
         }
+        #endregion
 
-        public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        public bool Initialize(Action<string> logger, IMessageManager messageHandler, IConfigManager configManager)
         {
             bool ret = false;
 
@@ -80,7 +95,7 @@ namespace SemiConductor_Equipment.Services
                 Stop();
                 ret = true;
             }
-                return ret;
+            return ret;
         }
 
         public void Start()
@@ -101,7 +116,7 @@ namespace SemiConductor_Equipment.Services
                 _cts.Dispose();
                 _cts = null;
             }
-            
+
             if (_hsmsConnector is HsmsConnection disposable)
             {
                 disposable.DisposeAsync();
@@ -174,5 +189,8 @@ namespace SemiConductor_Equipment.Services
                 _alarmMsgManager?.AlarmMessage_IN($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
             }
         }
+        #endregion
+
+
     }
 }

@@ -8,6 +8,14 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IEquipmentstate
     {
+        #region PROPERTIES
         int? State { get; set; }
+        #endregion
+
+        #region METHODS
+        #endregion
+
+        #region EVENTS
+        #endregion
     }
 }

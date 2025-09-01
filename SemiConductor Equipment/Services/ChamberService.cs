@@ -18,12 +18,13 @@ namespace SemiConductor_Equipment.Services
 {
     public class ChamberService : IChamberManager
     {
+        #region FIELDS
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
-        private readonly IResultFileManager _resultFileManager; 
+        private readonly IResultFileManager _resultFileManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -50,9 +51,13 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = "IDLE",
             ["Chamber6"] = "IDLE"
         };
+        #endregion
 
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, 
-            IVIDManager vIDManager, IResultFileManager resultFileManager)
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager, IResultFileManager resultFileManager)
         {
             this._logManager = logManager;
             this._equiptempManager = equiptempManager;
@@ -60,7 +65,12 @@ namespace SemiConductor_Equipment.Services
             this._vIDManager = vIDManager;
             this._resultFileManager = resultFileManager;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void ProcessStart()
         {
             ProcessHandled?.Invoke();
@@ -240,7 +250,7 @@ namespace SemiConductor_Equipment.Services
                 sw.Stop();
                 result.EndTime = DateTime.Now;
                 result.ProcessDuration = sw.Elapsed;
-                
+
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
 
                 this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
@@ -276,7 +286,7 @@ namespace SemiConductor_Equipment.Services
                 return true;
             }
             return false;
-            
+
         }
 
         public bool IsAllChamberEmpty()
@@ -284,5 +294,6 @@ namespace SemiConductor_Equipment.Services
             // 모든 챔버에 Wafer가 없으면 true
             return this._chambers.Values.All(chamber => chamber.wafer == null);
         }
+        #endregion
     }
 }

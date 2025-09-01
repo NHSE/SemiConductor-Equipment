@@ -11,12 +11,28 @@ namespace SemiConductor_Equipment.Services
 {
     public class LogtableService : IDatabase<Alarmlogtable>
     {
+        #region FIELDS
         private readonly LogDatabaseContext? _logDatabaseContext;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public LogtableService(LogDatabaseContext? logDatabaseContext)
         {
             this._logDatabaseContext = logDatabaseContext;
         }
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
         public void Create(Alarmlogtable entity)
         {
             this._logDatabaseContext.Alarmlogtables.Add(entity);
@@ -35,20 +51,6 @@ namespace SemiConductor_Equipment.Services
 
         public List<Alarmlogtable> Search(string? chamberName, DateTime? logTime = null)
         {
-            /*
-            var query = _logDatabaseContext?.Alarmlogtables.AsQueryable();
-
-            if(chamberName == "ALL")
-                return query?.ToList() ?? new List<Alarmlogtable>();
-
-            if (!string.IsNullOrWhiteSpace(chamberName))
-                query = query.Where(c => c. == chamberName);
-
-            if (logTime.HasValue)
-                query = query.Where(c => c.Time == logTime.Value);
-
-            return query?.ToList() ?? new List<Alarmlogtable>();
-            */
             List<Alarmlogtable> a = new List<Alarmlogtable>();
             return a;
         }
@@ -62,5 +64,7 @@ namespace SemiConductor_Equipment.Services
         {
             throw new NotImplementedException();
         }
+        #endregion
+
     }
 }

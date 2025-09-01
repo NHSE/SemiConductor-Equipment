@@ -19,6 +19,7 @@ namespace SemiConductor_Equipment.Services
 {
     public class CleanService : ICleanManager
     {
+        #region FIELDS
         private readonly ILogManager _logManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IEquipmentConfigManager _equiptempManager;
@@ -42,6 +43,7 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = (null, false),
             ["Chamber6"] = (null, false),
         };
+
         public Dictionary<string, bool> Unable_to_Process { get; set; } = new Dictionary<string, bool>()
         {
             ["Chamber1"] = false,
@@ -60,7 +62,12 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = "IDLE",
             ["Chamber6"] = "IDLE",
         };
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager,
             IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager)
         {
@@ -68,9 +75,14 @@ namespace SemiConductor_Equipment.Services
             this._equiptempManager = equiptempManager;
             this._logManager = logManager;
             this._alarmMsgManager = alarmMsgManager;
-            this._resultFileManager = resultFileManager;    
+            this._resultFileManager = resultFileManager;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public string? FindEmptySlot()
         {
             return _chamberSlots
@@ -346,5 +358,6 @@ namespace SemiConductor_Equipment.Services
         {
             return _chamberSlots[chambername].wafer == null;
         }
+        #endregion
     }
 }

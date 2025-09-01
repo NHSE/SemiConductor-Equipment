@@ -33,10 +33,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ISolutionManager _chemicalManager;
         private readonly IRobotArmManager _robotArmManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
-        private readonly DispatcherTimer _timer;
-        private readonly MessageHandlerService _messageHandler;
+        private readonly IMessageManager _messageHandler;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
+
+        private readonly DispatcherTimer _timer;
         public Dictionary<string, Point> locationPositions = new();
         #endregion
 
@@ -126,7 +127,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         #region CONSTRUCTOR
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
-            ISecsGemServer secsGemServer, MessageHandlerService messageHandler, IRunningStateManger runningStateManager, 
+            ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
             , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager)
         {

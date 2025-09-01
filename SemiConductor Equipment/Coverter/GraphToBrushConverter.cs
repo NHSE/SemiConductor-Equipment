@@ -11,6 +11,19 @@ namespace SemiConductor_Equipment.Coverter
 {
     public class GraphToBrushConverter : IValueConverter
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public object Convert(object value, Type t, object p, CultureInfo color)
         {
             if (value is LiveChartsCore.SkiaSharpView.Painting.SolidColorPaint paint)
@@ -21,5 +34,6 @@ namespace SemiConductor_Equipment.Coverter
             return Brushes.Black;
         }
         public object ConvertBack(object v, Type t, object p, CultureInfo color) => throw new NotImplementedException();
+        #endregion
     }
 }

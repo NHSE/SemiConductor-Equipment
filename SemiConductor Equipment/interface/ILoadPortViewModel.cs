@@ -11,16 +11,23 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface ILoadPortViewModel
     {
+        #region PROPERTIES
+        byte LoadPortId { get; }  // 로드포트 ID 추가
+        #endregion
+
+        #region METHODS
         bool Update_Carrier_info(Wafer newWaferData);
 
         bool Check_Running(string cjid);
 
-        public string GetCarrierId();
+        string GetCarrierId();
 
-        public string GetPJId(byte loadportId);
+        string GetPJId(byte loadportId);
 
-        byte LoadPortId { get; }  // 로드포트 ID 추가
+        List<Wafer> GetAllWaferInfo(string pjid);
+        #endregion
 
-        public List<Wafer> GetAllWaferInfo(string pjid);
+        #region EVENTS
+        #endregion
     }
 }

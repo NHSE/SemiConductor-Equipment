@@ -12,17 +12,28 @@ namespace SemiConductor_Equipment.Services
 {
     public partial class MessageBoxService : IMessageBox
     {
+        #region FIELDS
         private readonly ILogManager _logManager;
         private readonly Queue<List<string>> _MessageQueue = new();
         public event EventHandler<List<string>> Message_Show;
         private readonly object _lock = new();
         private bool _isProcessing = false;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public MessageBoxService(ILogManager logManager)
         {
             _logManager = logManager;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void Show(string title, string message)
         {
             List<string> list = new List<string>();
@@ -70,5 +81,8 @@ namespace SemiConductor_Equipment.Services
                 this._logManager.WriteLog("Error", "SYSTEM", "Message Box를 정상적으로 불러오지 못했습니다.");
             }
         }
+        #endregion
+
+
     }
 }

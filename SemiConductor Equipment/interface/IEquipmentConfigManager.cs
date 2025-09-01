@@ -8,11 +8,7 @@ namespace SemiConductor_Equipment.interfaces
 {
     public partial interface IEquipmentConfigManager
     {
-        void InitConfig();
-
-        void UpdateConfigValue(string key, int newValue);
-        string GetFilePathAndCreateIfNotExists();
-
+        #region PROPERTIES
         int Clean_RPM { get; set; }
         int Flow_Rate { get; set; }
         int Spray_Time { get; set; }
@@ -24,7 +20,18 @@ namespace SemiConductor_Equipment.interfaces
         int Dry_RPM { get; set; }
 
         int Chamber_Time { get; set; }
+        #endregion
+
+        #region METHODS
+        void InitConfig();
+
+        void UpdateConfigValue(string key, int newValue);
+        string GetFilePathAndCreateIfNotExists();
+        #endregion
+
+        #region EVENTS
 
         event Action ConfigRead;
+        #endregion
     }
 }

@@ -20,7 +20,7 @@ using System.Timers;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class MessageHandlerService
+    public class MessageHandlerService : IMessageManager
     {
         #region FIELDS
         private readonly ILogManager _logManager;
@@ -38,15 +38,6 @@ namespace SemiConductor_Equipment.Services
 
         private readonly Action<string> _logAction;
 
-        string? cmd;
-        string? cjId;
-        string? carrier_cmd;
-        string? carrierId;
-        string? pj_cmd;
-        string? pjId;
-        string? auto_start;
-        bool auto_start_flag;
-        byte loadportId;
         #endregion
 
         #region PROPERTIES
@@ -120,6 +111,7 @@ namespace SemiConductor_Equipment.Services
 
             else if (msg.S == 3 && msg.F == 17)
             {
+                string cmd = string.Empty;
                 // S3F17: 웨이퍼 정보 수신
                 if (msg?.SecsItem?[1] != null)
                     cmd = msg?.SecsItem?[1].GetString();
@@ -133,81 +125,7 @@ namespace SemiConductor_Equipment.Services
 
             else if (msg.S == 16 && msg.F == 11)
             {
-                // S3F17: 웨이퍼 정보 수신
-                if (msg.SecsItem[1] != null)
-                    pjId = msg?.SecsItem?[1].GetString();
-                else
-                    return;
-
-                if (msg?.SecsItem?[3][0][0] != null)
-                    carrierId = msg?.SecsItem?[3][0][0].GetString();
-                else
-                    return;
-
-                string recv_log = recv_logMessage + msg.ToSml();
-                _logManager.WriteLog("SECS", "RECV", recv_log);
-
-                bool success = false;
-
-                for (byte loadportId = 1; loadportId <= 2; loadportId++)
-                {
-                    var viewModel = _loadPortFactory(loadportId);
-                    if (viewModel != null)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            if (carrierId == viewModel.GetCarrierId())
-                            {
-                                var waferData = new Wafer
-                                {
-                                    PJId = pjId
-                                };
-                                success = viewModel.Update_Carrier_info(waferData);
-                                _vIDManager.SetDVID(1009, pjId, (int)loadportId);
-                            }
-                        });
-                    }
-                }
-
-                if (success && msg.ReplyExpected)
-                {
-                    // S3F18 응답 (ACK)
-                    var reply = new SecsMessage(16, 12)
-                    {
-                        Name = "PJCreate",
-                        SecsItem = L(
-                                        U1(0),
-                                        L(
-                                            L(
-                                                U4(0),
-                                                A("no error")
-                                              )
-                                          )
-                                     )
-                    };
-                    await wrapper.TryReplyAsync(reply);
-                    string send_log = send_logMessage + reply.ToSml();
-                    _logManager.WriteLog("SECS", "SEND", send_log);
-                }
-                else if (msg.ReplyExpected && !success)
-                {
-                    var reply = new SecsMessage(16, 12)
-                    {
-                        Name = "test",
-                        SecsItem = L(
-                                    U1(0),
-                                    L(
-                                        L(
-                                            U4(0),
-                                            A("error")
-                                          )
-                                      )
-                                 )
-                    };
-                    await wrapper.TryReplyAsync(reply);
-                    string send_log = send_logMessage + reply.ToSml();
-                    _logManager.WriteLog("SECS", "SEND", send_log);
-                }
+                await HandlePJCreate(msg, wrapper, recv_logMessage, send_logMessage);
 
             }
             else if (msg.S == 14 && msg.F == 9)
@@ -229,6 +147,85 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        private async Task HandlePJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
+        {
+            string? pjId = string.Empty;
+            if (msg.SecsItem[1] != null)
+                pjId = msg?.SecsItem?[1].GetString();
+            else
+                return;
+
+            string? carrierId = string.Empty;
+            if (msg?.SecsItem?[3][0][0] != null)
+                carrierId = msg?.SecsItem?[3][0][0].GetString();
+            else
+                return;
+
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
+            bool success = false;
+
+            for (byte loadportId = 1; loadportId <= 2; loadportId++)
+            {
+                var viewModel = _loadPortFactory(loadportId);
+                if (viewModel != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (carrierId == viewModel.GetCarrierId())
+                        {
+                            var waferData = new Wafer
+                            {
+                                PJId = pjId
+                            };
+                            success = viewModel.Update_Carrier_info(waferData);
+                            _vIDManager.SetDVID(1009, pjId, (int)loadportId);
+                        }
+                    });
+                }
+            }
+
+            if (success && msg.ReplyExpected)
+            {
+                // S3F18 응답 (ACK)
+                var reply = new SecsMessage(16, 12)
+                {
+                    Name = "PJCreate",
+                    SecsItem = L(
+                                    U1(0),
+                                    L(
+                                        L(
+                                            U4(0),
+                                            A("no error")
+                                          )
+                                      )
+                                 )
+                };
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+            else if (msg.ReplyExpected && !success)
+            {
+                var reply = new SecsMessage(16, 12)
+                {
+                    Name = "test",
+                    SecsItem = L(
+                                U1(0),
+                                L(
+                                    L(
+                                        U4(0),
+                                        A("error")
+                                      )
+                                  )
+                             )
+                };
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+        }
         private async Task HandleTraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
@@ -398,6 +395,15 @@ namespace SemiConductor_Equipment.Services
         {
             string recv_log = recv_logMessage + msg.ToSml();
             _logManager.WriteLog("SECS", "RECV", recv_log);
+
+            string? cmd = string.Empty;
+            string? cjId = string.Empty;
+            string? carrier_cmd = string.Empty;
+            string? carrierId = string.Empty;
+            string? pj_cmd = string.Empty;
+            string? pjId = string.Empty;
+            string? auto_start = string.Empty;
+            bool auto_start_flag = false;
 
             if (this._alarmMsgManager.IsAlarm)
             {

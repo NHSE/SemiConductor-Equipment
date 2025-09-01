@@ -155,7 +155,7 @@ namespace SemiConductor_Equipment
                 services.AddDbContext<LogDatabaseContext>();
 
                 services.AddSingleton<Action<string>>(provider => AppendLog);
-                services.AddSingleton<MessageHandlerService>();
+                services.AddSingleton<IMessageManager, MessageHandlerService>();
                 services.AddSingleton<ISecsGemServer, SecsGemServer>();
                 services.AddSingleton<IWaferManager, WaferService>();
                 services.AddSingleton<IWaferProcessCoordinator ,WaferProcessCoordinatorService>();

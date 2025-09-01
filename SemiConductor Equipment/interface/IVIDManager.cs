@@ -9,6 +9,12 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IVIDManager
     {
+        #region PROPERTIES
+
+        string? RobotStatus { get; set; }
+        #endregion
+
+        #region METHODS
         object? GetSVID(int svid);
         object? GetDVID(int svid, int array_data);
         void SetSVID(int svid, object data);
@@ -18,7 +24,9 @@ namespace SemiConductor_Equipment.interfaces
         bool IsVID(uint vid);
         bool IsCEID(uint ceid);
         bool IsRPTIDInCEID(uint ceid, uint rptid);
+        #endregion
 
-        string? RobotStatus { get; set; }
+        #region EVENTS
+        #endregion
     }
 }

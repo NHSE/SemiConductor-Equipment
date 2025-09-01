@@ -15,9 +15,21 @@ namespace SemiConductor_Equipment.Services
 {
     public class WaferService : IWaferManager
     {
+        #region FIELDS
         private Queue<Wafer> _waferQueue = new();
         public event Action<Wafer> WaferEnqueued;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void Enqueue(Wafer wafer)
         {
             _waferQueue.Enqueue(wafer);
@@ -37,5 +49,6 @@ namespace SemiConductor_Equipment.Services
         {
             _waferQueue.Clear();
         }
+        #endregion
     }
 }

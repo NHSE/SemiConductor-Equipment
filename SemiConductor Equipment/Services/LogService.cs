@@ -8,19 +8,28 @@ namespace SemiConductor_Equipment.Services
 {
     public class LogService : ILogManager
     {
-        // 로그별로 이벤트 제공 (예시: 사전으로 관리)
+        #region FIELDS
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
+        #endregion
 
+        #region PROPERTIES
         public string LogDataTime { get; set; } // S14F9 받은 시점
+        #endregion
 
+        #region CONSTRUCTOR
         public LogService(string logDirectory)
         {
             _logDirectory = logDirectory;
             if (!Directory.Exists(_logDirectory))
                 Directory.CreateDirectory(_logDirectory);
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         /// <summary>
         /// 로그 기록 (날짜별 파일 자동 생성)
         /// </summary>
@@ -55,7 +64,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// 날짜별 로그 파일 경로 반환
         /// </summary>
         public string GetLogFilePath(string logType)
         {
@@ -64,7 +73,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// 날짜별 로그 파일 경로 반환
         /// </summary>
         public string GetLogPath(string logType)
         {
@@ -79,5 +88,8 @@ namespace SemiConductor_Equipment.Services
             if (!Directory.Exists(processlogDir))
                 Directory.CreateDirectory(processlogDir);
         }
+        #endregion
+
+
     }
 }

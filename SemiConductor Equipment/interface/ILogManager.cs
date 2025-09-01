@@ -9,6 +9,11 @@ namespace SemiConductor_Equipment.interfaces
 {
     public partial interface ILogManager
     {
+        #region PROPERTIES
+        string LogDataTime { get; set; }
+        #endregion
+
+        #region METHODS
         void WriteLog(string logType, string messagetype, string message);
 
         void Subscribe(string logType, Action<string> handler);
@@ -17,8 +22,10 @@ namespace SemiConductor_Equipment.interfaces
 
         string GetLogPath(string logType);
 
-        string LogDataTime { get; set; }
-
         void SetTime(string time);
+        #endregion
+
+        #region EVENTS
+        #endregion
     }
 }
