@@ -71,10 +71,14 @@ SwingSecsSimulator와 연동 가능 (https://kenta-shimizu.github.io/secs-simula
 - ➡️ [SECS/GEM 통신 상세 문서](docs/SECSGEM.md)
 - ➡️ [구현된 CEID/VID LIST](docs/Event_Setting.md)
 
-### 3. 🔌 시뮬레이터 사용 방법
+### 3. 🖥 시뮬레이터 구성
 
-➡️ [사용 방법 상세 문서](docs/GETTING_STARTED.md)
+➡️ [시뮬레이터 구성 상세 문서](docs/Simulator_composition.md)
 
+
+### 4. 🖱️ 시뮬레이터 사용 방법
+
+➡️ [사용방법 상세 문서](docs/GETTING_STARTED.md)
 
 ## 🗂 시뮬레이터 결과 파일
 
@@ -90,13 +94,9 @@ SwingSecsSimulator와 연동 가능 (https://kenta-shimizu.github.io/secs-simula
 *폴더 명은 S14F9 메시지 수신 시점을 기준으로 자동 생성됩니다.*
 
 | 파일/폴더 | 설명 | 파일명 |
-|-----------|------|--------|
-| **Clean/Dry Chamber Log** | 각 챔버 클린/드라이 공정 기록 |{Chamber Type}yyyyMMdd_hhmmss.log|
+|-----------|--------------------|---------------------|
+| **Clean/Dry Chamber Log** | 각 챔버 클린/드라이 공정 기록 |{Chamber Type}_yyyyMMdd_hhmmss.log|
 | **Wafer Result Log** | 웨이퍼 처리 결과 기록 |yyyyMMdd_hhmmss_{Chamber Type}_Result.csv|
-
-## 🗂 프로젝트 구조
-
-프로젝트 구조는 UML 다이어그램으로 표현하며 추가 예정입니다.
 
 ## 📬 개발자
 
