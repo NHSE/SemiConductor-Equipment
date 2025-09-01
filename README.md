@@ -11,7 +11,6 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 - [목적](#-목적)
 - [사용 방법](#-사용-방법)
 - [시뮬레이터 결과](#-시뮬레이터-결과-파일)
-- [프로젝트 구조](#-프로젝트-구조)
   
 ![SemiConductor-Equipment](https://github.com/user-attachments/assets/436c2bb8-e451-40b8-9ea6-a51d101abc57)
 
@@ -49,8 +48,12 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 
 ## 🛠 사용 방법
 ### 1. 저장소 Clone 및 설치 방법
-```bash
+
 (git, dotnet이 설치가 되어 있지 않다면 설치 후 진행해주세요)
+
+- git : [Download](https://git-scm.com/downloads)  
+- dotnet : [Download](https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.304/dotnet-sdk-9.0.304-win-x64.exe)
+```bash
 
 git clone --branch master https://github.com/NHSE/SemiConductor-Equipment.git
 cd SemiConductor-Equipment/SemiConductor Equipment
