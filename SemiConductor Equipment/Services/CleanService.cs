@@ -25,6 +25,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly IResultFileManager _resultFileManager;
+        private readonly IPLCManager _plcManager;
         public event EventHandler<CleanChamberStatus> DataEnqueued;
         public event EventHandler<CleanChamberStatus> MultiCupChange;
         public event EventHandler<RobotCommand> Enque_Robot;
@@ -76,14 +77,16 @@ namespace SemiConductor_Equipment.Services
         /// <param name="logManager"></param>
         /// <param name="alarmMsgManager"></param>
         /// <param name="resultFileManager"></param>
+        /// <param name="plcManager"></param>
         public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager,
-            IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager)
+            IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager, IPLCManager plcManager)
         {
             this._eventMessageManager = eventMessageManager;
             this._equiptempManager = equiptempManager;
             this._logManager = logManager;
             this._alarmMsgManager = alarmMsgManager;
             this._resultFileManager = resultFileManager;
+            this._plcManager = plcManager;
         }
         #endregion
 
@@ -153,8 +156,13 @@ namespace SemiConductor_Equipment.Services
 
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Spin");
 
-            float current_rpm = 0;
+            int current_rpm = 0;
             int target_rpm = this._equiptempManager.Clean_RPM;
+            current_rpm  = Task.Run(() =>
+            {
+                return this._plcManager.Start(chambername, target_rpm, current_rpm, true).GetAwaiter().GetResult();
+            }).Result;
+            /*
             int max_random = this._equiptempManager.Clean_RPM / 10;
             int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
             Random rand = new Random();
@@ -174,7 +182,7 @@ namespace SemiConductor_Equipment.Services
 
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
                 await Task.Delay(1000);
-            }
+            }*/
 
             result.RPM = (int)current_rpm;
 
@@ -250,6 +258,9 @@ namespace SemiConductor_Equipment.Services
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END Cleaning");
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Initiate Spin Stop");
             //RPM 감소
+            await this._plcManager.Stop(chambername, true);
+
+            /*
             while (current_rpm > 0)
             {
                 current_rpm -= rand.Next(min_random, max_random);
@@ -260,6 +271,7 @@ namespace SemiConductor_Equipment.Services
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
                 await Task.Delay(1000);
             }
+            */
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Spin Stop");
 
             //멀티컵 Down

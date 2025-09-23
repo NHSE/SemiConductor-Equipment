@@ -36,6 +36,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IMessageManager _messageHandler;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
+        private readonly IPLCManager _plcManager;
 
         private readonly DispatcherTimer _timer;
         public Dictionary<string, Point> locationPositions = new();
@@ -141,11 +142,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// <param name="svIDManager"></param>
         /// <param name="chemicalManager"></param>
         /// <param name="alarmMsgManager"></param>
+        /// <param name="pLCManager"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
-            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager)
+            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager, IPLCManager plcManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -170,6 +172,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._vIDManager = svIDManager;
             this._chemicalManager = chemicalManager;
             this._alarmMsgManager = alarmMsgManager;
+            this._plcManager = plcManager;
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
@@ -180,6 +183,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
             this._alarmMsgManager.AlarmData += AlarmMsgManager_AlarmData;
 
+            this._plcManager.Initalize();
             if (this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
             {
                 this.IsDisconnected = true;

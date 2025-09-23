@@ -163,6 +163,7 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IRobotArmManager, RobotArmService>();
                 services.AddSingleton<IRunningStateManger, RunningStateService>();
                 services.AddSingleton<IDBLogManager, DbLogHelper>();
+                services.AddSingleton<IPLCManager, PLCHandlerService>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);
