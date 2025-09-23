@@ -10,9 +10,23 @@ namespace SemiConductor_Equipment.Models
 {
     public partial class EventQueueItem : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         [ObservableProperty]
         private CEIDInfo cEID;
         [ObservableProperty]
         private List<Item> vIDItems;
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }

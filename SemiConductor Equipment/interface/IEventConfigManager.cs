@@ -10,13 +10,15 @@ namespace SemiConductor_Equipment.interfaces
 {
     public partial interface IEventConfigManager
     {
-        event Action ConfigRead;
+        #region PROPERTIES
         Dictionary<int, RPTIDInfo> RPTID { get; set; }
 
         Dictionary<int, CEIDInfo> CEID { get; set; }
 
         Dictionary<int, SVIDInfo> SVID { get; set; }
+        #endregion
 
+        #region METHODS
         void InitCEIDConfig();
         void InitRPTIDConfig();
 
@@ -25,6 +27,11 @@ namespace SemiConductor_Equipment.interfaces
         void CreatedRPTIDSectionPartial(RPTIDInfo newData);
         void RemoveRPTIDSectionPartial(RPTIDInfo newData);
         void CEIDStateChange(int ceid, bool state);
+        #endregion
+
+        #region EVENTS
+        event Action ConfigRead;
+        #endregion
 
     }
 }

@@ -39,6 +39,10 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// CEID 수정 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
         public CEIDModifyViewModel(IEventConfigManager configManager)
         {
             this._configManager = configManager;
@@ -46,6 +50,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 저장 커맨드
+        /// </summary>
         [RelayCommand]
         private void Save()
         {
@@ -58,12 +65,19 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 첫 화면 띄울때 변수 저장 메서드
+        /// </summary>
+        /// <param name="item"></param>
         public void LoadItem(CEIDInfo item)
         {
             this._item = item;
             ChangeProperty();
         }
 
+        /// <summary>
+        /// 초기 값 저장 메서드
+        /// </summary>
         private void ChangeProperty()
         {
             this.Number = this._item.Number;
@@ -89,6 +103,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             this.AllRPTID = new ObservableCollection<int>(RPTID_LIST.SelectMany(r => r.Number_list));
         }
 
+        /// <summary>
+        /// 수정된 값 저장 메서드
+        /// </summary>
         private void ChangeData()
         {
             this._item.Number = this.Number;

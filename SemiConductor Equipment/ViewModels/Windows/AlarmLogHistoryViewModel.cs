@@ -24,6 +24,11 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 알람 Log History 클래스
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="messageBoxManager"></param>
         public AlarmLogHistoryViewModel(IDatabase<Alarmlogtable> database, IMessageBox messageBoxManager)
         {
             this._database = database;
@@ -36,12 +41,21 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 알람 정보 확인 Task 호출 Task
+        /// </summary>
+        /// <returns></returns>
         public async Task OnNavigatedToAsync()
         {
             await InitializeViewModelAsync();
         }
 
         public Task OnNavigatedFromAsync() => Task.CompletedTask;
+
+        /// <summary>
+        /// DB내 정보 획득 Task
+        /// </summary>
+        /// <returns></returns>
         private async Task InitializeViewModelAsync()
         {
             try

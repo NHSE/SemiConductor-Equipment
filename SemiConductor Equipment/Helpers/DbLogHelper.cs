@@ -11,15 +11,27 @@ namespace SemiConductor_Equipment.Helpers
 {
     public class DbLogHelper : IDBLogManager
     {
+        #region FIELDS
         private readonly IDatabase<Alarmlogtable> _database;
         private readonly ILogManager _logManager;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public DbLogHelper(IDatabase<Alarmlogtable> database, ILogManager logManager)
         {
             _database = database;
             _logManager = logManager;
         }
 
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void WriteDbLog(string Alarm_Msg)
         {
             try
@@ -45,5 +57,6 @@ namespace SemiConductor_Equipment.Helpers
                 _logManager.WriteLog("Error", $"State", ex.Message);
             }
         }
+        #endregion
     }
 }

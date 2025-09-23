@@ -22,8 +22,14 @@ namespace SemiConductor_Equipment.Views.Windows
     /// </summary>
     public partial class RPTIDAddWindow : Window
     {
-        public RPTIDAddViewModel ViewModel { get; }
+        #region FIELDS
+        #endregion
 
+        #region PROPERTIES
+        public RPTIDAddViewModel ViewModel { get; }
+        #endregion
+
+        #region CONSTRUCTOR
         public RPTIDAddWindow(RPTIDAddViewModel viewModel)
         {
             InitializeComponent();
@@ -32,7 +38,12 @@ namespace SemiConductor_Equipment.Views.Windows
 
             ViewModel.CloseRequested += OnClose;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void SetItem()
         {
             if (ViewModel is RPTIDAddViewModel vm)
@@ -84,5 +95,7 @@ namespace SemiConductor_Equipment.Views.Windows
         {
             this.Close();
         }
+        #endregion
+
     }
 }

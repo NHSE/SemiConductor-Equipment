@@ -64,15 +64,28 @@ namespace SemiConductor_Equipment.Models
 
     public partial class LoadPortWaferKey : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         [ObservableProperty]
         private int _loadPort;
         [ObservableProperty]
         private int _waferId;
+        #endregion
 
+        #region CONSTRUCTOR
         public LoadPortWaferKey(int loadPort, int waferId)
         {
             _loadPort = loadPort;
             _waferId = waferId;
         }
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }

@@ -18,12 +18,13 @@ namespace SemiConductor_Equipment.Services
 {
     public class ChamberService : IChamberManager
     {
+        #region FIELDS
         private readonly object _lock = new();
         private readonly ILogManager _logManager;
         private readonly IEquipmentConfigManager _equiptempManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
-        private readonly IResultFileManager _resultFileManager; 
+        private readonly IResultFileManager _resultFileManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -50,9 +51,21 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = "IDLE",
             ["Chamber6"] = "IDLE"
         };
+        #endregion
 
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, 
-            IVIDManager vIDManager, IResultFileManager resultFileManager)
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        /// <summary>
+        /// Dry Chamber의 동작 서비스 레이어
+        /// </summary>
+        /// <param name="logManager"></param>
+        /// <param name="equiptempManager"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="vIDManager"></param>
+        /// <param name="resultFileManager"></param>
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager, IResultFileManager resultFileManager)
         {
             this._logManager = logManager;
             this._equiptempManager = equiptempManager;
@@ -60,17 +73,33 @@ namespace SemiConductor_Equipment.Services
             this._vIDManager = vIDManager;
             this._resultFileManager = resultFileManager;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        /// <summary>
+        /// Dry Chamber 내 웨이퍼가 들어왔을 때 공정 시작을 알리는 메서드 (이벤트 발생으로 각 Chamber의 온도 그래프 초기화)
+        /// </summary>
         public void ProcessStart()
         {
             ProcessHandled?.Invoke();
         }
 
+        /// <summary>
+        /// 비어있는 Chamber 확인 메서드
+        /// </summary>
+        /// <returns>비어있는 Chamber 이름</returns>
         public string? FindEmptyChamber()
         {
             return this._chambers.FirstOrDefault(x => x.Value.wafer == null && x.Value.isProcessing == false).Key;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public (string ChamberName, Wafer Wafer)? PeekCompletedWafer()
         {
             var completed = this._chambers.FirstOrDefault(x => x.Value.wafer != null && x.Value.isProcessing != false);
@@ -78,6 +107,11 @@ namespace SemiConductor_Equipment.Services
             return (completed.Key, completed.Value.wafer);
         }
 
+
+        /// <summary>
+        /// 공정을 마친 웨이퍼의 정보를 Chamber 내 데이터에서 삭제
+        /// </summary>
+        /// <param name="chamberName"></param>
         public void RemoveWaferFromChamber(string chamberName)
         {
             if (_chambers.ContainsKey(chamberName))
@@ -90,11 +124,22 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// Chamber 내 웨이퍼의 정보를 추가
+        /// </summary>
+        /// <param name="chamberName"></param>
+        /// <param name="wafer"></param>
         public void AddWaferToChamber(string chamberName, Wafer wafer)
         {
             this._chambers[chamberName] = (wafer, false);
         }
 
+        /// <summary>
+        /// Dry 공정 프로세스 실행 메서드
+        /// </summary>
+        /// <param name="chamberName"></param>
+        /// <param name="wafer"></param>
+        /// <returns></returns>
         public async Task StartProcessingAsync(string chamberName, Wafer wafer)
         {
             try
@@ -240,7 +285,7 @@ namespace SemiConductor_Equipment.Services
                 sw.Stop();
                 result.EndTime = DateTime.Now;
                 result.ProcessDuration = sw.Elapsed;
-                
+
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
 
                 this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
@@ -276,13 +321,18 @@ namespace SemiConductor_Equipment.Services
                 return true;
             }
             return false;
-            
+
         }
 
+        /// <summary>
+        /// 모든 챔버내 웨이퍼가 없는 지 확인하는 메서드
+        /// </summary>
+        /// <returns>웨이퍼 존재 여부</returns>
         public bool IsAllChamberEmpty()
         {
             // 모든 챔버에 Wafer가 없으면 true
             return this._chambers.Values.All(chamber => chamber.wafer == null);
         }
+        #endregion
     }
 }

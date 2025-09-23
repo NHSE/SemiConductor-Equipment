@@ -22,6 +22,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+
+        /// <summary>
+        /// 현재 시간을 리턴해주는 메서드
+        /// </summary>
+        /// <returns>현재시간</returns>
         public DateTime? GetCurrentTime()
         {
             return DateTime.Now;

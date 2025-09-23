@@ -8,6 +8,14 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IDateTime
     {
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         DateTime? GetCurrentTime();
+        #endregion
+
+        #region EVENTS
+        #endregion
     }
 }

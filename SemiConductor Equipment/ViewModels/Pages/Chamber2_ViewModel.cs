@@ -88,6 +88,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Dry Chamber 2 클래스
+        /// </summary>
+        /// <param name="logService"></param>
+        /// <param name="messageBox"></param>
+        /// <param name="chamberManager"></param>
+        /// <param name="equipmentConfigManager"></param>
         public Chamber2_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager, IEquipmentConfigManager equipmentConfigManager)
         {
             this._logManager = logService;
@@ -118,7 +125,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-
+        /// <summary>
+        /// Log파일 읽기 설정 메서드
+        /// </summary>
         private void SetupLogFileWatcher()
         {
             var logDirectory = @"C:\Logs";
@@ -135,6 +144,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _logFileWatcher.EnableRaisingEvents = true;
         }
 
+        /// <summary>
+        /// Log 파일 실시간 읽기 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -162,6 +176,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             });
         }
 
+        /// <summary>
+        /// Log 파일 설정 메서드
+        /// </summary>
         private void LoadInitialLogs()
         {
             var logPath = Path.Combine(@"C:\Logs", $"Dry_Chamber2_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
@@ -227,7 +244,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         }
 
                         this.StatusText = chamber.State;
-
                         this.Series.Clear();
 
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
@@ -247,18 +263,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        private SKColor GetColorByWaferId(string waferId)
-        {
-            // 예시로 해시값 기반 색상 설정
-            int hash = waferId.GetHashCode();
-            var r = (byte)((hash >> 16) & 0xFF);
-            var g = (byte)((hash >> 8) & 0xFF);
-            var b = (byte)(hash & 0xFF);
-
-            return new SKColor(r, g, b);
-        }
-
-
+        /// <summary>
+        /// 프로세스 시작 시 값 초기화 메서드
+        /// </summary>
         private void OnProcess()
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -276,6 +283,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// RPM 데이터 저장 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnRPMData(object? sender, ChamberRPMValue e)
         {
             if (e.ChamberName == "Chamber2")
@@ -334,6 +346,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 온도 값 변경 메서드
+        /// </summary>
         private void ChangeTempData()
         {
             if (Application.Current.Dispatcher.CheckAccess())

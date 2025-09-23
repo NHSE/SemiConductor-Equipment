@@ -20,7 +20,7 @@ using System.Timers;
 
 namespace SemiConductor_Equipment.Services
 {
-    public class MessageHandlerService
+    public class MessageHandlerService : IMessageManager
     {
         #region FIELDS
         private readonly ILogManager _logManager;
@@ -38,21 +38,27 @@ namespace SemiConductor_Equipment.Services
 
         private readonly Action<string> _logAction;
 
-        string? cmd;
-        string? cjId;
-        string? carrier_cmd;
-        string? carrierId;
-        string? pj_cmd;
-        string? pjId;
-        string? auto_start;
-        bool auto_start_flag;
-        byte loadportId;
         #endregion
 
         #region PROPERTIES
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// SECS/GEM 메세지의 처리를 하기 위한 서비스 레이어
+        /// </summary>
+        /// <param name="logManager"></param>
+        /// <param name="logAction"></param>
+        /// <param name="loadPortFactory"></param>
+        /// <param name="traceDataManager"></param>
+        /// <param name="waferManager"></param>
+        /// <param name="processManager"></param>
+        /// <param name="loadPortManager"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="vIDManager"></param>
+        /// <param name="alarmMsgManager"></param>
+        /// <param name="messageBoxManager"></param>
+        /// <param name="runningStateManager"></param>
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory, ITraceDataManager traceDataManager,
             IWaferManager waferManager, IWaferProcessCoordinator processManager, ILoadPortManager loadPortManager, IEventMessageManager eventMessageManager,
             IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, IRunningStateManger runningStateManager)
@@ -76,6 +82,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 메세지 수신 시 메세지 형태에 따라 동작하는 메서드
+        /// </summary>
+        /// <param name="wrapper"></param>
+        /// <returns></returns>
         public async Task HandleMessageAsync(PrimaryMessageWrapper wrapper)
         {
             var msg = wrapper.PrimaryMessage;
@@ -120,6 +131,7 @@ namespace SemiConductor_Equipment.Services
 
             else if (msg.S == 3 && msg.F == 17)
             {
+                string cmd = string.Empty;
                 // S3F17: 웨이퍼 정보 수신
                 if (msg?.SecsItem?[1] != null)
                     cmd = msg?.SecsItem?[1].GetString();
@@ -133,81 +145,7 @@ namespace SemiConductor_Equipment.Services
 
             else if (msg.S == 16 && msg.F == 11)
             {
-                // S3F17: 웨이퍼 정보 수신
-                if (msg.SecsItem[1] != null)
-                    pjId = msg?.SecsItem?[1].GetString();
-                else
-                    return;
-
-                if (msg?.SecsItem?[3][0][0] != null)
-                    carrierId = msg?.SecsItem?[3][0][0].GetString();
-                else
-                    return;
-
-                string recv_log = recv_logMessage + msg.ToSml();
-                _logManager.WriteLog("SECS", "RECV", recv_log);
-
-                bool success = false;
-
-                for (byte loadportId = 1; loadportId <= 2; loadportId++)
-                {
-                    var viewModel = _loadPortFactory(loadportId);
-                    if (viewModel != null)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            if (carrierId == viewModel.GetCarrierId())
-                            {
-                                var waferData = new Wafer
-                                {
-                                    PJId = pjId
-                                };
-                                success = viewModel.Update_Carrier_info(waferData);
-                                _vIDManager.SetDVID(1009, pjId, (int)loadportId);
-                            }
-                        });
-                    }
-                }
-
-                if (success && msg.ReplyExpected)
-                {
-                    // S3F18 응답 (ACK)
-                    var reply = new SecsMessage(16, 12)
-                    {
-                        Name = "PJCreate",
-                        SecsItem = L(
-                                        U1(0),
-                                        L(
-                                            L(
-                                                U4(0),
-                                                A("no error")
-                                              )
-                                          )
-                                     )
-                    };
-                    await wrapper.TryReplyAsync(reply);
-                    string send_log = send_logMessage + reply.ToSml();
-                    _logManager.WriteLog("SECS", "SEND", send_log);
-                }
-                else if (msg.ReplyExpected && !success)
-                {
-                    var reply = new SecsMessage(16, 12)
-                    {
-                        Name = "test",
-                        SecsItem = L(
-                                    U1(0),
-                                    L(
-                                        L(
-                                            U4(0),
-                                            A("error")
-                                          )
-                                      )
-                                 )
-                    };
-                    await wrapper.TryReplyAsync(reply);
-                    string send_log = send_logMessage + reply.ToSml();
-                    _logManager.WriteLog("SECS", "SEND", send_log);
-                }
+                await HandlePJCreate(msg, wrapper, recv_logMessage, send_logMessage);
 
             }
             else if (msg.S == 14 && msg.F == 9)
@@ -229,6 +167,102 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// PJ 생성에 대한 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
+        private async Task HandlePJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
+        {
+            string? pjId = string.Empty;
+            if (msg.SecsItem[1] != null)
+                pjId = msg?.SecsItem?[1].GetString();
+            else
+                return;
+
+            string? carrierId = string.Empty;
+            if (msg?.SecsItem?[3][0][0] != null)
+                carrierId = msg?.SecsItem?[3][0][0].GetString();
+            else
+                return;
+
+            string recv_log = recv_logMessage + msg.ToSml();
+            _logManager.WriteLog("SECS", "RECV", recv_log);
+
+            bool success = false;
+
+            for (byte loadportId = 1; loadportId <= 2; loadportId++)
+            {
+                var viewModel = _loadPortFactory(loadportId);
+                if (viewModel != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (carrierId == viewModel.GetCarrierId())
+                        {
+                            var waferData = new Wafer
+                            {
+                                PJId = pjId
+                            };
+                            success = viewModel.Update_Carrier_info(waferData);
+                            _vIDManager.SetDVID(1009, pjId, (int)loadportId);
+                        }
+                    });
+                }
+            }
+
+            if (success && msg.ReplyExpected)
+            {
+                // S3F18 응답 (ACK)
+                var reply = new SecsMessage(16, 12)
+                {
+                    Name = "PJCreate",
+                    SecsItem = L(
+                                    U1(0),
+                                    L(
+                                        L(
+                                            U4(0),
+                                            A("no error")
+                                          )
+                                      )
+                                 )
+                };
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+            else if (msg.ReplyExpected && !success)
+            {
+                var reply = new SecsMessage(16, 12)
+                {
+                    Name = "test",
+                    SecsItem = L(
+                                U1(0),
+                                L(
+                                    L(
+                                        U4(0),
+                                        A("error")
+                                      )
+                                  )
+                             )
+                };
+                await wrapper.TryReplyAsync(reply);
+                string send_log = send_logMessage + reply.ToSml();
+                _logManager.WriteLog("SECS", "SEND", send_log);
+            }
+        }
+
+        /// <summary>
+        /// Trace Data에 대한 처리 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleTraceData(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
@@ -394,10 +428,27 @@ namespace SemiConductor_Equipment.Services
             }
         }   
 
+        /// <summary>
+        /// CJ 처리에 대한 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleCJCreate(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             string recv_log = recv_logMessage + msg.ToSml();
             _logManager.WriteLog("SECS", "RECV", recv_log);
+
+            string? cmd = string.Empty;
+            string? cjId = string.Empty;
+            string? carrier_cmd = string.Empty;
+            string? carrierId = string.Empty;
+            string? pj_cmd = string.Empty;
+            string? pjId = string.Empty;
+            string? auto_start = string.Empty;
+            bool auto_start_flag = false;
 
             if (this._alarmMsgManager.IsAlarm)
             {
@@ -546,6 +597,14 @@ namespace SemiConductor_Equipment.Services
             _logManager.WriteLog("SECS", "SEND", send_errorlog);
         }
 
+        /// <summary>
+        /// Carrier의 처리에 대한 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleProceedWithCarrier(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             string recv_log = recv_logMessage + msg.ToSml();
@@ -595,6 +654,14 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// RPTID와 VID Link에 대한 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleRPTIDVIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
@@ -702,7 +769,15 @@ namespace SemiConductor_Equipment.Services
                 }
             }
         }
-
+        
+        /// <summary>
+        /// CEID Link에 대한 동작 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleCEIDLink(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try
@@ -810,6 +885,14 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// CEID 상태 변경에 대한 메서드
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="wrapper"></param>
+        /// <param name="recv_logMessage"></param>
+        /// <param name="send_logMessage"></param>
+        /// <returns></returns>
         private async Task HandleCEIDEnable(SecsMessage msg, PrimaryMessageWrapper wrapper, string recv_logMessage, string send_logMessage)
         {
             try

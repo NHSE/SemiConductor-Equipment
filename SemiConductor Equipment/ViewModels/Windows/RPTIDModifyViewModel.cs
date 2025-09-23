@@ -32,6 +32,10 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// RPTID 수정 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
         public RPTIDModifyViewModel(IEventConfigManager configManager)
         {
             this._configManager = configManager;
@@ -39,6 +43,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 저장 커맨드
+        /// </summary>
         [RelayCommand]
         private void Save()
         {
@@ -48,6 +55,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             CloseRequested?.Invoke();
         }
 
+        /// <summary>
+        /// 삭제 커맨드
+        /// </summary>
         [RelayCommand]
         private void Remove()
         {
@@ -59,12 +69,19 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 첫 화면 띄울 때 변수 저장 메서드
+        /// </summary>
+        /// <param name="item"></param>
         public void LoadItem(RPTIDInfo item)
         {
             this._item = item;
             ChangeProperty();
         }
 
+        /// <summary>
+        /// 초기값 설정 메서드
+        /// </summary>
         private void ChangeProperty()
         {
             this.Number = this._item.Number;
@@ -79,6 +96,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             }
         }
 
+        /// <summary>
+        /// 수정된 값 저장 메서드
+        /// </summary>
         private void ChangeData()
         {
             this._item.Number = this.Number;

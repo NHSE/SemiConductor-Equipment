@@ -9,7 +9,7 @@ using static System.Object;
 
 namespace SemiConductor_Equipment.Services
 {
-    public partial class AlarmMessageService : IAlarmMsgManager
+    public class AlarmMessageService : IAlarmMsgManager
     {
         #region FIELDS
         public event EventHandler<string> AlarmData;
@@ -22,6 +22,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 커스텀으로 제작한 메세지 박스를 보여주기 위한 서비스 레이어
+        /// </summary>
+        /// <param name="dBLogManager"></param>
+        /// <param name="logManager"></param>
         public AlarmMessageService(IDBLogManager dBLogManager, ILogManager logManager) 
         {
             this._dblogManager = dBLogManager;
@@ -34,6 +39,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 알람에 대한 내용을 이벤트로 전달
+        /// </summary>
+        /// <param name="alarmmsg"></param>
         public void AlarmMessage_IN(string alarmmsg)
         {
             AlarmData?.Invoke(this, alarmmsg);
@@ -42,6 +51,9 @@ namespace SemiConductor_Equipment.Services
             IsAlarm = true;
         }
 
+        /// <summary>
+        /// 알람 내용 초기화
+        /// </summary>
         public void AlarmMessage_OUT()
         {
             AlarmData?.Invoke(this, string.Empty);

@@ -8,8 +8,12 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface ISolutionManager
     {
+        #region PROPERTIES
         Dictionary<string, int> Chemical { get; set; }
         Dictionary<string, int> PreClean { get; set; }
+        #endregion
+
+        #region METHODS
         void InitConfig();
         bool ConsumeChemical(string chambername, int Value);
         bool ConsumePreClean(string chambername, int Value);
@@ -18,7 +22,11 @@ namespace SemiConductor_Equipment.interfaces
         string GetFilePathAndCreateIfNotExists();
         int GetValue(string chambername);
         int GetPreCleanValue(string chambername);
+        #endregion
+
+        #region EVENTS
 
         event Action ConfigRead;
+        #endregion
     }
 }

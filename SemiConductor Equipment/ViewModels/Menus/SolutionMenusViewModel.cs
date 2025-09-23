@@ -46,6 +46,11 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Clean 공정에 사용되는 Solution(Pre-Clean, Chemical) 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
+        /// <param name="vIDManager"></param>
         public SolutionMenusViewModel(ISolutionManager configManager, IVIDManager vIDManager) 
         { 
             this._configManager = configManager;
@@ -57,6 +62,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// Chemical 저장 커맨드
+        /// </summary>
+        /// <param name="chambername"></param>
         [RelayCommand]
         private void Save(string chambername)
         {
@@ -64,6 +73,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             this._configManager.ModifyChemicalValue(chambername, Value);
         }
 
+        /// <summary>
+        /// Pre-Clean 저장 커맨드
+        /// </summary>
+        /// <param name="chambername"></param>
         [RelayCommand]
         private void PreClean_Save(string chambername)
         {
@@ -73,11 +86,19 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// Solution 정보 Read 메서드
+        /// </summary>
         public void Setup_Config()
         {
             this._configManager.InitConfig();
         }
 
+        /// <summary>
+        /// 각 챔버의 변수에 Chemical 양 저장
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <returns></returns>
         private int Get_Value(string chambername)
         {
             int ret = 0;
@@ -105,6 +126,11 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             return ret;
         }
 
+        /// <summary>
+        /// 각 챔버의 변수에 Pre-Clean 양 저장
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <returns></returns>
         private int Get_PreClean_Value(string chambername)
         {
             int ret = 0;
@@ -132,6 +158,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             return ret;
         }
 
+        /// <summary>
+        /// VID 정보 저장 메서드
+        /// </summary>
         private void SetVID()
         {
             this._vIDManager.SetSVID(104, this.Chemical_Chamber1);
@@ -149,6 +178,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             this._vIDManager.SetSVID(115, this.PreClean_Chamber6);
         }
 
+        /// <summary>
+        /// Solution 정보 저장 메서드
+        /// </summary>
         private void OnConfigRead()
         {
             this.Chemical_Chamber1 = (double)this._configManager.Chemical["Chamber1"];

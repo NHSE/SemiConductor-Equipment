@@ -12,16 +12,12 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface ICleanManager
     {
+        #region PROPERTIES
         IDictionary<string, string> Clean_State { get; set; }
         Dictionary<string, bool> Unable_to_Process { get; set; }
+        #endregion
 
-        event EventHandler<CleanChamberStatus> DataEnqueued;
-        event EventHandler<RobotCommand> Enque_Robot;
-        event EventHandler<CleanChamberStatus> MultiCupChange;
-        event EventHandler<ChemicalStatus> ChemicalChange;
-        event EventHandler<ChemicalStatus> PreCleanChange;
-        event EventHandler<ChamberData> CleanChamberChange;
-
+        #region METHODS
         string? FindEmptySlot();
 
         (string ChamberName, Wafer Wafer)? PeekCompletedWafer();
@@ -36,5 +32,15 @@ namespace SemiConductor_Equipment.interfaces
         bool IsAllCleanChamberEmpty();
         bool IsAllDisableChamber();
         bool CleanChamberEmpty(string chambername);
+        #endregion
+
+        #region EVENTS
+        event EventHandler<CleanChamberStatus> DataEnqueued;
+        event EventHandler<RobotCommand> Enque_Robot;
+        event EventHandler<CleanChamberStatus> MultiCupChange;
+        event EventHandler<ChemicalStatus> ChemicalChange;
+        event EventHandler<ChemicalStatus> PreCleanChange;
+        event EventHandler<ChamberData> CleanChamberChange;
+        #endregion
     }
 }

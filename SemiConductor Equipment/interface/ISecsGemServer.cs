@@ -12,11 +12,18 @@ namespace SemiConductor_Equipment.interfaces
 {
     public partial interface ISecsGemServer
     {
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         void Start();
         void Stop();
+        bool Initialize(Action<string> logger, IMessageManager messageHandler, IConfigManager configManager);
+        #endregion
+
+        #region EVENTS
         event EventHandler Connected;
         event EventHandler Disconnected;
-
-        bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager);
+        #endregion
     }
 }

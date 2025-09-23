@@ -11,6 +11,10 @@ namespace SemiConductor_Equipment.Models
     {
         public partial class RPTIDInfo : ObservableObject
         {
+            #region FIELDS
+            #endregion
+
+            #region PROPERTIES
             [ObservableProperty]
             public int number;
             [ObservableProperty]
@@ -45,10 +49,24 @@ namespace SemiConductor_Equipment.Models
                     }
                 }
             }
+            #endregion
+
+            #region CONSTRUCTOR
+            #endregion
+
+            #region COMMAND
+            #endregion
+
+            #region METHOD
+            #endregion
         }
 
         public partial class CEIDInfo : ObservableObject
         {
+            #region FIELDS
+            #endregion
+
+            #region PROPERTIES
             [ObservableProperty]
             private int number;
 
@@ -82,7 +100,15 @@ namespace SemiConductor_Equipment.Models
                     }
                 }
             }
+            #endregion
 
+            #region CONSTRUCTOR
+            #endregion
+
+            #region COMMAND
+            #endregion
+
+            #region METHOD
             public string? RPTIDsDisplay
             {
                 get => rPTIDs != null ? string.Join(", ", rPTIDs) : string.Empty;
@@ -99,14 +125,29 @@ namespace SemiConductor_Equipment.Models
                     }
                 }
             }
+            #endregion
         }
 
         public class SVIDInfo
         {
+            #region FIELDS
+            #endregion
+
+            #region PROPERTIES
             public int Number { get; set; }
             public string Name { get; set; }     // 예: Temperature
             public string Description { get; set; }  // 예: "Current chamber temperature"
             public string Type { get; set; }     // 예: "FLOAT", "ASCII", "INT"
+            #endregion
+
+            #region CONSTRUCTOR
+            #endregion
+
+            #region COMMAND
+            #endregion
+
+            #region METHOD
+            #endregion
         }
     }
 }

@@ -24,6 +24,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// SECS/GEM 통신을 위한 IP 설정 서비스 레이어
+        /// </summary>
+        /// <param name="configDirectory"></param>
         public IPSettingService(string configDirectory)
         {
             _configDirectory = configDirectory;
@@ -70,7 +74,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// IP 업데이트 메서드
         /// </summary>
         public void UpdateConfigValue(string key, string newValue)
         {

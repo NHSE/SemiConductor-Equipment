@@ -24,6 +24,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// CEID, RPTID 설정 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
         public EventMenusViewModel(IEventConfigManager configManager) 
         {
             _configManager = configManager;
@@ -37,6 +41,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// CEID, RPTID 파일 Read 메서드
+        /// </summary>
         private void OnConfigRead()
         {
             this.CEID = new ObservableCollection<CEIDInfo>(_configManager.CEID.Values);

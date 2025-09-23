@@ -25,6 +25,10 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// IP 설정 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
         public IpSettingViewModel(IConfigManager configManager) 
         {
             _configManager = configManager;
@@ -34,12 +38,18 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// IP 초기화 커맨드
+        /// </summary>
         [RelayCommand]
         private void Init()
         {
             _configManager.InitConfig();
         }
 
+        /// <summary>
+        /// IP 저장 커맨드
+        /// </summary>
         [RelayCommand]
         private void Save()
         {
@@ -53,6 +63,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
 
         #region METHOD
 
+        /// <summary>
+        /// IP 정보 Read 메서드
+        /// </summary>
         private void OnConfigRead()
         {
             this.IP = _configManager.IP;

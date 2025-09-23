@@ -8,6 +8,10 @@ namespace SemiConductor_Equipment.Models
 {
     public partial class Wafer : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         [ObservableProperty]
         private int loadportId;
 
@@ -55,5 +59,15 @@ namespace SemiConductor_Equipment.Models
 
         [ObservableProperty]
         private double runningTime;
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }

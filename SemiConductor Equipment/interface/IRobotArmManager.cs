@@ -11,10 +11,10 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IRobotArmManager
     {
-        event EventHandler<Wafer> CommandStarted;
-        event EventHandler<Wafer> CommandCompleted;
-        event EventHandler<Wafer> WaferMoveInfo;
+        #region PROPERTIES
+        #endregion
 
+        #region METHODS
         void EnqueueCommand_Chamber(RobotCommand command);
 
         void EnqueueCommand_Buffer(RobotCommand command);
@@ -36,5 +36,12 @@ namespace SemiConductor_Equipment.interfaces
         void StartProcessing(CancellationToken externalToken);
 
         Task StopProcessing();
+        #endregion
+
+        #region EVENTS
+        event EventHandler<Wafer> CommandStarted;
+        event EventHandler<Wafer> CommandCompleted;
+        event EventHandler<Wafer> WaferMoveInfo;
+        #endregion
     }
 }
