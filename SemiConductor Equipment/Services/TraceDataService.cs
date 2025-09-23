@@ -33,6 +33,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Trace Data를 동작하기 위한 서비스 레이어
+        /// </summary>
+        /// <param name="vIDManager"></param>
+        /// <param name="logManager"></param>
         public TraceDataService(IVIDManager vIDManager, ILogManager logManager)
         {
             this._vIDManager = vIDManager;
@@ -52,6 +57,15 @@ namespace SemiConductor_Equipment.Services
             _connection = connection;
         }
 
+        /// <summary>
+        /// 수신받은 Parameter를 사용가능한 데이터로 변경 후 Trace Data 실행 메서드
+        /// </summary>
+        /// <param name="TRID"></param>
+        /// <param name="DSPER"></param>
+        /// <param name="TOTSMP"></param>
+        /// <param name="REPGSZ"></param>
+        /// <param name="VID"></param>
+        /// <returns></returns>
         public int SetTraceData(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID)
         {
             bool isValid = DateTime.TryParseExact(DSPER, "HHmmss", null, 0, out _);
@@ -102,6 +116,16 @@ namespace SemiConductor_Equipment.Services
             return 0;
         }
 
+        /// <summary>
+        /// 지정된 Trace Data를 실행시키는 메서드
+        /// </summary>
+        /// <param name="TRID"></param>
+        /// <param name="DSPER"></param>
+        /// <param name="TOTSMP"></param>
+        /// <param name="REPGSZ"></param>
+        /// <param name="VID"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task RunTask(string TRID, string DSPER, uint TOTSMP, uint REPGSZ, List<uint> VID, CancellationToken token)
         {
             try
@@ -173,10 +197,19 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// Trace Data를 종료하는 메서드
+        /// </summary>
+        /// <param name="id"></param>
         private void CancelTask(int id)
         {
             ctsList[id]?.Cancel();
         }
+
+        /// <summary>
+        /// 종료된 Trace Data의 데이터를 삭제하는 메서드
+        /// </summary>
+        /// <param name="id"></param>
 
         private void RemoveTask(int id)
         {

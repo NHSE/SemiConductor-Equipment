@@ -42,6 +42,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Solution에 대한 설정을 위한 서비스 레이어
+        /// </summary>
+        /// <param name="alarmMsgManager"></param>
         public SolutionService(IAlarmMsgManager alarmMsgManager)
         {
             _configDirectory = @"C:\Configs";
@@ -96,8 +100,11 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// Chemical 용액의 양을 변경하는 메서드
         /// </summary>
+        /// <param name="chambername"></param>
+        /// <param name="Value"></param>
+        /// <returns>0이상의 용액이 남았는지에 대한 여부</returns>
         public bool ConsumeChemical(string chambername, int Value)
         {
             string filePath = GetFilePathAndCreateIfNotExists();
@@ -118,6 +125,12 @@ namespace SemiConductor_Equipment.Services
             return true;
         }
 
+        /// <summary>
+        /// Pre Clean 용액의 양을 변경하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <param name="Value"></param>
+        /// <returns>0이상의 용액이 남았는지에 대한 여부</returns>
         public bool ConsumePreClean(string chambername, int Value)
         {
             string filePath = GetFilePathAndCreateIfNotExists();
@@ -140,7 +153,7 @@ namespace SemiConductor_Equipment.Services
 
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// Chemical 용액 업데이트 메서드
         /// </summary>
         public void ModifyChemicalValue(string chambername, int Value)
         {
@@ -153,6 +166,9 @@ namespace SemiConductor_Equipment.Services
             ConfigRead?.Invoke();
         }
 
+        /// <summary>
+        /// Pre Clean 용액 업데이트 메서드
+        /// </summary>
         public void ModifyPreCleanValue(string chambername, int Value)
         {
             ModifyChamberValue(chambername, "Pre Clean", Value);
@@ -164,6 +180,9 @@ namespace SemiConductor_Equipment.Services
             ConfigRead?.Invoke();
         }
 
+        /// <summary>
+        /// Solution 변경 값에 따른 설정 파일 변경 메서드
+        /// </summary>
         public void ModifyChamberValue(string chamberName, string propertyName, int value)
         {
             string filePath = GetFilePathAndCreateIfNotExists();
@@ -214,11 +233,21 @@ namespace SemiConductor_Equipment.Services
             return filePath;
         }
 
+        /// <summary>
+        /// 현재 Chemical의 용량을 확인하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <returns>Chemical 용량</returns>
         public int GetValue(string chambername)
         {
             return this.Chemical[chambername];
         }
 
+        /// <summary>
+        /// 현재 Pre-Clean 용량을 확인하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <returns>Pre-Clean 용량</returns>
         public int GetPreCleanValue(string chambername)
         {
             return this.PreClean[chambername];

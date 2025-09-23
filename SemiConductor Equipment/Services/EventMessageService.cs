@@ -15,7 +15,7 @@ using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.Services
 {
-    public partial class EventMessageService : IEventMessageManager
+    public class EventMessageService : IEventMessageManager
     {
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
@@ -32,6 +32,12 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 발생된 이벤트를 호스트에게 전달하는 서비스 레이어
+        /// </summary>
+        /// <param name="eventConfigManager"></param>
+        /// <param name="logManager"></param>
+        /// <param name="VIDManager"></param>
         public EventMessageService(IEventConfigManager eventConfigManager, ILogManager logManager, IVIDManager VIDManager)
         {
             this._eventConfigManager = eventConfigManager;
@@ -45,27 +51,54 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// CEID 정보 획득 메서드
+        /// </summary>
+        /// <param name="ceid_num"></param>
+        /// <returns>CEID 정보</returns>
         public CEIDInfo GetCEID(int ceid_num)
         {
             this._eventConfigManager.InitCEIDConfig();
             return this._eventConfigManager.CEID[ceid_num];
         }
 
+        /// <summary>
+        /// CEID 존재 여부 확인 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <returns>CEID 존재 여부</returns>
+
         public bool IsCEID(uint ceid)
         {
             return this._vIDManager.IsCEID(ceid);
         }
 
+        /// <summary>
+        /// RPTID가 CEID내에 있는 지 확인 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <param name="rptid"></param>
+        /// <returns>CEID 내 RPTID 존재 여부</returns>
         public bool IsRPTIDInCEID(uint ceid, uint rptid)
         {
             return this._vIDManager.IsRPTIDInCEID(ceid, rptid);
         }
 
+        /// <summary>
+        /// RPTID 존재 여부 메서드
+        /// </summary>
+        /// <param name="rptid"></param>
+        /// <returns>RPTID 존재 여부</returns>
         public bool IsRPTID(uint rptid)
         {
             return this._vIDManager.IsRPTID(rptid);
         }
 
+        /// <summary>
+        /// VID 존재 여부 메서드
+        /// </summary>
+        /// <param name="vid"></param>
+        /// <returns>VID 존재 여부</returns>
         public bool IsVID(uint vid)
         {
             if(!this._vIDManager.IsVID(vid))
@@ -76,6 +109,11 @@ namespace SemiConductor_Equipment.Services
             return true;
         }
 
+        /// <summary>
+        /// SECS/GEM으로 RPTID 생성하는 메서드
+        /// </summary>
+        /// <param name="rptid"></param>
+        /// <param name="vid"></param>
         public void CreateRPTID(uint rptid, List<uint> vid)
         {
             RPTIDInfo Item = new RPTIDInfo();
@@ -90,6 +128,11 @@ namespace SemiConductor_Equipment.Services
             this._eventConfigManager.CreatedRPTIDSectionPartial(Item);
         }
 
+        /// <summary>
+        /// SECS/GEM으로 CEID와 RPTID를 링크 시키는 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <param name="rptid"></param>
         public void LinkCEID(uint ceid, List<uint> rptid)
         {
             CEIDInfo Item = this._eventConfigManager.CEID[(int)ceid];
@@ -102,16 +145,30 @@ namespace SemiConductor_Equipment.Services
             this._eventConfigManager.UpdateCEIDSectionPartial(Item);
         }
 
+        /// <summary>
+        /// SECS/GEM으로 CEID 상태 변경
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <param name="state"></param>
         public void CEIDStateChange(int ceid, bool state)
         {
             this._eventConfigManager.CEIDStateChange(ceid, state);
         }
 
+        /// <summary>
+        /// CEID의 상태를 확인하는 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <returns>CEID 상태</returns>
         public bool IsCEIDEnabled(int ceid)
         {
             return this._eventConfigManager.CEID[ceid].State;
         }
 
+        /// <summary>
+        /// CEID 시점에 맞는 이벤트 발생
+        /// </summary>
+        /// <param name="eventData"></param>
         public void EnqueueEventData(CEIDInfo eventData)
         {
             var vidItems = new List<Item>();
@@ -152,6 +209,11 @@ namespace SemiConductor_Equipment.Services
 
         }
 
+        /// <summary>
+        /// 호스트에게 이벤트 데이터를 전송시키는 메서드
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task ProcessEventQueueAsync(CancellationToken token)
         {
             try
@@ -203,6 +265,9 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 이벤트 서비스 동작 실행 메서드
+        /// </summary>
         public void StartProcessing()
         {
             _cts = new CancellationTokenSource();
@@ -222,6 +287,10 @@ namespace SemiConductor_Equipment.Services
             });
         }
 
+        /// <summary>
+        /// 종료 시 이벤트 서비스 동작 종료 메서드
+        /// </summary>
+        /// <returns></returns>
         public async Task StopProcessing()
         {
             if (_cts != null && !_cts.IsCancellationRequested)

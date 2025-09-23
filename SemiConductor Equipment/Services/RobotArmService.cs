@@ -14,6 +14,7 @@ namespace SemiConductor_Equipment.Services
 {
     public class RobotArmService : IRobotArmManager
     {
+        #region FIELDS
         private readonly Queue<RobotCommand> _EndCleancommandQueue = new();
         private readonly Queue<RobotCommand> _EndDrycommandQueue = new();
         private readonly Queue<RobotCommand> _RobotArmcommandQueue = new();
@@ -32,7 +33,20 @@ namespace SemiConductor_Equipment.Services
         private readonly IVIDManager _vidManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly ILogManager _logManager;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        /// <summary>
+        /// 로봇암을 제어하기 위한 서비스 레이어
+        /// </summary>
+        /// <param name="chamberManager"></param>
+        /// <param name="cleanManager"></param>
+        /// <param name="VIDManager"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="logManager"></param>
         public RobotArmService(IChamberManager chamberManager, ICleanManager cleanManager, IVIDManager VIDManager, IEventMessageManager eventMessageManager, ILogManager logManager)
         {
             _chamberManager = chamberManager;
@@ -44,42 +58,80 @@ namespace SemiConductor_Equipment.Services
             _chamberManager.Enque_Robot += OnQueDataInput;
             _cleanManager.Enque_Robot += OnQueDataInput;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        /// <summary>
+        /// Clean Chamber 종료 후 큐에 삽입하는 메서드
+        /// </summary>
+        /// <param name="command"></param>
         public void EnqueueCommand_Chamber(RobotCommand command)
         {
             _EndCleancommandQueue.Enqueue(command);
         }
 
+        /// <summary>
+        /// Dry Chamber 종료 후 큐에 삽입하는 메서드
+        /// </summary>
+        /// <param name="command"></param>
         public void EnqueueCommand_Buffer(RobotCommand command)
         {
             _EndDrycommandQueue.Enqueue(command);
         }
 
+        /// <summary>
+        /// 로봇암 동작 큐에 데이터 삽입하는 메서드
+        /// </summary>
+        /// <param name="command"></param>
         public void EnqueueCommand_RobotArm(RobotCommand command)
         {
             _RobotArmcommandQueue.Enqueue(command);
         }
 
+        /// <summary>
+        /// Clean Chamber 내 종료된 웨이퍼 정보를 확인하는 메서드
+        /// </summary>
+        /// <returns>로봇암 명령</returns>
         public RobotCommand DequeueCommand_Chamber()
         {
             return _EndCleancommandQueue.Dequeue();
         }
 
+        /// <summary>
+        /// Dry Chamber 내 종료된 웨이퍼 정보를 확인하는 메서드
+        /// </summary>
+        /// <returns>로봇암 명령</returns>
         public RobotCommand DequeueCommand_Buffer()
         {
             return _EndDrycommandQueue.Dequeue();
         }
 
+        /// <summary>
+        /// Clean Chamber 종료 큐의 데이터가 있는 지 확인하는 메서드
+        /// </summary>
+        /// <returns>큐 사이즈</returns>
         public int CommandSize_Chamber()
         {
             return _EndCleancommandQueue.Count;
         }
 
+        /// <summary>
+        /// Dry Chamber 종료 큐의 데이터가 있는 지 확인하는 메서드
+        /// </summary>
+        /// <returns>큐 사이즈</returns>
         public int CommandSize_Buffer()
         {
             return _EndDrycommandQueue.Count;
         }
 
+        /// <summary>
+        /// 다음 목적지에 따라 로봇암 큐에 저장하는 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnQueDataInput(object? sender, RobotCommand e)
         {
             switch(e.NextLocation)
@@ -93,6 +145,11 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 로봇암을 동작시키는 메서드
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task ProcessCommandQueueAsync(CancellationToken token)
         {
             string prev_Loacation = string.Empty;
@@ -222,6 +279,10 @@ namespace SemiConductor_Equipment.Services
 
         public bool IsBusy() => _isProcessing;
 
+        /// <summary>
+        /// 로봇암을 시작시키는 메서드
+        /// </summary>
+        /// <param name="externalToken"></param>
         public void StartProcessing(CancellationToken externalToken)
         {
             if (_isProcessing) return;
@@ -245,6 +306,10 @@ namespace SemiConductor_Equipment.Services
             });
         }
 
+        /// <summary>
+        /// 로봇암을 종료시키는 메서드
+        /// </summary>
+        /// <returns></returns>
         public async Task StopProcessing()
         {
             if (_cts != null && !_cts.IsCancellationRequested)
@@ -258,5 +323,6 @@ namespace SemiConductor_Equipment.Services
                 _isProcessing = false;
             }
         }
+        #endregion
     }
 }

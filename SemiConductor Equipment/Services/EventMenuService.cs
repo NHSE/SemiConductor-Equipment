@@ -27,6 +27,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// CEID, RPTID, VID를 관리하는 서비스 레이어
+        /// </summary>
+        /// <param name="configDirectory"></param>
+        /// <param name="messageBoxManager"></param>
         public EventMenuService(string configDirectory, IMessageBox messageBoxManager)
         {
             _configDirectory = configDirectory;
@@ -43,6 +48,9 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// RPTID의 설정 파일을 파싱하는 메서드
+        /// </summary>
         public void InitRPTIDConfig()
         {
             string filePath = GetFilePathAndCreateIfNotExists("RPTID.config");
@@ -96,7 +104,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// RPTID 업데이트 메서드
         /// </summary>
         public void UpdateRPTIDSectionPartial(RPTIDInfo newData)
         {
@@ -132,7 +140,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// RPTID 삭제 메서드
         /// </summary>
         public void RemoveRPTIDSectionPartial(RPTIDInfo newData)
         {
@@ -189,6 +197,10 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// CEID 내 RPTID 삭제 메서드
+        /// </summary>
+        /// <param name="newData"></param>
         public void RemoveRPTIDFromCEIDSections(RPTIDInfo newData)
         {
             string ceidFilePath = GetFilePathAndCreateIfNotExists("CEID.config");
@@ -236,7 +248,7 @@ namespace SemiConductor_Equipment.Services
 
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// RPTID 추가 메서드
         /// </summary>
         public void CreatedRPTIDSectionPartial(RPTIDInfo newData)
         {
@@ -278,6 +290,9 @@ namespace SemiConductor_Equipment.Services
             InitRPTIDConfig();
         }
 
+        /// <summary>
+        /// CEID 설정파일 파싱 메서드
+        /// </summary>
         public void InitCEIDConfig()
         {
             string filePath = GetFilePathAndCreateIfNotExists("CEID.config");
@@ -339,7 +354,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// Config 파일 경로 반환 없을 경우 생성
+        /// CEID 업데이트 메서드
         /// </summary>
         public void UpdateCEIDSectionPartial(CEIDInfo newData)
         {
@@ -383,6 +398,11 @@ namespace SemiConductor_Equipment.Services
             InitCEIDConfig();
         }
 
+        /// <summary>
+        /// CEID 상태 업데이트 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <param name="state"></param>
         public void CEIDStateChange(int ceid, bool state)
         {
             if(ceid == 0)
@@ -401,6 +421,11 @@ namespace SemiConductor_Equipment.Services
         }
 
 
+        /// <summary>
+        /// 파일 경로 확인 메서드
+        /// </summary>
+        /// <param name="configname"></param>
+        /// <returns>파일 경로</returns>
         public string GetFilePathAndCreateIfNotExists(string configname)
         {
             string fileName = configname;

@@ -10,7 +10,7 @@ using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.Services
 {
-    public partial class MessageBoxService : IMessageBox
+    public class MessageBoxService : IMessageBox
     {
         #region FIELDS
         private readonly ILogManager _logManager;
@@ -24,6 +24,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 커스텀 메세지 박스를 담당하는 서비스 레이어
+        /// </summary>
+        /// <param name="logManager"></param>
         public MessageBoxService(ILogManager logManager)
         {
             _logManager = logManager;
@@ -34,6 +38,11 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 메세지 큐 내 데이터 삽입 메서드
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
         public void Show(string title, string message)
         {
             List<string> list = new List<string>();
@@ -50,7 +59,10 @@ namespace SemiConductor_Equipment.Services
                 }
             }
         }
-
+        
+        /// <summary>
+        /// 메세지 큐 내 데이터 확인 후 메세지 창으로 보여주는 메서드
+        /// </summary>
         private void ProcessQueue()
         {
             try

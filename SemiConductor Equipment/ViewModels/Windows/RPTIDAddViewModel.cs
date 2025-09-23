@@ -33,6 +33,11 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// RPTID 추가 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
+        /// <param name="messageBoxManager"></param>
         public RPTIDAddViewModel(IEventConfigManager configManager, IMessageBox messageBoxManager)
         {
             this._configManager = configManager;
@@ -41,6 +46,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 저장 커맨드
+        /// </summary>
         [RelayCommand]
         private void Save()
         {
@@ -55,6 +63,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 값 초기화 메서드
+        /// </summary>
         public void Clear()
         {
             this.Number = "";
@@ -63,11 +74,18 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             this.SelectedSvids.Clear();
         }
 
+        /// <summary>
+        /// 첫 화면 띄울때 변수 저장 메서드
+        /// </summary>
         public void LoadItem()
         {
             this._item = new RPTIDInfo();
         }
 
+        /// <summary>
+        /// 수정된 값 저장 메서드
+        /// </summary>
+        /// <returns></returns>
         private bool ChangeData()
         {
             try

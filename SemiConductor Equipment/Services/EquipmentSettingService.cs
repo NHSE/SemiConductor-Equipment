@@ -28,6 +28,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 설정된 공정 파라미터에 대한 서비스 레이어
+        /// </summary>
+        /// <param name="configDirectory"></param>
         public EquipmentSettingService(string configDirectory)
         {
             _configDirectory = configDirectory;
@@ -44,7 +48,7 @@ namespace SemiConductor_Equipment.Services
         #region METHOD
 
         /// <summary>
-        /// 파일 파싱
+        /// 장비 설정 파일 파싱 메서드
         /// </summary>
         public void InitConfig()
         {

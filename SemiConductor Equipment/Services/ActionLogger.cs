@@ -18,6 +18,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 시뮬레이터와 장비간 SECS/GEM 로그 저장 서비스 레이어
+        /// </summary>
+        /// <param name="logAction"></param>
         public ActionLogger(Action<string> logAction)
         {
             _logAction = logAction;

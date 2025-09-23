@@ -10,9 +10,27 @@ namespace SemiConductor_Equipment.Services
 {
     public class RunningStateService : IRunningStateManger
     {
+        #region FIELDS
         private EquipmentStatusEnum _state;
         public event EventHandler<EquipmentStatusEnum> DataChange;
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+
+        /// <summary>
+        /// 장비 상태 변경하는 메서드 (이벤트로 상태값 변경)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="state"></param>
         public void Change_State(object? sender, EquipmentStatusEnum state)
         {
             if(state == EquipmentStatusEnum.Running)
@@ -42,9 +60,14 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 현재 장비의 상태를 확인하는 메서드
+        /// </summary>
+        /// <returns>장비 상태</returns>
         public EquipmentStatusEnum Get_State()
         {
             return this._state;
         }
+        #endregion
     }
 }

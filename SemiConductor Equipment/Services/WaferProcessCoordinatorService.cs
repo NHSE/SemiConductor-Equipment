@@ -30,6 +30,15 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 로봇암의 스케줄 관리를 위한 서비스 레이어
+        /// </summary>
+        /// <param name="chamberManager"></param>
+        /// <param name="cleanManager"></param>
+        /// <param name="robotArmManager"></param>
+        /// <param name="messageBoxManager"></param>
+        /// <param name="runningStateManager"></param>
+        /// <param name="resultFileManager"></param>
         public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, 
             IMessageBox messageBoxManager, IRunningStateManger runningStateManager, IResultFileManager resultFileManager)
         {
@@ -46,6 +55,12 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 스케쥴링 실행 메서드
+        /// </summary>
+        /// <param name="waferQueue"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token)
         {
             bool isError = false;
@@ -206,6 +221,9 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 결과 파일 저장 메서드
+        /// </summary>
         private void SaveResultFile()
         {
             // Clean Chamber

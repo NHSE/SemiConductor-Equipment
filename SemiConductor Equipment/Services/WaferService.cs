@@ -30,21 +30,36 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 웨이퍼 데이터를 공정 진행 큐에 삽입하는 메서드
+        /// </summary>
+        /// <param name="wafer"></param>
         public void Enqueue(Wafer wafer)
         {
             _waferQueue.Enqueue(wafer);
         }
 
+        /// <summary>
+        /// 공정 진행 큐를 Dequeue
+        /// </summary>
+        /// <returns></returns>
         public Wafer? Dequeue()
         {
             return _waferQueue.Count > 0 ? _waferQueue.Dequeue() : null;
         }
 
+        /// <summary>
+        /// 큐를 가져오는 메서드
+        /// </summary>
+        /// <returns>공정 진행 예정 큐</returns>
         public Queue<Wafer> GetQueue()
         {
             return _waferQueue;
         }
-
+        
+        /// <summary>
+        /// 공정 진행 큐를 비우는 메서드
+        /// </summary>
         public void Clear()
         {
             _waferQueue.Clear();

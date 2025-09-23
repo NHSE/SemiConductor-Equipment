@@ -18,6 +18,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Chamber, Event 등 실행 로그를 저장하는 서비스 레이어
+        /// </summary>
+        /// <param name="logDirectory"></param>
         public LogService(string logDirectory)
         {
             _logDirectory = logDirectory;
@@ -64,7 +68,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환
+        /// 날짜/시간 폴더별 로그 파일 경로 반환
         /// </summary>
         public string GetLogFilePath(string logType)
         {
@@ -73,7 +77,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환
+        /// 시간별 로그 파일 경로 반환
         /// </summary>
         public string GetLogPath(string logType)
         {
@@ -81,6 +85,10 @@ namespace SemiConductor_Equipment.Services
             return Path.Combine(_logDirectory, fileName);
         }
 
+        /// <summary>
+        /// 현재 시간에 해당하는 폴더 경로 확인 및 생성
+        /// </summary>
+        /// <param name="time"></param>
         public void SetTime(string time)
         {
             this.LogDataTime = time;

@@ -22,6 +22,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 공정 결과 파일을 csv로 저장하는 서비스 레이어
+        /// </summary>
+        /// <param name="logManager"></param>
         public ResultFileService(ILogManager logManager)
         {
             this._logManager = logManager;
@@ -35,12 +39,21 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 이전에 저장된 데이터를 초기화
+        /// </summary>
         public void ClearData()
         {
             _reultCleanData.Clear();
             _reultDryData.Clear();
         }
 
+        /// <summary>
+        /// Clean, Dry에 따라 결과 데이터 삽입
+        /// </summary>
+        /// <param name="ChamberType"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void InsertData(string ChamberType, LoadPortWaferKey key, ResultData value)
         {
             if(ChamberType == "Clean")
@@ -53,6 +66,10 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// Clean, Dry에 따라 csv 결과 파일 저장
+        /// </summary>
+        /// <param name="isClean"></param>
         public void SaveFile(bool isClean)
         {
             string fileName;
@@ -67,6 +84,11 @@ namespace SemiConductor_Equipment.Services
             SaveDictionaryToCsv(filePath, isClean);
         }
 
+        /// <summary>
+        /// csv 파일 chamber에 따라 column 지정 및 파일 생성
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="isClean"></param>
         private void SaveDictionaryToCsv(string filePath, bool isClean)
         {
             var sb = new StringBuilder();

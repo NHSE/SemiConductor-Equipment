@@ -126,6 +126,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// MainPage 클래스
+        /// </summary>
+        /// <param name="iDateTime"></param>
+        /// <param name="logmanager"></param>
+        /// <param name="configManager"></param>
+        /// <param name="secsGemServer"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="runningStateManager"></param>
+        /// <param name="chamberManager"></param>
+        /// <param name="cleanManager"></param>
+        /// <param name="robotArmManager"></param>
+        /// <param name="svIDManager"></param>
+        /// <param name="chemicalManager"></param>
+        /// <param name="alarmMsgManager"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
@@ -193,7 +209,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region COMMANDS
-
+        /// <summary>
+        /// TCP/IP 연결 해제 커맨드
+        /// </summary>
         [RelayCommand]
         private void DisConnect()
         {
@@ -202,6 +220,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.IsDisconnected = false;
         }
 
+        /// <summary>
+        /// TCP/IP 연결 커맨드
+        /// </summary>
         [RelayCommand]
         private void Connect()
         {
@@ -210,56 +231,127 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.IsDisconnected = true;
         }
 
+        /// <summary>
+        /// LP1로 페이지를 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void LoadPort1() => NavigateToPage<LoadPort1_Page>();
 
+        /// <summary>
+        /// LP2로 페이지를 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void LoadPort2() => NavigateToPage<LoadPort2_Page>();
 
+        /// <summary>
+        /// Clean Chamber 1 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber1() => NavigateToPage<CleanChamber1_Page>();
+
+        /// <summary>
+        /// Clean Chamber 2 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber2() => NavigateToPage<CleanChamber2_Page>();
+
+        /// <summary>
+        /// Clean Chamber 3 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber3() => NavigateToPage<CleanChamber3_Page>();
+
+        /// <summary>
+        /// Clean Chamber 4 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber4() => NavigateToPage<CleanChamber4_Page>();
+
+        /// <summary>
+        /// Clean Chamber 5 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber5() => NavigateToPage<CleanChamber5_Page>();
+
+        /// <summary>
+        /// Clean Chamber 6 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void CleanChamber6() => NavigateToPage<CleanChamber6_Page>();
 
+        /// <summary>
+        /// Dry Chamber 1 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber1() => NavigateToPage<Chamber1_Page>();
+
+        /// <summary>
+        /// Dry Chamber 2 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber2() => NavigateToPage<Chamber2_Page>();
+
+        /// <summary>
+        /// Dry Chamber 3 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber3() => NavigateToPage<Chamber3_Page>();
+
+        /// <summary>
+        /// Dry Chamber 4 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber4() => NavigateToPage<Chamber4_Page>();
+
+        /// <summary>
+        /// Dry Chamber 5 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber5() => NavigateToPage<Chamber5_Page>();
+
+        /// <summary>
+        /// Dry Chamber 6 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void DryChamber6() => NavigateToPage<Chamber6_Page>();
 
+        /// <summary>
+        /// IP Setting 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void SubMenuIPSetting() => NavigateToPage<IpSettingMenu>();
 
+        /// <summary>
+        /// Solution Setting 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void SubMenuChemicalSetting() => NavigateToPage<SolutionSettingMenu>();
 
+        /// <summary>
+        /// Equipment Setting 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void SubMenuEquipSetting() => NavigateToPage<EquipMenu>();
 
+        /// <summary>
+        /// Event Setting 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void SubMenuEventSetting() => NavigateToPage<EventMenu>();
 
+        /// <summary>
+        /// Alarm Moniter 페이지로 바꾸는 커맨드
+        /// </summary>
         [RelayCommand]
         private void SubMenuAlarmMonitor() => NavigateToPage<AlarmLogMenu>();
         #endregion
 
         #region METHODS
-
+        /// <summary>
+        /// 공정 상태에 따라 버튼, State 값 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="state"></param>
         private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -323,6 +415,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._vIDManager?.SetSVID(100, this.Equipment_state);
         }
 
+        /// <summary>
+        /// Page 변경 메서드
+        /// </summary>
+        /// <typeparam name="TPage"></typeparam>
         private void NavigateToPage<TPage>() where TPage : class
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
@@ -333,6 +429,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 알람 이벤트 발생 시 메세지 출력하는 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AlarmMsgManager_AlarmData(object? sender, string e)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -348,6 +449,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Clean Chamber 내 Solution 의 유무를 통해 DISABLE 설정하는 메서드
+        /// </summary>
         private void Check_CleanChamber_Enable()
         {
             for(int chamber_num = 1; chamber_num < 7; chamber_num++)
@@ -374,6 +478,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 상태에 따라 챔버 밑 텍스트의 색을 변경하는 메서드
+        /// </summary>
+        /// <param name="Draw_Type"></param>
         public void Draw_Color(string Draw_Type)
         {
             if (Draw_Type == "Chamber")
@@ -387,6 +495,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 각 챔버의 상태 획득 메서드
+        /// </summary>
         public void Get_Chamber_State()
         {
             this.Dry_chamber1_state = this._chamberManager.Chamber_State["Chamber1"];
@@ -405,6 +516,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.Clean_chamber6_state = this._cleanManager.Clean_State["Chamber6"];
         }
 
+        /// <summary>
+        /// 각 Clean 챔버의 상태에 따라 상태 텍스트 색 설정 메서드
+        /// </summary>
         private void Draw_CleanChamber_Color()
         {
             if (this.Clean_chamber1_state == "IDLE")
@@ -462,6 +576,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.Clean_chamber6_color = Brushes.Red;
         }
 
+        /// <summary>
+        /// 각 Dry 챔버의 상태에 따라 상태 텍스트 색 설정 메서드
+        /// </summary>
         private void Draw_DryChamber_Color()
         {
             if (this.Dry_chamber1_state == "IDLE")
@@ -507,6 +624,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.Dry_chamber6_color = Brushes.DarkOrange;
         }
 
+        /// <summary>
+        /// SECS/GEM 연결 상태를 텍스트로 보여주는 메서드
+        /// </summary>
+        /// <param name="text"></param>
         public void AppendLog(string text)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -522,6 +643,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Dry 챔버 상태 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Dry_DataEnqueued(object? sender, ChamberStatus e)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -591,6 +717,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+
+        /// <summary>
+        /// Clean 챔버 상태 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Clean_DataEnqueued(object? sender, CleanChamberStatus e)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -658,6 +790,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 웨이퍼의 위치에 따라 원을 위치시켜주는 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Wafer_Position_Draw(object? sender, Wafer e)
         {
             if (Application.Current.Dispatcher.CheckAccess())

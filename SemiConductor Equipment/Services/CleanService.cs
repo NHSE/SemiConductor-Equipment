@@ -68,6 +68,14 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Clean Chamber의 동작 서비스 레이어
+        /// </summary>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="equiptempManager"></param>
+        /// <param name="logManager"></param>
+        /// <param name="alarmMsgManager"></param>
+        /// <param name="resultFileManager"></param>
         public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager,
             IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager)
         {
@@ -83,6 +91,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 비어있는 Chamber를 확인하는 메서드
+        /// </summary>
+        /// <returns>비어있는 Chamber 이름</returns>
         public string? FindEmptySlot()
         {
             return _chamberSlots
@@ -101,6 +113,12 @@ namespace SemiConductor_Equipment.Services
             return (completed.Key, completed.Value.wafer);
         }
 
+        /// <summary>
+        /// Clean 공정 프로세스 실행 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <param name="wafer"></param>
+        /// <returns></returns>
         public async Task StartProcessingAsync(string chambername, Wafer wafer) // 로직 캡슐화 필요
         {
             ResultData result = new ResultData();
@@ -294,6 +312,13 @@ namespace SemiConductor_Equipment.Services
             this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
         }
 
+
+        /// <summary>
+        /// 웨이퍼 완료 처리 및 로봇암 내 큐에 웨이퍼 정보 삽입
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <param name="wafer"></param>
+        /// <param name="next"></param>
         private void ProcessComplete(string chambername, Wafer wafer, string next)
         {
             lock (_lock)
@@ -325,6 +350,10 @@ namespace SemiConductor_Equipment.Services
             return (completed.Key, completed.Value.wafer);
         }
 
+        /// <summary>
+        /// 공정이 종료된 웨이퍼의 정보를 Chamber 내 데이터에서 삭제하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
         public void RemoveWaferFromCleanChamber(string chambername)
         {
             if (_chamberSlots.ContainsKey(chambername))
@@ -338,22 +367,40 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 웨이퍼 정보를 Clean Chamber으로 추가하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <param name="wafer"></param>
         public void AddWaferToBuffer(string chambername, Wafer wafer)
         {
             _chamberSlots[chambername] = (wafer, false);
         }
 
+        /// <summary>
+        /// 모든 Clean Chamber 내 웨이퍼 삽입여부 확인하는 메서드
+        /// </summary>
+        /// <returns>Chamber 내 웨이퍼 존재 여부</returns>
         public bool IsAllCleanChamberEmpty()
         {
             // 모든 챔버에 Wafer가 없으면 true
             return _chamberSlots.Values.All(chamber => chamber.wafer == null);
         }
 
+        /// <summary>
+        /// Solution 부족으로 잠긴 Chamber를 확인하는 메서드
+        /// </summary>
+        /// <returns>잠긴 Chamber 이름</returns>
         public bool IsAllDisableChamber()
         {
             return Unable_to_Process.Values.All(value => value);
         }
 
+        /// <summary>
+        /// 특정 Chamber 내 웨이퍼 삽입 여부 확인하는 메서드
+        /// </summary>
+        /// <param name="chambername"></param>
+        /// <returns>비어있는 Chamber 이름</returns>
         public bool CleanChamberEmpty(string chambername)
         {
             return _chamberSlots[chambername].wafer == null;

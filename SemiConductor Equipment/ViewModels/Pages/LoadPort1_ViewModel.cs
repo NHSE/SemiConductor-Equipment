@@ -53,6 +53,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// LoadPort 1 클래스
+        /// </summary>
+        /// <param name="robotArmManager"></param>
+        /// <param name="runningStateManager"></param>
+        /// <param name="VIDManager"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="processManager"></param>
         public LoadPort1_ViewModel(IRobotArmManager robotArmManager, IRunningStateManger runningStateManager, IVIDManager VIDManager, 
             IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager)
         {
@@ -72,6 +80,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 웨이퍼 삽입 정보 초기화 커맨드
+        /// </summary>
         [RelayCommand]
         private void Cancel()
         {
@@ -83,7 +94,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-
+        /// <summary>
+        /// 웨이퍼 삽입에 따라 MainView.Page 내 사진 변경 요청 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsSetupEnabled")
@@ -95,6 +110,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Carrier 정보 및 Carrier 내 웨이퍼 정보 저장 메서드
+        /// S3F17, S14F9, S16F11에 따라 값 변경
+        /// </summary>
+        /// <param name="newWaferData"></param>
+        /// <returns></returns>
         public bool Update_Carrier_info(Wafer newWaferData)
         {
             if (SelectedSlots == null || SelectedSlots.Count == 0)
@@ -147,6 +168,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             return true;
         }
 
+        /// <summary>
+        /// 해당 LoadPort 내 Carrier가 실행중인지 아닌지 판별하는 메서드
+        /// </summary>
+        /// <param name="cjid"></param>
+        /// <returns>Carrier 실행 여부</returns>
         public bool Check_Running(string cjid)
         {
             if (SelectedSlots == null || SelectedSlots.Count == 0)
@@ -166,6 +192,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
         partial void OnSelectedSlotsChanged(List<int> oldValue, List<int> newValue)
         {
             if (newValue == null) return;
@@ -198,6 +229,10 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             Event_Send(100);
         }
 
+        /// <summary>
+        /// 이벤트 요청 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
         private void Event_Send(int ceid)
         {
             CEIDInfo info = this._eventMessageManager.GetCEID(ceid);
@@ -206,11 +241,20 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._eventMessageManager.EnqueueEventData(info);
         }
 
+        /// <summary>
+        /// Carrier ID 요청 메서드
+        /// </summary>
+        /// <returns>Carrier ID</returns>
         public string GetCarrierId()
         {
             return this.CarrierId;
         }
 
+        /// <summary>
+        /// Carrier 내 삽입된 Wafer 요청 메서드
+        /// </summary>
+        /// <param name="pjid"></param>
+        /// <returns>Wafer List</returns>
         public List<Wafer> GetAllWaferInfo(string pjid)
         {
             // 필요하다면 LoadPortId로 필터링
@@ -219,12 +263,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 .ToList();
         }
 
+        /// <summary>
+        /// PJID 요청 메서드
+        /// </summary>
+        /// <param name="loadportId"></param>
+        /// <returns>PJID</returns>
         public string GetPJId(byte loadportId)
         {
             var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId);
             return wafer?.PJId ?? "";
         }
 
+        /// <summary>
+        /// 공정 진행 상태에 따른 버튼, LPState 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="state"></param>
         private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
         {
             if ((sender as string) == "LoadPort1")
@@ -259,6 +313,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 공정이 종료된 Wafer 삽입 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnWaferIn(object? sender, Wafer e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -271,6 +330,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         }
 
+        /// <summary>
+        /// 공정 진행을 위해 Wafer 반출 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnWaferOut(object? sender, Wafer e)
         {
             if (e.LoadportId == this.LoadPortId)
@@ -279,6 +343,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 상태에 따라 버튼 상태 제어 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProcessChange(object? sender, string e)
         {
             if (e == "Start")

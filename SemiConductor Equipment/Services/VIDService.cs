@@ -11,7 +11,7 @@ using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.Services
 {
-    public partial class VIDService : IVIDManager
+    public class VIDService : IVIDManager
     {
         #region FIELDS
         private readonly IEventConfigManager _eventConfigManager;
@@ -51,6 +51,10 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// VID 사용을 위한 서비스 레이어
+        /// </summary>
+        /// <param name="eventConfigManager"></param>
         public VIDService(IEventConfigManager eventConfigManager)
         {
             this._eventConfigManager = eventConfigManager;
@@ -61,7 +65,13 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
-
+        /// <summary>
+        /// RPTID의 정보를 얻는 메서드
+        /// </summary>
+        /// <param name="rptid"></param>
+        /// <param name="wafer_number"></param>
+        /// <param name="loadport_number"></param>
+        /// <returns>RPTID 정보</returns>
         public List<Item>? GetRPTID(int rptid, object wafer_number, int loadport_number)
         {
             var RPTID_data = this._eventConfigManager.RPTID[rptid];
@@ -135,6 +145,11 @@ namespace SemiConductor_Equipment.Services
             return vidItems;
         }
 
+        /// <summary>
+        /// SVID의 정보를 얻는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <returns>SVID 정보</returns>
         public object? GetSVID(int svid)
         {
             return svid switch
@@ -160,6 +175,12 @@ namespace SemiConductor_Equipment.Services
             };
         }
 
+        /// <summary>
+        /// DVID의 정보를 얻는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <param name="array_data"></param>
+        /// <returns></returns>
         public object? GetDVID(int svid, int array_data)
         {
             return svid switch
@@ -177,6 +198,11 @@ namespace SemiConductor_Equipment.Services
             };
         }
 
+        /// <summary>
+        /// SVID의 정보를 설정하는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <param name="data"></param>
         public void SetSVID(int svid, object data)
         {
             switch (svid)
@@ -247,6 +273,12 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// DVID의 정보를 설정하는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <param name="data"></param>
+        /// <param name="array_data"></param>
         public void SetDVID(int svid, object data, int array_data = 0)
         {
             switch (svid)
@@ -285,6 +317,11 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// RPTID 존재 여부 확인
+        /// </summary>
+        /// <param name="rptid"></param>
+        /// <returns></returns>
         public bool IsRPTID(uint rptid)
         {
             if (!this._eventConfigManager.RPTID.ContainsKey((int)rptid))
@@ -293,11 +330,21 @@ namespace SemiConductor_Equipment.Services
                 return true;
         }
 
+        /// <summary>
+        /// VID 존재 여부 확인
+        /// </summary>
+        /// <param name="vid"></param>
+        /// <returns></returns>
         public bool IsVID(uint vid)
         {
             return this.vid_list.Contains((int)vid);
         }
 
+        /// <summary>
+        /// CEID 존재 여부 확인
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <returns></returns>
         public bool IsCEID(uint ceid)
         {
             if (!this._eventConfigManager.CEID.ContainsKey((int)ceid))
@@ -306,6 +353,12 @@ namespace SemiConductor_Equipment.Services
                 return true;
         }
 
+        /// <summary>
+        /// CEID와 연결된 RPTID 존재 여부 확인
+        /// </summary>
+        /// <param name="ceid"></param>
+        /// <param name="rptid"></param>
+        /// <returns></returns>
         public bool IsRPTIDInCEID(uint ceid, uint rptid)
         {
             if (!this._eventConfigManager.CEID[(int)ceid].RPTIDs.Contains((int)rptid))

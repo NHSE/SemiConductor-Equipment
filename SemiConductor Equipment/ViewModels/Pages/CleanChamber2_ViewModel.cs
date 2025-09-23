@@ -64,6 +64,13 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// Clean Chamber 2 클래스
+        /// </summary>
+        /// <param name="cleanManager"></param>
+        /// <param name="solutionManager"></param>
+        /// <param name="equipmentConfigManager"></param>
+        /// <param name="logManager"></param>
         public CleanChamber2_ViewModel(ICleanManager cleanManager, ISolutionManager solutionManager, IEquipmentConfigManager equipmentConfigManager, ILogManager logManager)
         {
             this._cleanManager = cleanManager;
@@ -89,12 +96,19 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// Log 파일 업데이트 시 변수 저장 메서드
+        /// </summary>
+        /// <param name="newLog"></param>
         private void OnLogUpdated(string newLog)
         {
             // UI 스레드에서 속성 갱신
             App.Current.Dispatcher.Invoke(() => this.LogText = newLog);
         }
 
+        /// <summary>
+        /// Log 파일 읽기 설정 메서드
+        /// </summary>
         private void SetupLogFileWatcher()
         {
             var logDirectory = @"C:\Logs";
@@ -111,6 +125,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _logFileWatcher.EnableRaisingEvents = true;
         }
 
+        /// <summary>
+        /// Log 파일 읽기 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -138,6 +157,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             });
         }
 
+        /// <summary>
+        /// Log 파일 설정 메서드
+        /// </summary>
         private void LoadInitialLogs()
         {
             var logPath = Path.Combine(@"C:\Logs", $"Clean_Chamber2_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
@@ -147,6 +169,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Clean 공정에 필요한 데이터 저장 (Equipment Setting 값)
+        /// </summary>
         public void Load_Chemical()
         {
             this.Chemical = this._solutionManager.GetValue("Chamber2");
@@ -158,6 +183,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this.Setting_PreClean_Spray_Time = this._equipmentConfigManager.PreClean_Spray_Time;
         }
 
+        /// <summary>
+        /// Clean 챔버 내 웨이퍼 삽입/반출 시 이벤트 발생에 대한 동작 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="cleanChamber"></param>
         private void CleanManager_DataEnqueued(object? sender, CleanChamberStatus cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber2")
@@ -175,6 +205,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 사용 X
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="cleanChamber"></param>
         private void CleanManager_MultiCupChange(object? sender, CleanChamberStatus cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber2")
@@ -190,6 +225,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 챔버 내 웨이퍼 삽입 시 정보 저장 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="cleanChamber"></param>
         private void CleanManager_CleanChamberChange(object? sender, ChamberData cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber2")
@@ -218,6 +258,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Clean 공정 진행 시 Chemical 값 변경
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="cleanChamber"></param>
         private void CleanManager_ChemicalChange(object? sender, ChemicalStatus cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber2")
@@ -255,6 +300,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// Clean 공정 진행 시 PreClean 값 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="cleanChamber"></param>
         private void CleanManager_PreCleanChange(object? sender, ChemicalStatus cleanChamber)
         {
             if (cleanChamber.ChamberName == "Chamber2")
