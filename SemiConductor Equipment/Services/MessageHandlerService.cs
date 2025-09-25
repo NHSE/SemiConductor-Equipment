@@ -33,6 +33,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IWaferProcessCoordinator _processManager;
         private readonly ILoadPortManager _loadPortManager;
         private readonly IRunningStateManger _runningStateManager;
+        private readonly IPLCManager _plcManager;
 
         private readonly Func<byte, ILoadPortViewModel> _loadPortFactory; // 팩토리 디자인 (대리자로 키, value값을 서비스 등록 때 전달받은 후 사용)
 
@@ -61,7 +62,7 @@ namespace SemiConductor_Equipment.Services
         /// <param name="runningStateManager"></param>
         public MessageHandlerService(ILogManager logManager, Action<string> logAction, Func<byte, ILoadPortViewModel> loadPortFactory, ITraceDataManager traceDataManager,
             IWaferManager waferManager, IWaferProcessCoordinator processManager, ILoadPortManager loadPortManager, IEventMessageManager eventMessageManager,
-            IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, IRunningStateManger runningStateManager)
+            IVIDManager vIDManager, IAlarmMsgManager alarmMsgManager, IMessageBox messageBoxManager, IRunningStateManger runningStateManager, IPLCManager plcManager)
         {
             this._logManager = logManager;
             this._logAction = logAction;
@@ -75,6 +76,7 @@ namespace SemiConductor_Equipment.Services
             this._messageBoxManager = messageBoxManager;
             this._runningStateManager = runningStateManager;
             this._traceDataManager = traceDataManager;
+            this._plcManager = plcManager;
         }
         #endregion
 
@@ -462,6 +464,12 @@ namespace SemiConductor_Equipment.Services
                 goto error_msg;
             }
 
+            if(this._plcManager.bNotConnect)
+            {
+                this._alarmMsgManager.AlarmMessage_IN("PLC is not connected");
+                goto error_msg;
+            }
+
             if (msg.SecsItem[1] != null)
                 cmd = msg?.SecsItem?[1].GetString();
             else goto error_msg;
@@ -586,7 +594,7 @@ namespace SemiConductor_Equipment.Services
                                         L(
                                             L(
                                                 U4(2),
-                                                A("unknown class")
+                                                A("Error")
                                              )
                                          )
                                     )

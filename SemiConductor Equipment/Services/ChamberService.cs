@@ -25,6 +25,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
         private readonly IResultFileManager _resultFileManager;
+        private readonly IPLCManager _plcManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -65,13 +66,15 @@ namespace SemiConductor_Equipment.Services
         /// <param name="eventMessageManager"></param>
         /// <param name="vIDManager"></param>
         /// <param name="resultFileManager"></param>
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager, IResultFileManager resultFileManager)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, 
+            IVIDManager vIDManager, IResultFileManager resultFileManager, IPLCManager plcManager)
         {
             this._logManager = logManager;
             this._equiptempManager = equiptempManager;
             this._eventMessageManager = eventMessageManager;
             this._vIDManager = vIDManager;
             this._resultFileManager = resultFileManager;
+            this._plcManager = plcManager;
         }
         #endregion
 
@@ -175,12 +178,21 @@ namespace SemiConductor_Equipment.Services
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Start Spin");
 
+                int current_rpm = 0;
+                int target_rpm = this._equiptempManager.Clean_RPM;
+                current_rpm = Task.Run(() =>
+                {
+                    return this._plcManager.PLC_Start(chamberName, target_rpm, current_rpm, false).GetAwaiter().GetResult();
+                }).Result;
+
+                /*
                 float current_rpm = 0;
                 int target_rpm = this._equiptempManager.Dry_RPM;
                 int max_random = this._equiptempManager.Dry_RPM / 10;
                 int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
                 Random rand = new Random();
 
+                
                 while (Math.Abs(current_rpm - target_rpm) > 1)
                 {
                     if (current_rpm < target_rpm)
@@ -198,8 +210,10 @@ namespace SemiConductor_Equipment.Services
                     ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
                     await Task.Delay(1000);
                 }
+                */
 
                 result.RPM = (int)current_rpm;
+                Random rand = new Random();
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Spin");
 
@@ -231,6 +245,7 @@ namespace SemiConductor_Equipment.Services
                 else
                     wafer.Status = "Completed";
 
+                /*
                 while (current_rpm > 0)
                 {
                     current_rpm -= rand.Next(min_random, max_random);
@@ -242,6 +257,8 @@ namespace SemiConductor_Equipment.Services
                     ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
                     await Task.Delay(1000);
                 }
+                */
+                await this._plcManager.PLC_Stop(chamberName, false);
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Spin Stop");
 
                 lock (_lock)

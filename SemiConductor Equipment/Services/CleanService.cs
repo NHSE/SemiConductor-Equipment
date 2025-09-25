@@ -160,8 +160,9 @@ namespace SemiConductor_Equipment.Services
             int target_rpm = this._equiptempManager.Clean_RPM;
             current_rpm  = Task.Run(() =>
             {
-                return this._plcManager.Start(chambername, target_rpm, current_rpm, true).GetAwaiter().GetResult();
+                return this._plcManager.PLC_Start(chambername, target_rpm, current_rpm, true).GetAwaiter().GetResult();
             }).Result;
+
             /*
             int max_random = this._equiptempManager.Clean_RPM / 10;
             int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
@@ -258,7 +259,7 @@ namespace SemiConductor_Equipment.Services
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END Cleaning");
             this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Initiate Spin Stop");
             //RPM 감소
-            await this._plcManager.Stop(chambername, true);
+            await this._plcManager.PLC_Stop(chambername, true);
 
             /*
             while (current_rpm > 0)

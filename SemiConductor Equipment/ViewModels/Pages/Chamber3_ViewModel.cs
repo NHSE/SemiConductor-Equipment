@@ -29,6 +29,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ILogManager _logManager;
         private readonly IChamberManager _chamberManager;
         private readonly IEquipmentConfigManager _equipmentConfigManager;
+        private readonly IPLCManager _plcManager;
+
         private FileSystemWatcher _logFileWatcher;
         private readonly object _itemLock1 = new object();
         private long lastLogPosition = 0;
@@ -95,7 +97,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// <param name="messageBox"></param>
         /// <param name="chamberManager"></param>
         /// <param name="equipmentConfigManager"></param>
-        public Chamber3_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager, IEquipmentConfigManager equipmentConfigManager)
+        public Chamber3_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager, IEquipmentConfigManager equipmentConfigManager, IPLCManager plcManager)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -113,6 +115,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager.ChangeTempData += OnTempChanged;
             this._chamberManager.ProcessHandled += OnProcess;
             this._chamberManager.ChangeRPMData += OnRPMData;
+
+            this._plcManager = plcManager;
+            this._plcManager.ChangeRPMData += OnRPMData;
 
             this._equipmentConfigManager = equipmentConfigManager;
             this._equipmentConfigManager.ConfigRead += ChangeTempData;

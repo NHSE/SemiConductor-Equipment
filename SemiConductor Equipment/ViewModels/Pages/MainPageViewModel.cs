@@ -183,12 +183,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._robotArmManager.WaferMoveInfo += Wafer_Position_Draw;
             this._alarmMsgManager.AlarmData += AlarmMsgManager_AlarmData;
 
-            this._plcManager.Initalize();
             if (this._secsGemServer.Initialize(AppendLog, messageHandler, _configManager))
             {
                 this.IsDisconnected = true;
             }
 
+            this._plcManager.Initalize();
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
