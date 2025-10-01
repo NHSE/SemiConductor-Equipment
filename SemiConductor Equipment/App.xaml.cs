@@ -164,6 +164,7 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IRunningStateManger, RunningStateService>();
                 services.AddSingleton<IDBLogManager, DbLogHelper>();
                 services.AddSingleton<IPLCManager, PLCHandlerService>();
+                services.AddSingleton<IOHTManager, OHTHandlerService>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);

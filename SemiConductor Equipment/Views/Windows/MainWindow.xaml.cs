@@ -61,6 +61,8 @@ namespace SemiConductor_Equipment.Views.Windows
                 App.Services.GetRequiredService<CleanChamber4_Page>();
                 App.Services.GetRequiredService<CleanChamber5_Page>();
                 App.Services.GetRequiredService<CleanChamber6_Page>();
+                App.Services.GetRequiredService<LoadPort1_Page>();
+                App.Services.GetRequiredService<LoadPort2_Page>();
                 App.Services.GetRequiredService<AlarmLogMenu>();
                 App.Services.GetRequiredService<SolutionSettingMenu>();
                 //

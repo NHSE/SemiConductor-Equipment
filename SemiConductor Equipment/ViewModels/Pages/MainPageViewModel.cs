@@ -37,6 +37,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
         private readonly IPLCManager _plcManager;
+        private readonly IOHTManager _ohtManager;
 
         private readonly DispatcherTimer _timer;
         public Dictionary<string, Point> locationPositions = new();
@@ -147,7 +148,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
-            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager, IPLCManager plcManager)
+            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager, IPLCManager plcManager, IOHTManager ohtManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -173,6 +174,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chemicalManager = chemicalManager;
             this._alarmMsgManager = alarmMsgManager;
             this._plcManager = plcManager;
+            this._ohtManager = ohtManager;
+            this._ohtManager.Start();
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
@@ -219,6 +222,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void DisConnect()
         {
+            if(this._ohtManager._isRunning)
+            {
+                this._ohtManager.Stop();
+            }
+
             this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = true;
             this.IsDisconnected = false;
@@ -230,6 +238,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Connect()
         {
+            if (this._ohtManager._isRunning)
+            {
+                this._ohtManager.Start();
+            }
+
             this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = false;
             this.IsDisconnected = true;
