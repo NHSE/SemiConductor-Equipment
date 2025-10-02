@@ -52,6 +52,8 @@ namespace SemiConductor_Equipment.Views.Pages
             DataContext = viewModel;
             viewModel.RemoveRequested += Remove_WaferLine;
             viewModel.AddRequested += Add_WaferLine;
+            viewModel.OHT_LoadWafer += OHT_Add_WafersLine;
+            viewModel.OHT_UnLoadWafer += OHT_Remove_WafersLine; ;
         }
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -101,6 +103,36 @@ namespace SemiConductor_Equipment.Views.Pages
                         _slotLines.Remove(wafer.Wafer_Num);
                     });
                 }
+            }
+        }
+
+        private void OHT_Add_WafersLine(object? sender, List<int> e)
+        {
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                DrawLinesBasedOnSelectedSlots(e);
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    DrawLinesBasedOnSelectedSlots(e);
+                });
+            }
+        }
+
+        private void OHT_Remove_WafersLine()
+        {
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                mainCanvas.Children.Clear();
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    mainCanvas.Children.Clear();
+                });
             }
         }
 

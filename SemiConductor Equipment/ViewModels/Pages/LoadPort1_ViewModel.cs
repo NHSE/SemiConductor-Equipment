@@ -118,10 +118,12 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        private void OHT_inserts_Wafer(object? sender, List<int> e)
+        private void OHT_inserts_Wafer(object? sender, OHTCarrierInfo e)
         {
-            this.SelectedSlots = e;
-            if (e.Count > 0)
+            if (e.LoadPort != this.LoadPortId) return;
+
+            this.SelectedSlots = e.CarrierInfo;
+            if (e.CarrierInfo.Count > 0)
             {
                 if (Application.Current.Dispatcher.CheckAccess())
                 {

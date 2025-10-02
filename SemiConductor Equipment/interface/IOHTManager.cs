@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static SemiConductor_Equipment.Enums.PIOSignalEnum;
+using SemiConductor_Equipment.Models;
 
 namespace SemiConductor_Equipment.interfaces
 {
@@ -27,7 +28,7 @@ namespace SemiConductor_Equipment.interfaces
         #endregion
 
         #region EVENTS
-        event EventHandler<List<int>> Insert_Wafer;
+        event EventHandler<OHTCarrierInfo> Insert_Wafer;
         event Action<int> Remove_Wafer;
         #endregion
     }

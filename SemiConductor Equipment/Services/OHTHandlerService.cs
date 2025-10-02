@@ -6,10 +6,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Excel;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
+using SemiConductor_Equipment.Models;
 using static SemiConductor_Equipment.Enums.PIOSignalEnum;
 
 namespace SemiConductor_Equipment.Services
@@ -17,20 +19,30 @@ namespace SemiConductor_Equipment.Services
     public class OHTHandlerService : IOHTManager
     {
         #region FIELDS
+        public event EventHandler<OHTCarrierInfo> Insert_Wafer;
+        public event Action<int> Remove_Wafer;
+
         private TcpListener _server;
         private CancellationTokenSource? _cts;
-        public bool _isRunning {  get; set; }
-        public event EventHandler<List<int>> Insert_Wafer;
-        public event Action<int> Remove_Wafer;
-        public bool _isWafer { get; set; }
+        private readonly IRunningStateManger _runningStateManager;
+        private readonly IMessageBox _messageBoxManager;
+
+        private bool isTestInProgress = false;
         #endregion
 
         #region PROPERTIES
+        public bool _isRunning { get; set; }
+        public bool _isWafer { get; set; }
         #endregion
 
         #region CONSTRUCTOR
-        public OHTHandlerService()
+        public OHTHandlerService(IRunningStateManger runningStateManger, IMessageBox messageBoxManager)
         {
+            this._runningStateManager = runningStateManger;
+            this._messageBoxManager = messageBoxManager;
+
+            this._runningStateManager.DataChange += OnEquipment_State_Change;
+
             _isRunning = false;
             Initalize();
         }
@@ -118,6 +130,13 @@ namespace SemiConductor_Equipment.Services
 
         private async Task ProcessReceivedData(byte type, byte received, byte[] buffer, int nbytes, NetworkStream stream)
         {
+            if(isTestInProgress)
+            {
+                this._messageBoxManager.Show("예외 발생", "장비가 작동 중입니다.\n공정 종료 후 진행해 주세요.");
+                await stream.WriteAsync(new byte[] { 0x00 }, 0, 1);
+                return;
+            }
+
             if (type == (byte)TransferAction.Load)
             {
                 if (_isWafer)
@@ -141,7 +160,7 @@ namespace SemiConductor_Equipment.Services
                             selectedWafers.Add(buffer[i]);
                     }
 
-                    Insert_Wafer?.Invoke(this, selectedWafers);
+                    Insert_Wafer?.Invoke(this, new OHTCarrierInfo(selectedWafers, (int)Loadport_Number));
 
                     var response = new List<byte> { type, (byte)PioSignal.L_REQ };
                     await stream.WriteAsync(response.ToArray(), 0, response.Count);
@@ -218,6 +237,18 @@ namespace SemiConductor_Equipment.Services
                 _cts.Cancel();
                 _cts.Dispose();
                 _cts = null;
+            }
+        }
+
+        private void OnEquipment_State_Change(object sender, EquipmentStatusEnum state)
+        {
+            if (!(state == EquipmentStatusEnum.Completed || state == EquipmentStatusEnum.Ready))
+            {
+                isTestInProgress = true;
+            }
+            else
+            {
+                isTestInProgress = false;
             }
         }
         #endregion
