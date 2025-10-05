@@ -72,4 +72,10 @@
     <Resource Include="Resources\Wafer.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\Menus\Windows\SimulationWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

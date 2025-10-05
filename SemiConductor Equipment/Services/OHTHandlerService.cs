@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Microsoft.Extensions.Logging;
-using Microsoft.Office.Interop.Excel;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
@@ -21,6 +20,7 @@ namespace SemiConductor_Equipment.Services
         #region FIELDS
         public event EventHandler<OHTCarrierInfo> Insert_Wafer;
         public event Action<int> Remove_Wafer;
+        public event Action Server_Connect;
 
         private TcpListener _server;
         private CancellationTokenSource? _cts;
@@ -33,6 +33,7 @@ namespace SemiConductor_Equipment.Services
         #region PROPERTIES
         public bool _isRunning { get; set; }
         public bool _isWafer { get; set; }
+        public bool _State { get; set; }
         #endregion
 
         #region CONSTRUCTOR
@@ -44,7 +45,7 @@ namespace SemiConductor_Equipment.Services
             this._runningStateManager.DataChange += OnEquipment_State_Change;
 
             _isRunning = false;
-            Initalize();
+            _State = false;
         }
         #endregion
 
@@ -63,11 +64,13 @@ namespace SemiConductor_Equipment.Services
 
             _isRunning = true;
             _isWafer = false;
+
+            Start();
         }
 
         public void Start()
         {
-            _cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource(10000);
             Task.Run(() => _ = Server_Start(_cts.Token));
         }
 
@@ -79,14 +82,16 @@ namespace SemiConductor_Equipment.Services
                 {
                     // 클라이언트 연결 대기
                     TcpClient tcpClient = await _server.AcceptTcpClientAsync(token);
-                    Console.WriteLine("클라이언트 연결됨");
 
                     // 클라이언트마다 별도 Task에서 처리
                     _ = Task.Run(() => HandleClientAsync(tcpClient, token), token);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"서버 Accept 오류: {ex.Message}");
+                    _State = false;
+                    Server_Connect?.Invoke();
+                    this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
+                    return;
                 }
             }
         }
@@ -108,22 +113,33 @@ namespace SemiConductor_Equipment.Services
                         {
                             // 클라이언트가 연결을 끊음
                             Console.WriteLine("클라이언트 연결 종료 감지");
+                            this._State = false;
+                            Server_Connect?.Invoke();
                             break;
                         }
 
                         byte type = buffer[0];
                         byte received = buffer[1];
 
+                        if(type == (byte)TransferAction.Connect)
+                        {
+                            _State = true;
+                            Server_Connect?.Invoke();
+                            continue;
+                        }
+
                         await ProcessReceivedData(type, received, buffer, nbytes, stream);
                     }
                 }
                 catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine("클라이언트 강제 종료 감지");
+                    _State = false;
+                    this._messageBoxManager.Show("예외 발생", "클라이언트 강제 종료 감지");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"클라이언트 처리 중 오류: {ex.Message}");
+                    _State = false;
+                    this._messageBoxManager.Show("예외 발생", $"클라이언트 처리 중 오류: {ex.Message}");
                 }
             }
         }

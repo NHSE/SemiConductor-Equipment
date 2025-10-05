@@ -11,10 +11,12 @@ namespace SemiConductor_Equipment.interfaces
     {
         #region PROPERTIES
         bool bNotConnect { get; set; }
+        public bool _State { get; set; }
         #endregion
 
         #region METHODS
-        void Initalize();
+        Task Initalize();
+        Task Server_End();
 
         Task<int> PLC_Start(string chambername, int targetRpm, int currentRpm, bool bClean);
 
@@ -23,6 +25,7 @@ namespace SemiConductor_Equipment.interfaces
 
         #region EVENTS
         event EventHandler<ChamberRPMValue> ChangeRPMData;
+        event Action Server_Connect;
         #endregion
     }
 }

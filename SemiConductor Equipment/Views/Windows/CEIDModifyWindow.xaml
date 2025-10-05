@@ -48,7 +48,7 @@
             <ToggleButton Grid.Row="2" Grid.Column="1" 
                           x:Name="tgbstate"
                           IsChecked="{Binding ViewModel.State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                          Width="60" Height="28" Margin="0,12,0,0"
+                          Width="60" Height="28" Margin="0,4,0,0"
                           Foreground="White" Background="#374259" FontWeight="Bold"
                           BorderBrush="#55596D"
                           HorizontalAlignment="Left"/>

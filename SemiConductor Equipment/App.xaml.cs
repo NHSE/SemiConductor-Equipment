@@ -21,6 +21,8 @@ using System.Configuration;
 using SemiConductor_Equipment.ViewModels.MessageBox;
 using SemiConductor_Equipment.Views.MessageBox;
 using Secs4Net;
+using SemiConductor_Equipment.Views.Menus.Windows;
+using SemiConductor_Equipment.ViewModels.Menus.Windows;
 
 namespace SemiConductor_Equipment
 {
@@ -99,6 +101,11 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IAlarmMsgManager, AlarmMessageService>();
                 services.AddSingleton<AlarmLogHistoryWindow>();
                 services.AddSingleton<AlarmLogHistoryViewModel>();
+
+                services.AddSingleton<SimulationWindow>();
+                services.AddSingleton<SimulationViewModel>();
+                services.AddSingleton<ISimulationManager>(provider =>
+                                    new SimulationService(@"C:\Configs"));
 
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();

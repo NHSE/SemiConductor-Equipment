@@ -19,11 +19,13 @@ namespace SemiConductor_Equipment.Services
         private ModbusIpMaster _master;
 
         private readonly ILogManager _logManager;
-        private readonly IMessageBox _messageBox;
+        private readonly IMessageBox _messageBoxManager;
 
         public event EventHandler<ChamberRPMValue> ChangeRPMData;
+        public event Action Server_Connect;
 
         public bool bNotConnect { get; set; }
+        public bool _State { get; set; }
         #endregion
 
         #region PROPERTIES
@@ -33,7 +35,10 @@ namespace SemiConductor_Equipment.Services
         public PLCHandlerService(ILogManager logManager, IMessageBox messageBox)
         {
             this._logManager = logManager;
-            this._messageBox = messageBox;
+            this._messageBoxManager = messageBox;
+
+            bNotConnect = true;
+            _State = false;
         }
         #endregion
 
@@ -41,17 +46,67 @@ namespace SemiConductor_Equipment.Services
         #endregion
 
         #region METHOD
-        public void Initalize()
+        public async Task Initalize()
         {
             try
             {
                 _client = new TcpClient("127.0.0.1", 502);
                 _master = ModbusIpMaster.CreateIp(_client);
-                bNotConnect = false;
+
+                if (_client.Connected)
+                {
+
+                    for (int time = 0; time < 30; time++)
+                    {
+                        // Master에 연결 신호 보내기
+                        await _master.WriteSingleCoilAsync((int)Registers.Registers_Master_Connect, true);
+
+                        // Slave 상태 읽기
+                        bool[] connect = await _master.ReadCoilsAsync(0, 100);
+
+                        if (connect[(int)Registers.Registers_Slave_Connect])
+                        {
+                            bNotConnect = false;
+                            _State = true;
+                            break;
+                        }
+
+                        // 1초 대기
+                        await Task.Delay(1000);
+                    }
+
+                    Server_Connect?.Invoke();
+                }
+                else
+                {
+                    this._messageBoxManager.Show("예외 발생", $"TCP/IP 통신이 연결되지 않았습니다.\n가상 PLC를 확인해주세요.");
+                }
             }
             catch (Exception ex)
             {
                 bNotConnect = true;
+                _State = false;
+                Server_Connect?.Invoke();
+                this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
+            }
+        }
+
+        public async Task Server_End()
+        {
+            try
+            {
+                await _master.WriteSingleCoilAsync((int)Registers.Registers_Master_Connect, false);
+                _State = false;
+
+                Server_Connect?.Invoke();
+
+                _client.Close();
+                _master.Dispose();
+            }
+            catch (Exception ex)
+            {
+                bNotConnect = true;
+                this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
             }
         }
 
@@ -155,8 +210,9 @@ namespace SemiConductor_Equipment.Services
             }
             catch (Exception ex)
             {
-                this._messageBox.Show("예외발생", ex.ToString());
+                this._messageBoxManager.Show("예외발생", ex.ToString());
 
+                await Server_End();
                 return -1;
             }
         }
@@ -197,7 +253,7 @@ namespace SemiConductor_Equipment.Services
             }
             catch (Exception ex)
             {
-                this._messageBox.Show("예외발생", ex.ToString());
+                this._messageBoxManager.Show("예외발생", ex.ToString());
             }
         }
     }

@@ -15,6 +15,8 @@ namespace SemiConductor_Equipment.interfaces
         #region PROPERTIES
         bool _isRunning { get; set; }
         bool _isWafer {  get; set; }
+
+        bool _State { get; set; }
         #endregion
 
         #region METHODS
@@ -30,6 +32,7 @@ namespace SemiConductor_Equipment.interfaces
         #region EVENTS
         event EventHandler<OHTCarrierInfo> Insert_Wafer;
         event Action<int> Remove_Wafer;
+        event Action Server_Connect;
         #endregion
     }
 }

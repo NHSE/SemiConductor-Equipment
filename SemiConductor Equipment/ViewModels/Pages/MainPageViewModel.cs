@@ -12,7 +12,9 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.ViewModels.Menus.Windows;
 using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.Views.Menus.Windows;
 using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
@@ -36,8 +38,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IMessageManager _messageHandler;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
-        private readonly IPLCManager _plcManager;
-        private readonly IOHTManager _ohtManager;
 
         private readonly DispatcherTimer _timer;
         public Dictionary<string, Point> locationPositions = new();
@@ -148,7 +148,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
             IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, IVIDManager svIDManager
-            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager, IPLCManager plcManager, IOHTManager ohtManager)
+            , ISolutionManager chemicalManager, IAlarmMsgManager alarmMsgManager)
         {
             _iDateTime = iDateTime ?? throw new ArgumentNullException(nameof(iDateTime));
 
@@ -173,9 +173,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._vIDManager = svIDManager;
             this._chemicalManager = chemicalManager;
             this._alarmMsgManager = alarmMsgManager;
-            this._plcManager = plcManager;
-            this._ohtManager = ohtManager;
-            this._ohtManager.Start();
 
             this.Equipment_color = Brushes.LightBlue;
             this.Equipment_state = "Ready";
@@ -190,8 +187,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 this.IsDisconnected = true;
             }
-
-            this._plcManager.Initalize();
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
@@ -222,11 +217,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void DisConnect()
         {
-            if(this._ohtManager._isRunning)
-            {
-                this._ohtManager.Stop();
-            }
-
             this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = true;
             this.IsDisconnected = false;
@@ -238,11 +228,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         [RelayCommand]
         private void Connect()
         {
-            if (this._ohtManager._isRunning)
-            {
-                this._ohtManager.Start();
-            }
-
             this._secsGemServer.Initialize(AppendLog, this._messageHandler, this._configManager);
             this.IsConnected = false;
             this.IsDisconnected = true;
@@ -361,6 +346,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// </summary>
         [RelayCommand]
         private void SubMenuAlarmMonitor() => NavigateToPage<AlarmLogMenu>();
+
+        /// <summary>
+        /// Alarm Moniter 페이지로 바꾸는 커맨드
+        /// </summary>
+        [RelayCommand]
+        private void SubMenuSimulationSetting()
+        {
+            var simWindow = App.Services.GetRequiredService<SimulationWindow>();
+            simWindow.Show();
+        }
         #endregion
 
         #region METHODS

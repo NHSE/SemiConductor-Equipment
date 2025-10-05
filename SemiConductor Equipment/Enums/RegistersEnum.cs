@@ -23,7 +23,10 @@ namespace SemiConductor_Equipment.Enums
             Registers_DryChamber3 = 8,
             Registers_DryChamber4 = 9,
             Registers_DryChamber5 = 10,
-            Registers_DryChamber6 = 11
+            Registers_DryChamber6 = 11,
+
+            Registers_Master_Connect = 12,
+            Registers_Slave_Connect = 13,
             #endregion
         }
     }

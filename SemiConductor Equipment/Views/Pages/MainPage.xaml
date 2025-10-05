@@ -55,13 +55,14 @@
                     <TextBlock Text="{Binding ViewModel.Currenttime}" Foreground="#B0B7C3" Margin="16,0" VerticalAlignment="Center"/>
                     <ui:Button x:Name="bMenu" Width="60" Height="30"
                     Click="Menu_Click" MouseRightButtonUp="bMenu_MouseRightButtonUp"
-                    MouseOverBackground="LightGray">
+                    MouseOverBackground="LightGray" IsEnabled="{Binding ViewModel.Setting_menu}">
                         <ui:Button.ContextMenu>
                             <ContextMenu Background="#282C34" Foreground="White" FontFamily="Noto Sans" FontSize="15">
-                                <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
-                                <MenuItem Header="Solutions Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}" IsEnabled="{Binding ViewModel.Setting_menu}"/>
+                                <MenuItem Header="Equipment Setting" Command="{Binding ViewModel.SubMenuEquipSettingCommand}"/>
+                                <MenuItem Header="Solutions Setting" Command="{Binding ViewModel.SubMenuChemicalSettingCommand}"/>
                                 <MenuItem Header="Event Setting" Command="{Binding ViewModel.SubMenuEventSettingCommand}"/>
                                 <MenuItem Header="IP Setting" Command="{Binding ViewModel.SubMenuIPSettingCommand}"/>
+                                <MenuItem Header="Simulation Setting" Command="{Binding ViewModel.SubMenuSimulationSettingCommand}"/>
                             </ContextMenu>
                         </ui:Button.ContextMenu>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

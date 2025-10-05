@@ -26,6 +26,8 @@ namespace SemiConductor_Equipment.Services
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly IResultFileManager _resultFileManager;
         private readonly IPLCManager _plcManager;
+        private readonly ISimulationManager _simulationManager;
+
         public event EventHandler<CleanChamberStatus> DataEnqueued;
         public event EventHandler<CleanChamberStatus> MultiCupChange;
         public event EventHandler<RobotCommand> Enque_Robot;
@@ -63,6 +65,8 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = "IDLE",
             ["Chamber6"] = "IDLE",
         };
+
+        private Random rand = new Random();
         #endregion
 
         #region PROPERTIES
@@ -79,7 +83,7 @@ namespace SemiConductor_Equipment.Services
         /// <param name="resultFileManager"></param>
         /// <param name="plcManager"></param>
         public CleanService(IEventMessageManager eventMessageManager, IEquipmentConfigManager equiptempManager, ILogManager logManager,
-            IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager, IPLCManager plcManager)
+            IAlarmMsgManager alarmMsgManager, IResultFileManager resultFileManager, IPLCManager plcManager, ISimulationManager simulationManager)
         {
             this._eventMessageManager = eventMessageManager;
             this._equiptempManager = equiptempManager;
@@ -87,6 +91,7 @@ namespace SemiConductor_Equipment.Services
             this._alarmMsgManager = alarmMsgManager;
             this._resultFileManager = resultFileManager;
             this._plcManager = plcManager;
+            this._simulationManager = simulationManager;
         }
         #endregion
 
@@ -148,94 +153,77 @@ namespace SemiConductor_Equipment.Services
 
                 this._logManager.WriteLog($"Clean_{chambername}", $"State", $"{wafer.Wafer_Num} in {chambername}");
             }
-            //멀티컵 Up
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start MultiCup Up");
-            await Task.Delay(1500);
-            MultiCupChange?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END MultiCup Up");
 
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Spin");
-
-            int current_rpm = 0;
-            int target_rpm = this._equiptempManager.Clean_RPM;
-            current_rpm  = Task.Run(() =>
+            try
             {
-                return this._plcManager.PLC_Start(chambername, target_rpm, current_rpm, true).GetAwaiter().GetResult();
-            }).Result;
+                //멀티컵 Up
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start MultiCup Up");
+                await Task.Delay(1500);
+                MultiCupChange?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END MultiCup Up");
 
-            /*
-            int max_random = this._equiptempManager.Clean_RPM / 10;
-            int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
-            Random rand = new Random();
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Spin");
 
-            while (Math.Abs(current_rpm - target_rpm) > 1)
-            {
-                if (current_rpm < target_rpm)
+                if (this._simulationManager.State)
                 {
-                    current_rpm += rand.Next(min_random, max_random);
-                    if (current_rpm > target_rpm) current_rpm = target_rpm; // 오버런 방지
+                    int current_rpm = 0;
+                    int target_rpm = this._equiptempManager.Clean_RPM;
+                    current_rpm = Task.Run(() =>
+                    {
+                        return this._plcManager.PLC_Start(chambername, target_rpm, current_rpm, true).GetAwaiter().GetResult();
+                    }).Result;
+
+                    if (current_rpm == -1)
+                    {
+                        throw new InvalidOperationException("PLC Connect ERROR");
+                    }
+                    else
+                    {
+                        result.RPM = (int)current_rpm;
+                    }
                 }
-                else if (current_rpm > target_rpm)
+                else
                 {
-                    current_rpm -= rand.Next(min_random, max_random);
-                    if (current_rpm < target_rpm) current_rpm = target_rpm;
+                    float current_rpm = 0;
+                    int target_rpm = this._equiptempManager.Clean_RPM;
+                    int max_random = this._equiptempManager.Clean_RPM / 10;
+                    int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
+
+                    while (Math.Abs(current_rpm - target_rpm) > 1)
+                    {
+                        if (current_rpm < target_rpm)
+                        {
+                            current_rpm += rand.Next(min_random, max_random);
+                            if (current_rpm > target_rpm) current_rpm = target_rpm; // 오버런 방지
+                        }
+                        else if (current_rpm > target_rpm)
+                        {
+                            current_rpm -= rand.Next(min_random, max_random);
+                            if (current_rpm < target_rpm) current_rpm = target_rpm;
+                        }
+
+                        this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
+                        await Task.Delay(1000);
+                    }
+                    result.RPM = (int)current_rpm;
                 }
 
-                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
-                await Task.Delay(1000);
-            }*/
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] End Spin");
 
-            result.RPM = (int)current_rpm;
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Cleaning");
 
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] End Spin");
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] Start Cleaning");
 
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start Cleaning");
-
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] Start Cleaning");
-
-            //Pre-Clean
-            bool Error_flag = false;
-            for (int time = 0; time < this._equiptempManager.PreClean_Spray_Time; time++)
-            {
-                await Task.Delay(1000); // 1 sec
-                // 세정액 감소
-                var Status = new ChemicalStatus(chambername, this._equiptempManager.PreClean_Flow_Rate);
-                PreCleanChange?.Invoke(this, Status);
-
-                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] Cleaning Time : {time + 1}");
-
-                if (Status.Result) // 다 떨어졌을 시
-                {
-                    // 테스트 강제 종료
-                    Unable_to_Process[chambername] = true; // 사용 금지 락
-                    wafer.Status = "Error";
-                    Error_flag = true;
-                    this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] An error has occurred due to insufficient Pre-Clean Supply");
-                    this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] An error has occurred due to insufficient Pre-Clean Supply");
-
-                    result.HasAlarm = true;
-                    result.ErrorInfo = "An error has occurred due to insufficient Pre-Clean Supply";
-
-                    break;
-                    // 에러 로그 발생
-                }
-            }
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] END Cleaning");
-            await Task.Delay(1000); // 1 sec
-
-            if (!Error_flag)
-            {
-                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] Start Cleaning");
-
-                //Chemical
-                for (int time = 0; time < this._equiptempManager.Spray_Time; time++)
+                //Pre-Clean
+                bool Error_flag = false;
+                for (int time = 0; time < this._equiptempManager.PreClean_Spray_Time; time++)
                 {
                     await Task.Delay(1000); // 1 sec
                                             // 세정액 감소
-                    var Status = new ChemicalStatus(chambername, this._equiptempManager.Flow_Rate);
-                    ChemicalChange?.Invoke(this, Status);
+                    var Status = new ChemicalStatus(chambername, this._equiptempManager.PreClean_Flow_Rate);
+                    PreCleanChange?.Invoke(this, Status);
 
-                    this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] Cleaning Time : {time + 1}");
+                    this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] Cleaning Time : {time + 1}");
 
                     if (Status.Result) // 다 떨어졌을 시
                     {
@@ -243,7 +231,7 @@ namespace SemiConductor_Equipment.Services
                         Unable_to_Process[chambername] = true; // 사용 금지 락
                         wafer.Status = "Error";
                         Error_flag = true;
-                        this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] An error has occurred due to insufficient Chemical Supply");
+                        this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] An error has occurred due to insufficient Pre-Clean Supply");
                         this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] An error has occurred due to insufficient Pre-Clean Supply");
 
                         result.HasAlarm = true;
@@ -253,45 +241,124 @@ namespace SemiConductor_Equipment.Services
                         // 에러 로그 발생
                     }
                 }
-                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] END Cleaning");
-            }
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Pre-Clean] END Cleaning");
+                await Task.Delay(1000); // 1 sec
 
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END Cleaning");
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Initiate Spin Stop");
-            //RPM 감소
-            await this._plcManager.PLC_Stop(chambername, true);
-
-            /*
-            while (current_rpm > 0)
-            {
-                current_rpm -= rand.Next(min_random, max_random);
-                if (current_rpm < 0)
+                if (!Error_flag)
                 {
-                    current_rpm = 0;
+                    this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] Start Cleaning");
+
+                    //Chemical
+                    for (int time = 0; time < this._equiptempManager.Spray_Time; time++)
+                    {
+                        await Task.Delay(1000); // 1 sec
+                                                // 세정액 감소
+                        var Status = new ChemicalStatus(chambername, this._equiptempManager.Flow_Rate);
+                        ChemicalChange?.Invoke(this, Status);
+
+                        this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] Cleaning Time : {time + 1}");
+
+                        if (Status.Result) // 다 떨어졌을 시
+                        {
+                            // 테스트 강제 종료
+                            Unable_to_Process[chambername] = true; // 사용 금지 락
+                            wafer.Status = "Error";
+                            Error_flag = true;
+                            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] An error has occurred due to insufficient Chemical Supply");
+                            this._alarmMsgManager.AlarmMessage_IN($"[{chambername}] An error has occurred due to insufficient Pre-Clean Supply");
+
+                            result.HasAlarm = true;
+                            result.ErrorInfo = "An error has occurred due to insufficient Pre-Clean Supply";
+
+                            break;
+                            // 에러 로그 발생
+                        }
+                    }
+                    this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}][Chemical] END Cleaning");
                 }
-                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
-                await Task.Delay(1000);
+
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END Cleaning");
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Initiate Spin Stop");
+
+                if (this._simulationManager.State)
+                {
+                    //RPM 감소
+                    await this._plcManager.PLC_Stop(chambername, true);
+                }
+                else
+                {
+                    int current_rpm = result.RPM;
+                    int max_random = this._equiptempManager.Clean_RPM / 10;
+                    int min_random = (this._equiptempManager.Clean_RPM / 50) == 0 ? 1 : this._equiptempManager.Clean_RPM / 50;
+
+                    while (current_rpm > 0)
+                    {
+                        current_rpm -= rand.Next(min_random, max_random);
+                        if (current_rpm < 0)
+                        {
+                            current_rpm = 0;
+                        }
+                        this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Rotational Speed : {(int)current_rpm} rpm");
+                        await Task.Delay(1000);
+                    }
+                }
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Spin Stop");
+
+                //멀티컵 Down
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start MultiCup Down");
+                await Task.Delay(1500);
+                MultiCupChange?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END MultiCup Down");
+
+                if (!Error_flag)
+                {
+                    ProcessComplete(chambername, wafer, "Dry Chamber");
+                    this.Clean_State[chambername] = "DONE";
+
+                    result.Yield = true;
+                }
+                else
+                {
+                    ProcessComplete(chambername, wafer, "LoadPort");
+                    this.Clean_State[chambername] = "DISAB";
+
+                    ResultData Result = new ResultData
+                    {
+                        SlotNo = wafer.Wafer_Num,
+                        LoadPort = wafer.LoadportId.ToString(),
+                        CarrierID = wafer.CarrierId,
+                        CJID = wafer.CJId,
+                        PJID = wafer.PJId,
+                        ChamberName = "",
+                        PreClean_Flow = 0,
+                        Chemical_Flow = 0,
+                        RPM = 0,
+                        TargetMaxTemperature = 0,
+                        TargetMinTemperature = 0,
+                        ActualTemperature = (int)wafer.RequiredTemperature,
+                        HasAlarm = true,
+                        ErrorInfo = "No Process",
+                    };
+
+                    //Dry에 표시될 정보
+                    this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), Result);
+                }
+
+                DataEnqueued?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
+
+                sw.Stop();
+                result.EndTime = DateTime.Now;
+                result.ProcessDuration = sw.Elapsed;
+
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] {wafer.SlotId} process done in {chambername}");
+
+                this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+
             }
-            */
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Spin Stop");
-
-            //멀티컵 Down
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] Start MultiCup Down");
-            await Task.Delay(1500);
-            MultiCupChange?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] END MultiCup Down");
-
-            if (!Error_flag)
+            catch (Exception ex)
             {
-                ProcessComplete(chambername, wafer, "Dry Chamber");
-                this.Clean_State[chambername] = "DONE";
-
-                result.Yield = true;
-            }
-            else
-            {
+                wafer.Status = "Error";
                 ProcessComplete(chambername, wafer, "LoadPort");
-                this.Clean_State[chambername] = "DISAB";
 
                 ResultData Result = new ResultData
                 {
@@ -308,21 +375,22 @@ namespace SemiConductor_Equipment.Services
                     TargetMinTemperature = 0,
                     ActualTemperature = (int)wafer.RequiredTemperature,
                     HasAlarm = true,
-                    ErrorInfo = "No Process",
+                    ErrorInfo = "PLC Connect ERROR",
                 };
 
                 this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), Result);
+
+                result.HasAlarm = true;
+                result.ErrorInfo = "PLC Connect ERROR";
+
+                sw.Stop();
+                result.EndTime = DateTime.Now;
+                result.ProcessDuration = sw.Elapsed;
+
+                this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] {wafer.SlotId} process done in {chambername}");
+
+                this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
             }
-
-            DataEnqueued?.Invoke(this, new CleanChamberStatus(chambername, this.Clean_State[chambername]));
-
-            sw.Stop();
-            result.EndTime = DateTime.Now;
-            result.ProcessDuration = sw.Elapsed;
-
-            this._logManager.WriteLog($"Clean_{chambername}", $"State", $"[{chambername}] {wafer.SlotId} process done in {chambername}");
-
-            this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
         }
 
 
