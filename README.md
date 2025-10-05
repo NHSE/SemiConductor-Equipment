@@ -34,7 +34,10 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 - **데이터 로깅 및 CSV 저장**  
 - **SECS/GEM 표준 통신 지원 (Secs4Net 기반)**  
 - **CI/CD 환경(Jenkins) 연동**  
-- **추후 Modbus 통신 추가 예정**
+
+  **-- 추가 2025.10.05 --**
+- **가상 PLC와 프로그램 간 Modbus를 이용한 통신 기능**
+- **가상 OHT와 프로그램 간 TCP/IP 통신을 통한 PIO 통신 시나리오 기능 및 Load/UnLoad 기능**
 
 ---
 
@@ -74,14 +77,18 @@ SwingSecsSimulator와 연동 가능 (https://kenta-shimizu.github.io/secs-simula
 - ➡️ [SECS/GEM 통신 상세 문서](docs/SECSGEM.md)
 - ➡️ [구현된 CEID/VID LIST](docs/Event_Setting.md)
 
-### 3. 🖥 시뮬레이터 구성
+### 3. 🖥 프로그램 구성
 
-➡️ [시뮬레이터 구성 상세 문서](docs/Simulator_composition.md)
+➡️ [프로그램 구성 상세 문서](docs/Simulator_composition.md)
 
 
-### 4. 🖱️ 시뮬레이터 사용 방법
+### 4. 🖱️ 프로그램 사용 방법
 
 ➡️ [사용방법 상세 문서](docs/GETTING_STARTED.md)
+
+### 5. ⚙️ PLC, OHT Simulator 연동 및 사용 방법
+
+➡️ [시뮬레이터 상세 문서](docs/Simulator.md)
 
 ## 🗂 시뮬레이터 결과 파일
 
