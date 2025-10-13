@@ -1,0 +1,60 @@
+﻿<Window x:Class="SemiConductor_Equipment.Views.Menus.Windows.SimulationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SemiConductor_Equipment.ViewModels.Windows"
+        xmlns:conv="clr-namespace:SemiConductor_Equipment.Coverter"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="SimulationWindow" Height="280" Width="400"
+        Background="#232C39"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="AUTO"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 10 10 10">
+                <ui:TextBlock Text="Simulation Mode " FontWeight="Bold" Foreground="White"/>
+                <ui:ToggleSwitch IsChecked="{Binding ViewModel.State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Expander Header="OHT" IsExpanded="False" Margin="0 0 0 0" IsEnabled="{Binding ViewModel.State}">
+                <Grid Margin="10 5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding ViewModel.Oht}" Margin="0 5 30 0" FontWeight="Bold" Foreground="{Binding ViewModel.OhtColor}"/>
+                    <Button Grid.Column="1" Content="Connect" Command="{Binding ViewModel.OHT_ConnectCommand}" Margin="0 0 10 0"/>
+                    <Button Grid.Column="2" Content="DisConnect" Command="{Binding ViewModel.OHT_DisConnectCommand}" Margin="0 0 10 0"/>
+                </Grid>
+            </Expander>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Expander Header="PLC" IsExpanded="False" Margin="0 0 0 0" IsEnabled="{Binding ViewModel.State}">
+                <Grid Margin="10 5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding ViewModel.Plc}" Foreground="{Binding ViewModel.PlcColor}" FontWeight="Bold" Margin="0 5 30 0"/>
+                    <Button Grid.Column="1" Content="Connect" Command="{Binding ViewModel.PLC_ConnectCommand}" Margin="0 0 10 0"/>
+                    <Button Grid.Column="2" Content="DisConnect" Command="{Binding ViewModel.PLC_DisConnectCommand}" Margin="0 0 10 0"/>
+                </Grid>
+            </Expander>
+        </Grid>
+
+    </Grid>
+</Window>

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
@@ -21,11 +20,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         public event EventHandler<Wafer> RemoveRequested;
         public event EventHandler<Wafer> AddRequested;
+        public event EventHandler<List<int>> OHT_LoadWafer;
+        public event Action OHT_UnLoadWafer;
         private readonly IRobotArmManager _robotArmManager;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IWaferProcessCoordinator _processManager;
+        private readonly IOHTManager _ohtManager;
         public byte LoadPortId => 2;
         #endregion
 
@@ -50,25 +52,40 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// LoadPort 1 클래스
+        /// </summary>
+        /// <param name="robotArmManager"></param>
+        /// <param name="runningStateManager"></param>
+        /// <param name="VIDManager"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="processManager"></param>
         public LoadPort2_ViewModel(IRobotArmManager robotArmManager, IRunningStateManger runningStateManager, IVIDManager VIDManager, 
-            IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager)
+            IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager, IOHTManager ohtManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateManager = runningStateManager;
             this._vIDManager = VIDManager;
             this._eventMessageManager = eventMessageManager;
             this._processManager = processManager;
+            this._ohtManager = ohtManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
             this._runningStateManager.DataChange += OnEquipment_State_Change;
             this._processManager.Process += ProcessChange;
 
+            this._ohtManager.Insert_Wafer += OHT_inserts_Wafer;
+            this._ohtManager.Remove_Wafer += OHT_Remove_Wafer;
+
             PropertyChanged += OnPropertyChanged;
         }
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 웨이퍼 삽입 정보 초기화 커맨드
+        /// </summary>
         [RelayCommand]
         private void Cancel()
         {
@@ -76,11 +93,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._runningStateManager.Change_State("LoadPort2", state);
             Event_Send(101);
             _waferinfo.Clear();
+            this._ohtManager._isWafer = false;
         }
         #endregion
 
         #region METHOD
-
+        /// <summary>
+        /// 웨이퍼 삽입에 따라 MainView.Page 내 사진 변경 요청 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsSetupEnabled")
@@ -92,6 +114,70 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        private void OHT_inserts_Wafer(object? sender, OHTCarrierInfo e)
+        {
+            if (e.LoadPort != this.LoadPortId) return;
+
+            this.SelectedSlots = e.CarrierInfo;
+            if (e.CarrierInfo.Count > 0)
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.IsSetupEnabled = false;
+                    this.IsCancelEnabled = true;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.IsSetupEnabled = false;
+                        this.IsCancelEnabled = true;
+                    });
+                }
+            }
+
+            this._ohtManager._isWafer = true;
+            OHT_LoadWafer?.Invoke(this, this.SelectedSlots);
+        }
+
+        private void OHT_Remove_Wafer(int LoadPort_Number)
+        {
+            if (LoadPort_Number == this.LoadPortId)
+            {
+                if (this.Waferinfo.Count == 0)
+                {
+                    Console.WriteLine("XX");
+                    return;
+                }
+
+                this.SelectedSlots.Clear();
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.Waferinfo.Clear();
+                    this.IsSetupEnabled = true;
+                    this.IsCancelEnabled = false;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.Waferinfo.Clear();
+                        this.IsSetupEnabled = true;
+                        this.IsCancelEnabled = false;
+                    });
+                }
+
+                this._ohtManager._isWafer = false;
+                OHT_UnLoadWafer?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Carrier 정보 및 Carrier 내 웨이퍼 정보 저장 메서드
+        /// S3F17, S14F9, S16F11에 따라 값 변경
+        /// </summary>
+        /// <param name="newWaferData"></param>
+        /// <returns></returns>
         public bool Update_Carrier_info(Wafer newWaferData)
         {
             if (SelectedSlots == null || SelectedSlots.Count == 0)
@@ -144,6 +230,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             return true;
         }
 
+        /// <summary>
+        /// 해당 LoadPort 내 Carrier가 실행중인지 아닌지 판별하는 메서드
+        /// </summary>
+        /// <param name="cjid"></param>
+        /// <returns>Carrier 실행 여부</returns>
         public bool Check_Running(string cjid)
         {
             if (SelectedSlots == null || SelectedSlots.Count == 0)
@@ -163,38 +254,81 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
         partial void OnSelectedSlotsChanged(List<int> oldValue, List<int> newValue)
         {
-            if (newValue == null) return;
-
-            this.Waferinfo.Clear();
-            Random random = new Random();
-            string carrierId = this.CarrierId ?? "UNKNOWN";
-
-            foreach (int slot in newValue.OrderBy(x => x))
+            if (Application.Current.Dispatcher.CheckAccess())
             {
-                double temperature = random.Next(20, 30);
-                this.Waferinfo.Add(new Wafer
-                {
-                    LoadportId = this.LoadPortId,
-                    Wafer_Num = slot,
-                    CarrierId = carrierId,
-                    PJId = "",
-                    CJId = "",
-                    SlotId = slot.ToString("D2"),
-                    LotId = "",
-                    CurrentLocation = $"LoadPort{this.LoadPortId}",
-                    RequiredTemperature = temperature,
-                    RunningTime = 0.0,
-                });
+                if (newValue == null) return;
 
-                this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                this.Waferinfo.Clear();
+                Random random = new Random();
+                string carrierId = this.CarrierId ?? "UNKNOWN";
+
+                foreach (int slot in newValue.OrderBy(x => x))
+                {
+                    double temperature = random.Next(20, 30);
+                    this.Waferinfo.Add(new Wafer
+                    {
+                        LoadportId = this.LoadPortId,
+                        Wafer_Num = slot,
+                        CarrierId = carrierId,
+                        PJId = "",
+                        CJId = "",
+                        SlotId = slot.ToString("D2"),
+                        LotId = "",
+                        CurrentLocation = $"LoadPort{this.LoadPortId}",
+                        RequiredTemperature = temperature,
+                        RunningTime = 0.0,
+                    });
+
+                    this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                }
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (newValue == null) return;
+
+                    this.Waferinfo.Clear();
+                    Random random = new Random();
+                    string carrierId = this.CarrierId ?? "UNKNOWN";
+
+                    foreach (int slot in newValue.OrderBy(x => x))
+                    {
+                        double temperature = random.Next(20, 30);
+                        this.Waferinfo.Add(new Wafer
+                        {
+                            LoadportId = this.LoadPortId,
+                            Wafer_Num = slot,
+                            CarrierId = carrierId,
+                            PJId = "",
+                            CJId = "",
+                            SlotId = slot.ToString("D2"),
+                            LotId = "",
+                            CurrentLocation = $"LoadPort{this.LoadPortId}",
+                            RequiredTemperature = temperature,
+                            RunningTime = 0.0,
+                        });
+
+                        this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                    }
+                });
             }
             this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
             this._vIDManager?.SetSVID(103, "CLOSE");
             Event_Send(100);
         }
 
+        /// <summary>
+        /// 이벤트 요청 메서드
+        /// </summary>
+        /// <param name="ceid"></param>
         private void Event_Send(int ceid)
         {
             CEIDInfo info = this._eventMessageManager.GetCEID(ceid);
@@ -203,11 +337,20 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._eventMessageManager.EnqueueEventData(info);
         }
 
+        /// <summary>
+        /// Carrier ID 요청 메서드
+        /// </summary>
+        /// <returns>Carrier ID</returns>
         public string GetCarrierId()
         {
             return this.CarrierId;
         }
 
+        /// <summary>
+        /// Carrier 내 삽입된 Wafer 요청 메서드
+        /// </summary>
+        /// <param name="pjid"></param>
+        /// <returns>Wafer List</returns>
         public List<Wafer> GetAllWaferInfo(string pjid)
         {
             // 필요하다면 LoadPortId로 필터링
@@ -216,12 +359,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 .ToList();
         }
 
+        /// <summary>
+        /// PJID 요청 메서드
+        /// </summary>
+        /// <param name="loadportId"></param>
+        /// <returns>PJID</returns>
         public string GetPJId(byte loadportId)
         {
             var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId);
             return wafer?.PJId ?? "";
         }
 
+        /// <summary>
+        /// 공정 진행 상태에 따른 버튼, LPState 변경 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="state"></param>
         private void OnEquipment_State_Change(object? sender, EquipmentStatusEnum state)
         {
             if ((sender as string) == "LoadPort2")
@@ -256,6 +409,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 공정이 종료된 Wafer 삽입 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnWaferIn(object? sender, Wafer e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -268,6 +426,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
 
         }
 
+        /// <summary>
+        /// 공정 진행을 위해 Wafer 반출 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnWaferOut(object? sender, Wafer e)
         {
             if (e.LoadportId == this.LoadPortId)
@@ -276,6 +439,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 상태에 따라 버튼 상태 제어 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProcessChange(object? sender, string e)
         {
             if (e == "Start")
@@ -283,7 +451,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                 this.IsSetupEnabled = false;
                 this.IsCancelEnabled = false;
             }
-            else if(e == "END" && this.LPState == "Completed")
+            else if (e == "END" && this.LPState == "Completed")
             {
                 this.IsSetupEnabled = false;
                 this.IsCancelEnabled = true;

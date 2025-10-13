@@ -11,6 +11,7 @@ namespace SemiConductor_Equipment.Services
         #region FIELDS
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
+        private static readonly object _logLock = new object();
         #endregion
 
         #region PROPERTIES
@@ -49,12 +50,16 @@ namespace SemiConductor_Equipment.Services
                 filePath = GetLogPath(logType);
             }
             string logLine = $"{DateTime.Now:HH:mm:ss} {messagetype} ▶ {message}";
-            File.AppendAllText(filePath, logLine + Environment.NewLine);
 
-            // 파일 전체 내용을 읽어서 이벤트 발행 (실시간 뷰 갱신용)
-            string newContent = File.ReadAllText(filePath);
-            if (_logUpdatedEvents.ContainsKey(logType))
-                _logUpdatedEvents[logType]?.Invoke(newContent);
+            lock (_logLock)
+            {
+                File.AppendAllText(filePath, logLine + Environment.NewLine);
+
+                // 파일 전체 내용을 읽어서 이벤트 발행 (실시간 뷰 갱신용)
+                string newContent = File.ReadAllText(filePath);
+                if (_logUpdatedEvents.ContainsKey(logType))
+                    _logUpdatedEvents[logType]?.Invoke(newContent);
+            }
         }
 
         /// <summary>

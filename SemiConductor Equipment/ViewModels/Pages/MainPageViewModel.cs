@@ -12,7 +12,9 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.ViewModels.Menus.Windows;
 using SemiConductor_Equipment.Views.Menus;
+using SemiConductor_Equipment.Views.Menus.Windows;
 using SemiConductor_Equipment.Views.MessageBox;
 using SemiConductor_Equipment.Views.Pages;
 using SemiConductor_Equipment.Views.Windows;
@@ -141,6 +143,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// <param name="svIDManager"></param>
         /// <param name="chemicalManager"></param>
         /// <param name="alarmMsgManager"></param>
+        /// <param name="pLCManager"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public MainPageViewModel(IDateTime iDateTime, ILogManager logmanager, IConfigManager configManager,
             ISecsGemServer secsGemServer, IMessageManager messageHandler, IRunningStateManger runningStateManager, 
@@ -184,7 +187,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 this.IsDisconnected = true;
             }
-
 
             WeakReferenceMessenger.Default.Register<ViewModelMessages>(this, (r, m) =>
             {
@@ -344,6 +346,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// </summary>
         [RelayCommand]
         private void SubMenuAlarmMonitor() => NavigateToPage<AlarmLogMenu>();
+
+        /// <summary>
+        /// Alarm Moniter 페이지로 바꾸는 커맨드
+        /// </summary>
+        [RelayCommand]
+        private void SubMenuSimulationSetting()
+        {
+            var simWindow = App.Services.GetRequiredService<SimulationWindow>();
+            simWindow.Show();
+        }
         #endregion
 
         #region METHODS

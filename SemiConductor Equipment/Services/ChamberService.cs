@@ -25,6 +25,8 @@ namespace SemiConductor_Equipment.Services
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IVIDManager _vIDManager;
         private readonly IResultFileManager _resultFileManager;
+        private readonly IPLCManager _plcManager;
+        private readonly ISimulationManager _simulationManager;
 
         private readonly Dictionary<string, (Wafer? wafer, bool isProcessing)> _chambers = new()
         {
@@ -51,6 +53,8 @@ namespace SemiConductor_Equipment.Services
             ["Chamber5"] = "IDLE",
             ["Chamber6"] = "IDLE"
         };
+
+        private Random rand = new Random();
         #endregion
 
         #region PROPERTIES
@@ -65,13 +69,16 @@ namespace SemiConductor_Equipment.Services
         /// <param name="eventMessageManager"></param>
         /// <param name="vIDManager"></param>
         /// <param name="resultFileManager"></param>
-        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, IVIDManager vIDManager, IResultFileManager resultFileManager)
+        public ChamberService(ILogManager logManager, IEquipmentConfigManager equiptempManager, IEventMessageManager eventMessageManager, 
+            IVIDManager vIDManager, IResultFileManager resultFileManager, IPLCManager plcManager, ISimulationManager simulationManager)
         {
             this._logManager = logManager;
             this._equiptempManager = equiptempManager;
             this._eventMessageManager = eventMessageManager;
             this._vIDManager = vIDManager;
             this._resultFileManager = resultFileManager;
+            this._plcManager = plcManager;
+            this._simulationManager = simulationManager;
         }
         #endregion
 
@@ -142,64 +149,85 @@ namespace SemiConductor_Equipment.Services
         /// <returns></returns>
         public async Task StartProcessingAsync(string chamberName, Wafer wafer)
         {
-            try
+            ResultData result = new ResultData(); // 공정 결과 데이터
+            var sw = Stopwatch.StartNew();
+            lock (_lock)
             {
-                ResultData result = new ResultData(); // 공정 결과 데이터
-                var sw = Stopwatch.StartNew();
-                lock (_lock)
+                this.Chamber_State[chamberName] = "Running";
+                DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
+                ChangeTempData?.Invoke(this, wafer);
+
+                CEIDInfo info = this._eventMessageManager.GetCEID(300);
+                info.Wafer_number = wafer.Wafer_Num;
+                info.Loadport_Number = wafer.LoadportId;
+                this._eventMessageManager.EnqueueEventData(info);
+
+                result = new ResultData
                 {
-                    this.Chamber_State[chamberName] = "Running";
-                    DataEnqueued?.Invoke(this, new ChamberStatus(chamberName, this.Chamber_State[chamberName], wafer.Wafer_Num));
-                    ChangeTempData?.Invoke(this, wafer);
+                    StartTime = DateTime.Now,
+                    SlotNo = wafer.Wafer_Num,
+                    LoadPort = wafer.LoadportId.ToString(),
+                    CarrierID = wafer.CarrierId,
+                    CJID = wafer.CJId,
+                    PJID = wafer.PJId,
+                    ChamberName = chamberName,
+                    TargetMinTemperature = this._equiptempManager.Min_Temp,
+                    TargetMaxTemperature = this._equiptempManager.Max_Temp,
+                };
+            }
 
-                    CEIDInfo info = this._eventMessageManager.GetCEID(300);
-                    info.Wafer_number = wafer.Wafer_Num;
-                    info.Loadport_Number = wafer.LoadportId;
-                    this._eventMessageManager.EnqueueEventData(info);
-
-                    result = new ResultData
-                    {
-                        StartTime = DateTime.Now,
-                        SlotNo = wafer.Wafer_Num,
-                        LoadPort = wafer.LoadportId.ToString(),
-                        CarrierID = wafer.CarrierId,
-                        CJID = wafer.CJId,
-                        PJID = wafer.PJId,
-                        ChamberName = chamberName,
-                        TargetMinTemperature = this._equiptempManager.Min_Temp,
-                        TargetMaxTemperature = this._equiptempManager.Max_Temp,
-                    };
-                }
-
+            try 
+            {    
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"{wafer.Wafer_Num} in {chamberName}");
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Start Spin");
 
-                float current_rpm = 0;
-                int target_rpm = this._equiptempManager.Dry_RPM;
-                int max_random = this._equiptempManager.Dry_RPM / 10;
-                int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
-                Random rand = new Random();
-
-                while (Math.Abs(current_rpm - target_rpm) > 1)
+                if (this._simulationManager.State)
                 {
-                    if (current_rpm < target_rpm)
+                    int current_rpm = 0;
+                    int target_rpm = this._equiptempManager.Clean_RPM;
+                    current_rpm = Task.Run(() =>
                     {
-                        current_rpm += rand.Next(min_random, max_random);
-                        if (current_rpm > target_rpm) current_rpm = target_rpm; // 오버런 방지
-                    }
-                    else if (current_rpm > target_rpm)
-                    {
-                        current_rpm -= rand.Next(min_random, max_random);
-                        if (current_rpm < target_rpm) current_rpm = target_rpm;
-                    }
+                        return this._plcManager.PLC_Start(chamberName, target_rpm, current_rpm, false).GetAwaiter().GetResult();
+                    }).Result;
 
-                    this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
-                    ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
-                    await Task.Delay(1000);
+                    if (current_rpm == -1)
+                    {
+                        throw new InvalidOperationException("PLC Connect ERROR");
+                    }
+                    else
+                    {
+                        result.RPM = (int)current_rpm;
+                    }
+                }
+                else
+                {
+                    float current_rpm = 0;
+                    int target_rpm = this._equiptempManager.Dry_RPM;
+                    int max_random = this._equiptempManager.Dry_RPM / 10;
+                    int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
+
+
+                    while (Math.Abs(current_rpm - target_rpm) > 1)
+                    {
+                        if (current_rpm < target_rpm)
+                        {
+                            current_rpm += rand.Next(min_random, max_random);
+                            if (current_rpm > target_rpm) current_rpm = target_rpm; // 오버런 방지
+                        }
+                        else if (current_rpm > target_rpm)
+                        {
+                            current_rpm -= rand.Next(min_random, max_random);
+                            if (current_rpm < target_rpm) current_rpm = target_rpm;
+                        }
+
+                        this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
+                        ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
+                        await Task.Delay(1000);
+                    }
+                    result.RPM = (int)current_rpm;
                 }
 
-                result.RPM = (int)current_rpm;
 
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] End Spin");
 
@@ -231,16 +259,27 @@ namespace SemiConductor_Equipment.Services
                 else
                     wafer.Status = "Completed";
 
-                while (current_rpm > 0)
+                if (this._simulationManager.State)
                 {
-                    current_rpm -= rand.Next(min_random, max_random);
-                    if (current_rpm < 0)
+                    await this._plcManager.PLC_Stop(chamberName, false);
+                }
+                else
+                {
+                    int current_rpm = result.RPM;
+                    int max_random = this._equiptempManager.Dry_RPM / 10;
+                    int min_random = (this._equiptempManager.Dry_RPM / 50) == 0 ? 1 : this._equiptempManager.Dry_RPM / 50;
+
+                    while (current_rpm > 0)
                     {
-                        current_rpm = 0;
+                        current_rpm -= rand.Next(min_random, max_random);
+                        if (current_rpm < 0)
+                        {
+                            current_rpm = 0;
+                        }
+                        this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
+                        ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
+                        await Task.Delay(1000);
                     }
-                    this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Rotational Speed : {(int)current_rpm} rpm");
-                    ChangeRPMData?.Invoke(this, new ChamberRPMValue(chamberName, current_rpm));
-                    await Task.Delay(1000);
                 }
                 this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] Spin Stop");
 
@@ -292,8 +331,26 @@ namespace SemiConductor_Equipment.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("StartProcessingAsync 예외: " + ex);
-                throw;
+                wafer.Status = "Error";
+                Enque_Robot?.Invoke(this, new RobotCommand
+                {
+                    CommandType = RobotCommandType.Error,
+                    Wafer = wafer,
+                    Location = "Dry",
+                    NextLocation = "LoadPort",
+                    Completed = chamberName
+                });
+
+                result.HasAlarm = true;
+                result.ErrorInfo = "PLC Connect ERROR";
+
+                sw.Stop();
+                result.EndTime = DateTime.Now;
+                result.ProcessDuration = sw.Elapsed;
+
+                this._logManager.WriteLog($"Dry_{chamberName}", $"State", $"[{chamberName}] {wafer.SlotId} process done in {chamberName}");
+
+                this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
             }
         }
 

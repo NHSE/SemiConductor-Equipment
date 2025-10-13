@@ -23,11 +23,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #region FIELDS
         public event EventHandler<Wafer> RemoveRequested;
         public event EventHandler<Wafer> AddRequested;
+        public event EventHandler<List<int>> OHT_LoadWafer;
+        public event Action OHT_UnLoadWafer;
         private readonly IRobotArmManager _robotArmManager;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
         private readonly IEventMessageManager _eventMessageManager;
         private readonly IWaferProcessCoordinator _processManager;
+        private readonly IOHTManager _ohtManager;
         public byte LoadPortId => 1;
         private bool imgflag = false;
         #endregion
@@ -62,18 +65,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// <param name="eventMessageManager"></param>
         /// <param name="processManager"></param>
         public LoadPort1_ViewModel(IRobotArmManager robotArmManager, IRunningStateManger runningStateManager, IVIDManager VIDManager, 
-            IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager)
+            IEventMessageManager eventMessageManager, IWaferProcessCoordinator processManager, IOHTManager ohtManager)
         {
             this._robotArmManager = robotArmManager;
             this._runningStateManager = runningStateManager;
             this._vIDManager = VIDManager;
             this._eventMessageManager = eventMessageManager;
             this._processManager = processManager;
+            this._ohtManager = ohtManager;
 
             this._robotArmManager.CommandStarted += OnWaferOut;
             this._robotArmManager.CommandCompleted += OnWaferIn;
             this._runningStateManager.DataChange += OnEquipment_State_Change;
             this._processManager.Process += ProcessChange;
+
+            this._ohtManager.Insert_Wafer += OHT_inserts_Wafer;
+            this._ohtManager.Remove_Wafer += OHT_Remove_Wafer;
 
             PropertyChanged += OnPropertyChanged;
         }
@@ -90,6 +97,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._runningStateManager.Change_State("LoadPort1", state);
             Event_Send(101);
             _waferinfo.Clear();
+            this._ohtManager._isWafer = false;
         }
         #endregion
 
@@ -107,6 +115,64 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1_in_wafer" });
                 else if (this.IsSetupEnabled && _waferinfo.Count == 0)
                     WeakReferenceMessenger.Default.Send(new ViewModelMessages { Content = "LoadPort1" });
+            }
+        }
+
+        private void OHT_inserts_Wafer(object? sender, OHTCarrierInfo e)
+        {
+            if (e.LoadPort != this.LoadPortId) return;
+
+            this.SelectedSlots = e.CarrierInfo;
+            if (e.CarrierInfo.Count > 0)
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.IsSetupEnabled = false;
+                    this.IsCancelEnabled = true;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.IsSetupEnabled = false;
+                        this.IsCancelEnabled = true;
+                    });
+                }
+            }
+
+            this._ohtManager._isWafer = true;
+            OHT_LoadWafer?.Invoke(this, this.SelectedSlots);
+        }
+
+        private void OHT_Remove_Wafer(int LoadPort_Number)
+        {
+            if (LoadPort_Number == this.LoadPortId)
+            {
+                if(this.Waferinfo.Count == 0)
+                {
+                    Console.WriteLine("XX");
+                    return;
+                }
+
+                this.SelectedSlots.Clear();
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    this.Waferinfo.Clear();
+                    this.IsSetupEnabled = true;
+                    this.IsCancelEnabled = false;
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.Waferinfo.Clear();
+                        this.IsSetupEnabled = true;
+                        this.IsCancelEnabled = false;
+                    });
+                }
+
+                this._ohtManager._isWafer = false;
+                OHT_UnLoadWafer?.Invoke();
             }
         }
 
@@ -199,30 +265,64 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// <param name="newValue"></param>
         partial void OnSelectedSlotsChanged(List<int> oldValue, List<int> newValue)
         {
-            if (newValue == null) return;
-
-            this.Waferinfo.Clear();
-            Random random = new Random();
-            string carrierId = this.CarrierId ?? "UNKNOWN";
-
-            foreach (int slot in newValue.OrderBy(x => x))
+            if (Application.Current.Dispatcher.CheckAccess())
             {
-                double temperature = random.Next(20, 30);
-                this.Waferinfo.Add(new Wafer
-                {
-                    LoadportId = this.LoadPortId,
-                    Wafer_Num = slot,
-                    CarrierId = carrierId,
-                    PJId = "",
-                    CJId = "",
-                    SlotId = slot.ToString("D2"),
-                    LotId = "",
-                    CurrentLocation = $"LoadPort{this.LoadPortId}",
-                    RequiredTemperature = temperature,
-                    RunningTime = 0.0,
-                });
+                if (newValue == null) return;
 
-                this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                this.Waferinfo.Clear();
+                Random random = new Random();
+                string carrierId = this.CarrierId ?? "UNKNOWN";
+
+                foreach (int slot in newValue.OrderBy(x => x))
+                {
+                    double temperature = random.Next(20, 30);
+                    this.Waferinfo.Add(new Wafer
+                    {
+                        LoadportId = this.LoadPortId,
+                        Wafer_Num = slot,
+                        CarrierId = carrierId,
+                        PJId = "",
+                        CJId = "",
+                        SlotId = slot.ToString("D2"),
+                        LotId = "",
+                        CurrentLocation = $"LoadPort{this.LoadPortId}",
+                        RequiredTemperature = temperature,
+                        RunningTime = 0.0,
+                    });
+
+                    this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                }
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (newValue == null) return;
+
+                    this.Waferinfo.Clear();
+                    Random random = new Random();
+                    string carrierId = this.CarrierId ?? "UNKNOWN";
+
+                    foreach (int slot in newValue.OrderBy(x => x))
+                    {
+                        double temperature = random.Next(20, 30);
+                        this.Waferinfo.Add(new Wafer
+                        {
+                            LoadportId = this.LoadPortId,
+                            Wafer_Num = slot,
+                            CarrierId = carrierId,
+                            PJId = "",
+                            CJId = "",
+                            SlotId = slot.ToString("D2"),
+                            LotId = "",
+                            CurrentLocation = $"LoadPort{this.LoadPortId}",
+                            RequiredTemperature = temperature,
+                            RunningTime = 0.0,
+                        });
+
+                        this._vIDManager?.SetDVID(1001, (int)temperature, slot);
+                    }
+                });
             }
             this._vIDManager?.SetDVID(1002, newValue.Count(), LoadPortId);
             this._vIDManager?.SetSVID(102, "CLOSE");
