@@ -185,7 +185,7 @@ namespace SemiConductor_Equipment.Services
                 if (this._simulationManager.State)
                 {
                     int current_rpm = 0;
-                    int target_rpm = this._equiptempManager.Clean_RPM;
+                    int target_rpm = this._equiptempManager.Dry_RPM;
                     current_rpm = Task.Run(() =>
                     {
                         return this._plcManager.PLC_Start(chamberName, target_rpm, current_rpm, false).GetAwaiter().GetResult();

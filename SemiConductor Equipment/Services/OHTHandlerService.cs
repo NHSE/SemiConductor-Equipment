@@ -70,7 +70,7 @@ namespace SemiConductor_Equipment.Services
 
         public void Start()
         {
-            _cts = new CancellationTokenSource(10000);
+            _cts = new CancellationTokenSource();
             Task.Run(() => _ = Server_Start(_cts.Token));
         }
 
@@ -91,6 +91,7 @@ namespace SemiConductor_Equipment.Services
                     _State = false;
                     Server_Connect?.Invoke();
                     this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
+                    Stop();
                     return;
                 }
             }
@@ -253,6 +254,7 @@ namespace SemiConductor_Equipment.Services
                 _cts.Cancel();
                 _cts.Dispose();
                 _cts = null;
+                _server.Dispose();
             }
         }
 

@@ -112,12 +112,6 @@
                                 <RotateTransform x:Name="WaferRotate" Angle="0" CenterX="100" CenterY="100"/>
                             </Image.RenderTransform>
                         </Image>
-                        <TextBlock Text="WAFER"
-                   Foreground="White"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
             </Border>

@@ -81,7 +81,7 @@ namespace SemiConductor_Equipment.Services
                     if (isAllDone)
                         break;
 
-                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함
+                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함 + 통신 중간에 종료 시
                     if(_cleanManager.IsAllDisableChamber() && waferQueue.Count > 0)
                     {
                         while(waferQueue.Count != 0)
