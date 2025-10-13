@@ -29,6 +29,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly ILogManager _logManager;
         private readonly IChamberManager _chamberManager;
         private readonly IEquipmentConfigManager _equipmentConfigManager;
+        private readonly IPLCManager _plcManager;
         private FileSystemWatcher _logFileWatcher;
         private readonly object _itemLock1 = new object();
         private long lastLogPosition = 0;
@@ -88,7 +89,14 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region CONSTRUCTOR
-        public Chamber1_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager, IEquipmentConfigManager equipmentConfigManager)
+        /// <summary>
+        /// Dry Chamber 1 클래스
+        /// </summary>
+        /// <param name="logService"></param>
+        /// <param name="messageBox"></param>
+        /// <param name="chamberManager"></param>
+        /// <param name="equipmentConfigManager"></param>
+        public Chamber1_ViewModel(ILogManager logService, IMessageBox messageBox, IChamberManager chamberManager, IEquipmentConfigManager equipmentConfigManager, IPLCManager plcManager)
         {
             this._logManager = logService;
             // 구독: 로그가 갱신될 때마다 OnLogUpdated 호출
@@ -107,6 +115,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._chamberManager.ProcessHandled += OnProcess;
             this._chamberManager.ChangeRPMData += OnRPMData;
 
+            this._plcManager = plcManager;
+            this._plcManager.ChangeRPMData += OnRPMData;
+
             this._equipmentConfigManager = equipmentConfigManager;
             this._equipmentConfigManager.ConfigRead += ChangeTempData;
             this._equipmentConfigManager.InitConfig();
@@ -118,7 +129,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region METHOD
-
+        /// <summary>
+        /// Log파일 읽기 설정 메서드
+        /// </summary>
         private void SetupLogFileWatcher()
         {
             var logDirectory = @$"C:\Logs";
@@ -135,6 +148,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _logFileWatcher.EnableRaisingEvents = true;
         }
 
+        /// <summary>
+        /// Log 파일 실시간 읽기 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -162,6 +180,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             });
         }
 
+        /// <summary>
+        /// Log 파일 설정 메서드
+        /// </summary>
         private void LoadInitialLogs()
         {
             var logPath = Path.Combine(@"C:\Logs", $"Chamber1_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.log");
@@ -246,18 +267,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
-        private SKColor GetColorByWaferId(string waferId)
-        {
-            // 예시로 해시값 기반 색상 설정
-            int hash = waferId.GetHashCode();
-            var r = (byte)((hash >> 16) & 0xFF);
-            var g = (byte)((hash >> 8) & 0xFF);
-            var b = (byte)(hash & 0xFF);
-
-            return new SKColor(r, g, b);
-        }
-
-
+        /// <summary>
+        /// 프로세스 시작 시 값 초기화 메서드
+        /// </summary>
         private void OnProcess()
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -275,6 +287,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// RPM 데이터 저장 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnRPMData(object? sender, ChamberRPMValue e)
         {
             if (e.ChamberName == "Chamber1")
@@ -333,6 +350,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             }
         }
 
+        /// <summary>
+        /// 온도 값 변경 메서드
+        /// </summary>
         private void ChangeTempData()
         {
             if (Application.Current.Dispatcher.CheckAccess())

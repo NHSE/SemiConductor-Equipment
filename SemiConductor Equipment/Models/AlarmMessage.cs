@@ -8,6 +8,10 @@ namespace SemiConductor_Equipment.Models
 {
     public partial class AlarmMessage : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         [ObservableProperty]
         private int _alarmNum;
 
@@ -15,5 +19,15 @@ namespace SemiConductor_Equipment.Models
         private string? _alarmMsg;
         [ObservableProperty]
         private DateTime? _alarmTime;
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }

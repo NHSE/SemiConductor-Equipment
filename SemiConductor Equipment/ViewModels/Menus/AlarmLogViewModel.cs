@@ -30,6 +30,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 알람 메세지 Clear 커맨드
+        /// </summary>
         [RelayCommand]
         private void Clear()
         {
@@ -41,6 +44,11 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 알람 메세지 삽입 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AlarmMsgManager_AlarmData(object? sender, string e)
         {
             if (e == string.Empty) return;

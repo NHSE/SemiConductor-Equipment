@@ -22,6 +22,10 @@ namespace SemiConductor_Equipment.ViewModels.MessageBox
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 메세지 박스 클래스
+        /// </summary>
+        /// <param name="messageBox"></param>
         public MessageBox_ViewModel(IMessageBox messageBox)
         {
             this._messageBox = messageBox;
@@ -33,6 +37,11 @@ namespace SemiConductor_Equipment.ViewModels.MessageBox
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 메세지 박스 Show 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void OnMessageShow(object sender, List<string> args)
         {
             // Dispatcher로 UI 스레드에서 메시지 박스 띄우기

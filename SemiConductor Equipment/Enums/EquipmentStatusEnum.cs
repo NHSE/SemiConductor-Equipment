@@ -8,10 +8,12 @@ namespace SemiConductor_Equipment.Enums
 {
     public enum EquipmentStatusEnum
     {
+        #region ENUM
         Ready,       // 대기 중
         Wait,
         Running,    // 동작 중
         Completed,   // 작업 완료
         Error
+        #endregion
     }
 }

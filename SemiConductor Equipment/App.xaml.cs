@@ -21,6 +21,8 @@ using System.Configuration;
 using SemiConductor_Equipment.ViewModels.MessageBox;
 using SemiConductor_Equipment.Views.MessageBox;
 using Secs4Net;
+using SemiConductor_Equipment.Views.Menus.Windows;
+using SemiConductor_Equipment.ViewModels.Menus.Windows;
 
 namespace SemiConductor_Equipment
 {
@@ -100,6 +102,11 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<AlarmLogHistoryWindow>();
                 services.AddSingleton<AlarmLogHistoryViewModel>();
 
+                services.AddSingleton<SimulationWindow>();
+                services.AddSingleton<SimulationViewModel>();
+                services.AddSingleton<ISimulationManager>(provider =>
+                                    new SimulationService(@"C:\Configs"));
+
                 services.AddSingleton<IChamberManager, ChamberService>();
                 services.AddSingleton<Chamber1_ViewModel>();
                 services.AddSingleton<Chamber2_ViewModel>();
@@ -155,7 +162,7 @@ namespace SemiConductor_Equipment
                 services.AddDbContext<LogDatabaseContext>();
 
                 services.AddSingleton<Action<string>>(provider => AppendLog);
-                services.AddSingleton<MessageHandlerService>();
+                services.AddSingleton<IMessageManager, MessageHandlerService>();
                 services.AddSingleton<ISecsGemServer, SecsGemServer>();
                 services.AddSingleton<IWaferManager, WaferService>();
                 services.AddSingleton<IWaferProcessCoordinator ,WaferProcessCoordinatorService>();
@@ -163,6 +170,8 @@ namespace SemiConductor_Equipment
                 services.AddSingleton<IRobotArmManager, RobotArmService>();
                 services.AddSingleton<IRunningStateManger, RunningStateService>();
                 services.AddSingleton<IDBLogManager, DbLogHelper>();
+                services.AddSingleton<IPLCManager, PLCHandlerService>();
+                services.AddSingleton<IOHTManager, OHTHandlerService>();
             }).Build();
 
         public static Action<string> AppendLog = msg => Console.WriteLine(msg);

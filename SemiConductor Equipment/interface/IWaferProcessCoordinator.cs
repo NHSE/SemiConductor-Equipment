@@ -12,7 +12,15 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IWaferProcessCoordinator
     {
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         Task StartProcessAsync(Queue<Wafer> waferQueue, CancellationToken token);
+        #endregion
+
+        #region EVENTS
         event EventHandler<string> Process;
+        #endregion
     }
 }

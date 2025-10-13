@@ -38,6 +38,11 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region CONSTRUCTOR
+        /// <summary>
+        /// 장비 테스트 설정 클래스
+        /// </summary>
+        /// <param name="configManager"></param>
+        /// <param name="messageBoxManager"></param>
         public EquipMenusViewModel(IEquipmentConfigManager configManager, IMessageBox messageBoxManager)
         {
             _configManager = configManager;
@@ -48,12 +53,18 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region COMMAND
+        /// <summary>
+        /// 초기화 커맨드
+        /// </summary>
         [RelayCommand]
         private void Init()
         {
             _configManager.InitConfig();
         }
 
+        /// <summary>
+        /// 입력 값 저장 메서드
+        /// </summary>
         [RelayCommand]
         private void Save()
         {
@@ -79,6 +90,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus
         #endregion
 
         #region METHOD
+        /// <summary>
+        /// 설정 파일 Read 메서드
+        /// </summary>
         private void OnConfigRead()
         {
             this.Clean_rpm = _configManager.Clean_RPM;

@@ -13,11 +13,14 @@ namespace SemiConductor_Equipment.interfaces
         #endregion
 
         #region METHODS
-        event EventHandler<EquipmentStatusEnum> DataChange;
 
         void Change_State(object? sender, EquipmentStatusEnum state);
 
         public EquipmentStatusEnum Get_State();
+        #endregion
+
+        #region EVENTS
+        event EventHandler<EquipmentStatusEnum> DataChange;
         #endregion
     }
 }

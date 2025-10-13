@@ -14,12 +14,24 @@ namespace SemiConductor_Equipment.Services
 {
     public class ApplicationHostService : IHostedService
     {
+        #region FIELDS
         private readonly IServiceProvider _serviceProvider;
-        public ApplicationHostService(IServiceProvider serviceProvider) 
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        public ApplicationHostService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             try
@@ -41,5 +53,7 @@ namespace SemiConductor_Equipment.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         => await Task.CompletedTask;
+        #endregion
+
     }
 }

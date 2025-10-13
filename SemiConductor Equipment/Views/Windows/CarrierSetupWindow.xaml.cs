@@ -21,6 +21,7 @@ namespace SemiConductor_Equipment.Views.Windows // ALL 체크 박스 추가 !!!,
     /// </summary>
     public partial class CarrierSetupWindow : Window
     {
+        #region FIELDS
         private List<Line> wafers = new List<Line>();
         private const int SlotCount = 25;
         private const double TopY = 90;
@@ -30,14 +31,24 @@ namespace SemiConductor_Equipment.Views.Windows // ALL 체크 박스 추가 !!!,
 
         public List<int> SelectedWaferSlots { get; private set; } = new();
         private double GapY => (BottomY - TopY) / (SlotCount - 1);
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
         public CarrierSetupWindow()
         {
             InitializeComponent();
             DataContext = new CarrierSetupViewModel();
-            
-        }
 
+        }
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         private void ImageCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point clickPoint = e.GetPosition(ImageCanvas);
@@ -80,7 +91,7 @@ namespace SemiConductor_Equipment.Views.Windows // ALL 체크 박스 추가 !!!,
         private void AddWaferToSlot(int slotIndex)
         {
             // 기존 선 추가 코드 외에:
-            if (!SelectedWaferSlots.Contains((slotIndex-25) * (-1)))
+            if (!SelectedWaferSlots.Contains((slotIndex - 25) * (-1)))
                 SelectedWaferSlots.Add((slotIndex - 25) * (-1));
         }
 
@@ -135,5 +146,6 @@ namespace SemiConductor_Equipment.Views.Windows // ALL 체크 박스 추가 !!!,
             }
             wafers.Clear();
         }
+        #endregion
     }
 }

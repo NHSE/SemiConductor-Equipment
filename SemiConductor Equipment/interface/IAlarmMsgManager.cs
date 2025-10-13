@@ -9,10 +9,18 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IAlarmMsgManager
     {
-        event EventHandler<string> AlarmData;
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         void AlarmMessage_IN(string alarmmsg);
         void AlarmMessage_OUT();
 
         bool IsAlarm { get; set; }
+        #endregion
+
+        #region EVENTS
+        event EventHandler<string> AlarmData;
+        #endregion
     }
 }

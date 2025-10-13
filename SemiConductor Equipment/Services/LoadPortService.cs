@@ -9,6 +9,7 @@ namespace SemiConductor_Equipment.Services
 {
     public class LoadPortService : ILoadPortManager
     {
+        #region FIELDS
         private readonly object _lock = new();
 
         // 포트 ID별로 슬롯 25개 (0~24): 각 슬롯에 Wafer 저장
@@ -17,7 +18,18 @@ namespace SemiConductor_Equipment.Services
             ["LoadPort1"] = new Wafer?[25],
             ["LoadPort2"] = new Wafer?[25]
         };
+        #endregion
 
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public Wafer? PickWaferFromPort(string loadPortId)
         {
             lock (_lock)
@@ -93,5 +105,8 @@ namespace SemiConductor_Equipment.Services
                     .ToList();
             }
         }
+        #endregion
+
+
     }
 }

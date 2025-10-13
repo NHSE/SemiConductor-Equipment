@@ -22,9 +22,18 @@ namespace SemiConductor_Equipment.Views.Windows
     /// <summary>
     /// AlarmLogHistoryWindow.xaml에 대한 상호 작용 논리
     /// </summary>
+    /// 
+
     public partial class AlarmLogHistoryWindow : Window
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
         public AlarmLogHistoryViewModel ViewModel { get; set; }
+        #endregion
+
+        #region CONSTRUCTOR
         public AlarmLogHistoryWindow(AlarmLogHistoryViewModel viewModel)
         {
             InitializeComponent();
@@ -33,7 +42,12 @@ namespace SemiConductor_Equipment.Views.Windows
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.OnNavigatedToAsync();
@@ -49,5 +63,6 @@ namespace SemiConductor_Equipment.Views.Windows
                     break;
             }
         }
+        #endregion
     }
 }

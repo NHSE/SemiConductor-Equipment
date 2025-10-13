@@ -8,8 +8,10 @@ namespace SemiConductor_Equipment.Enums
 {
     public enum RobotCommandType
     {
+        #region ENUM
         MoveTo,
         Error,
         Place
+        #endregion
     }
 }

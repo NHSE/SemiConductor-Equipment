@@ -10,6 +10,10 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IEventMessageManager
     {
+        #region PROPERTIES
+        #endregion
+
+        #region METHODS
         CEIDInfo GetCEID(int ceid_num);
         bool IsCEIDEnabled(int ceid);
         bool IsCEID(uint ceid);
@@ -26,5 +30,9 @@ namespace SemiConductor_Equipment.interfaces
         void StartProcessing();
         Task StopProcessing();
         Task ProcessEventQueueAsync(CancellationToken token);
+        #endregion
+
+        #region EVENTS
+        #endregion
     }
 }

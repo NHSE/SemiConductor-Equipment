@@ -24,8 +24,14 @@ namespace SemiConductor_Equipment.Views.Windows
     public partial class CEIDModifyWindow : Window
     {
 
-        public CEIDModifyViewModel ViewModel { get; }
+        #region FIELDS
+        #endregion
 
+        #region PROPERTIES
+        public CEIDModifyViewModel ViewModel { get; }
+        #endregion
+
+        #region CONSTRUCTOR
         public CEIDModifyWindow(CEIDModifyViewModel viewModel)
         {
             InitializeComponent();
@@ -35,7 +41,12 @@ namespace SemiConductor_Equipment.Views.Windows
             ViewModel.CloseRequested += OnClose;
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         private void Initialize(bool State)
         {
             if (!State)
@@ -67,7 +78,7 @@ namespace SemiConductor_Equipment.Views.Windows
                     if (toggle.IsChecked == true && !vm.SelectedSvids.Contains(vid))
                     {
                         vm.SelectedSvids.Add(vid);
-                        if(vm.Svid_list != string.Empty)
+                        if (vm.Svid_list != string.Empty)
                             vm.Svid_list += $", {vid}";
                         else
                             vm.Svid_list += $"{vid}";
@@ -99,7 +110,7 @@ namespace SemiConductor_Equipment.Views.Windows
 
         private void OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "State")
+            if (e.PropertyName == "State")
             {
                 if (this.tgbstate.Content == "ON")
                 {
@@ -116,5 +127,8 @@ namespace SemiConductor_Equipment.Views.Windows
         {
             this.Close();
         }
+        #endregion
+
+
     }
 }

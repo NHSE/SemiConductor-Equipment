@@ -9,9 +9,19 @@ namespace SemiConductor_Equipment.ViewModels.Windows
 {
     public partial class CarrierSetupViewModel : ObservableObject
     {
+        #region FIELDS
+        #endregion
+
+        #region PROPERTIES
+
         [ObservableProperty]
         private ObservableCollection<int> _selectedWaferSlots = new();
+        #endregion
 
+        #region CONSTRUCTOR
+        #endregion
+
+        #region COMMAND
         [RelayCommand]
         private void ToggleSlot(int slotIndex)
         {
@@ -20,5 +30,9 @@ namespace SemiConductor_Equipment.ViewModels.Windows
             else
                 SelectedWaferSlots.Add(slotIndex);
         }
+        #endregion
+
+        #region METHOD
+        #endregion
     }
 }

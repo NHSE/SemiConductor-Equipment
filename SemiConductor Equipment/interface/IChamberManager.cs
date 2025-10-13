@@ -12,6 +12,11 @@ namespace SemiConductor_Equipment.interfaces
 {
     public interface IChamberManager
     {
+        #region PROPERTIES
+        IDictionary<string, string> Chamber_State { get; set; }
+        #endregion
+
+        #region METHODS
         bool IsAllChamberEmpty();
         string? FindEmptyChamber();
 
@@ -20,13 +25,14 @@ namespace SemiConductor_Equipment.interfaces
         void AddWaferToChamber(string chamberName, Wafer wafer);
         Task StartProcessingAsync(string chamberName, Wafer wafer);
         void ProcessStart();
+        #endregion
 
-        IDictionary<string, string> Chamber_State { get; set; }
-
+        #region EVENTS
         event EventHandler<ChamberStatus> DataEnqueued;
         event EventHandler<RobotCommand> Enque_Robot;
         event EventHandler<Wafer> ChangeTempData;
         event EventHandler<ChamberRPMValue> ChangeRPMData;
         event Action ProcessHandled;
+        #endregion
     }
 }

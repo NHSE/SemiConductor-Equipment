@@ -8,19 +8,33 @@ namespace SemiConductor_Equipment.Services
 {
     public class LogService : ILogManager
     {
-        // 로그별로 이벤트 제공 (예시: 사전으로 관리)
+        #region FIELDS
         private readonly Dictionary<string, Action<string>?> _logUpdatedEvents = new();
         private readonly string _logDirectory;
+        private static readonly object _logLock = new object();
+        #endregion
 
+        #region PROPERTIES
         public string LogDataTime { get; set; } // S14F9 받은 시점
+        #endregion
 
+        #region CONSTRUCTOR
+        /// <summary>
+        /// Chamber, Event 등 실행 로그를 저장하는 서비스 레이어
+        /// </summary>
+        /// <param name="logDirectory"></param>
         public LogService(string logDirectory)
         {
             _logDirectory = logDirectory;
             if (!Directory.Exists(_logDirectory))
                 Directory.CreateDirectory(_logDirectory);
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         /// <summary>
         /// 로그 기록 (날짜별 파일 자동 생성)
         /// </summary>
@@ -36,12 +50,16 @@ namespace SemiConductor_Equipment.Services
                 filePath = GetLogPath(logType);
             }
             string logLine = $"{DateTime.Now:HH:mm:ss} {messagetype} ▶ {message}";
-            File.AppendAllText(filePath, logLine + Environment.NewLine);
 
-            // 파일 전체 내용을 읽어서 이벤트 발행 (실시간 뷰 갱신용)
-            string newContent = File.ReadAllText(filePath);
-            if (_logUpdatedEvents.ContainsKey(logType))
-                _logUpdatedEvents[logType]?.Invoke(newContent);
+            lock (_logLock)
+            {
+                File.AppendAllText(filePath, logLine + Environment.NewLine);
+
+                // 파일 전체 내용을 읽어서 이벤트 발행 (실시간 뷰 갱신용)
+                string newContent = File.ReadAllText(filePath);
+                if (_logUpdatedEvents.ContainsKey(logType))
+                    _logUpdatedEvents[logType]?.Invoke(newContent);
+            }
         }
 
         /// <summary>
@@ -55,7 +73,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// 날짜/시간 폴더별 로그 파일 경로 반환
         /// </summary>
         public string GetLogFilePath(string logType)
         {
@@ -64,7 +82,7 @@ namespace SemiConductor_Equipment.Services
         }
 
         /// <summary>
-        /// 날짜별 로그 파일 경로 반환 (예: Chamber1_20240605.log)
+        /// 시간별 로그 파일 경로 반환
         /// </summary>
         public string GetLogPath(string logType)
         {
@@ -72,6 +90,10 @@ namespace SemiConductor_Equipment.Services
             return Path.Combine(_logDirectory, fileName);
         }
 
+        /// <summary>
+        /// 현재 시간에 해당하는 폴더 경로 확인 및 생성
+        /// </summary>
+        /// <param name="time"></param>
         public void SetTime(string time)
         {
             this.LogDataTime = time;
@@ -79,5 +101,8 @@ namespace SemiConductor_Equipment.Services
             if (!Directory.Exists(processlogDir))
                 Directory.CreateDirectory(processlogDir);
         }
+        #endregion
+
+
     }
 }

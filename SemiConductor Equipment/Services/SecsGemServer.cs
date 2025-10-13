@@ -17,19 +17,37 @@ namespace SemiConductor_Equipment.Services
 {
     public class SecsGemServer : ISecsGemServer
     {
-        private Action<string> _log;
+        #region FIELDS
         private SecsGem _secs;
+
         private ISecsConnection _hsmsConnector;
         private IEventMessageManager _eventMessageManager;
         private readonly IAlarmMsgManager _alarmMsgManager;
         private readonly ITraceDataManager _traceDataManager;
-        public event EventHandler Connected;
-        public event EventHandler Disconnected;
-        private readonly MessageHandlerService _messageHandler;
+        private readonly IMessageManager _messageHandler;
+
         private CancellationTokenSource? _cts;
         private CancellationTokenSource _connectingCts;
 
-        public SecsGemServer(Action<string> logger, MessageHandlerService messageHandler, IEventMessageManager eventMessageManager, 
+        private Action<string> _log;
+        public event EventHandler Connected;
+        public event EventHandler Disconnected;
+
+        #endregion
+
+        #region PROPERTIES
+        #endregion
+
+        #region CONSTRUCTOR
+        /// <summary>
+        /// SECS/GEM 통신을 진행하기 위한 서비스 레이어
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="eventMessageManager"></param>
+        /// <param name="alarmMsgManager"></param>
+        /// <param name="traceDataManager"></param>
+        public SecsGemServer(Action<string> logger, IMessageManager messageHandler, IEventMessageManager eventMessageManager,
             IAlarmMsgManager alarmMsgManager, ITraceDataManager traceDataManager)
         {
             this._messageHandler = messageHandler;
@@ -37,8 +55,20 @@ namespace SemiConductor_Equipment.Services
             this._alarmMsgManager = alarmMsgManager;
             this._traceDataManager = traceDataManager;
         }
+        #endregion
 
-        public bool Initialize(Action<string> logger, MessageHandlerService messageHandler, IConfigManager configManager)
+        #region COMMAND
+        #endregion
+
+        #region METHOD
+        /// <summary>
+        /// SECS/GEM 통신 연결하는 메서드
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="configManager"></param>
+        /// <returns></returns>
+        public bool Initialize(Action<string> logger, IMessageManager messageHandler, IConfigManager configManager)
         {
             bool ret = false;
 
@@ -80,9 +110,12 @@ namespace SemiConductor_Equipment.Services
                 Stop();
                 ret = true;
             }
-                return ret;
+            return ret;
         }
 
+        /// <summary>
+        /// SECS/GEM 통신 시작하는 메서드
+        /// </summary>
         public void Start()
         {
             this._hsmsConnector.Start(CancellationToken.None);
@@ -92,6 +125,9 @@ namespace SemiConductor_Equipment.Services
             Task.Run(() => ReceivePrimaryMessagesAsync(_cts.Token));
         }
 
+        /// <summary>
+        /// SECS/GEM 통신 종료하는 메서드
+        /// </summary>
         public void Stop()
         {
             // 1. CancellationTokenSource를 통해 비동기 작업 취소 요청
@@ -101,7 +137,7 @@ namespace SemiConductor_Equipment.Services
                 _cts.Dispose();
                 _cts = null;
             }
-            
+
             if (_hsmsConnector is HsmsConnection disposable)
             {
                 disposable.DisposeAsync();
@@ -116,6 +152,11 @@ namespace SemiConductor_Equipment.Services
         private void OnConnected() => Connected?.Invoke(this, EventArgs.Empty);
         private void OnDisconnected() => Disconnected?.Invoke(this, EventArgs.Empty);
 
+        /// <summary>
+        /// 현재 연결 상태를 나타내는 메서드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnConnectionChanged(object sender, ConnectionState e)
         {
             switch (e)
@@ -156,6 +197,11 @@ namespace SemiConductor_Equipment.Services
             }
         }
 
+        /// <summary>
+        /// 메세지를 수신 받기 위해 실행되는 메서드
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         private async Task ReceivePrimaryMessagesAsync(CancellationToken cancellationToken)
         {
             try
@@ -174,5 +220,8 @@ namespace SemiConductor_Equipment.Services
                 _alarmMsgManager?.AlarmMessage_IN($"[ERROR] Exception in ReceivePrimaryMessagesAsync: {ex}");
             }
         }
+        #endregion
+
+
     }
 }

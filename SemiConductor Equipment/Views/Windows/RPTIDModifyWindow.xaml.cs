@@ -22,8 +22,14 @@ namespace SemiConductor_Equipment.Views.Windows
     /// </summary>
     public partial class RPTIDModifyWindow : Window
     {
-        public RPTIDModifyViewModel ViewModel { get; }
+        #region FIELDS
+        #endregion
 
+        #region PROPERTIES
+        public RPTIDModifyViewModel ViewModel { get; }
+        #endregion
+
+        #region CONSTRUCTOR
         public RPTIDModifyWindow(RPTIDModifyViewModel viewModel)
         {
             InitializeComponent();
@@ -32,7 +38,12 @@ namespace SemiConductor_Equipment.Views.Windows
 
             ViewModel.CloseRequested += OnClose;
         }
+        #endregion
 
+        #region COMMAND
+        #endregion
+
+        #region METHOD
         public void SetItem(RPTIDInfo item)
         {
             if (ViewModel is RPTIDModifyViewModel vm)
@@ -41,6 +52,12 @@ namespace SemiConductor_Equipment.Views.Windows
             }
         }
 
+
+        /// <summary>
+        /// RPTID 수정 시 VID LINK 추가
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleButton toggle && toggle.DataContext is int vid)
@@ -59,6 +76,11 @@ namespace SemiConductor_Equipment.Views.Windows
             }
         }
 
+        /// <summary>
+        /// RPTID 수정 시 VID LINK 제거
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ToggleButton_UnChecked(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleButton toggle && toggle.DataContext is int vid)
@@ -84,5 +106,8 @@ namespace SemiConductor_Equipment.Views.Windows
         {
             this.Close();
         }
+        #endregion
+
+
     }
 }
