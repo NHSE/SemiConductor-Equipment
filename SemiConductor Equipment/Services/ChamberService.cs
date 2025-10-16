@@ -261,7 +261,11 @@ namespace SemiConductor_Equipment.Services
 
                 if (this._simulationManager.State)
                 {
-                    await this._plcManager.PLC_Stop(chamberName, false);
+                    bool state = await this._plcManager.PLC_Stop(chamberName, false);
+                    if(!state)
+                    {
+                        throw new InvalidOperationException("PLC Connect ERROR");
+                    }
                 }
                 else
                 {
@@ -332,6 +336,8 @@ namespace SemiConductor_Equipment.Services
             catch (Exception ex)
             {
                 wafer.Status = "Error";
+                this.Chamber_State[chamberName] = "DONE";
+
                 Enque_Robot?.Invoke(this, new RobotCommand
                 {
                     CommandType = RobotCommandType.Error,

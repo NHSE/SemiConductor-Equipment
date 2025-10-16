@@ -76,7 +76,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
         {
             this.Plc = "DisConnected";
             this.PlcColor = Brushes.Red;
-            Task.Run(() => this._PLCManager.Server_End());
+            Task.Run(() => this._PLCManager.Server_End(true));
         }
         #endregion
 
@@ -108,9 +108,9 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
             }
         }
 
-        private void PLC_Server_Connect()
+        private void PLC_Server_Connect(bool state)
         {
-            if (this._PLCManager._State)
+            if (state)
             {
                 this.Plc = "Connected";
                 this.PlcColor = Brushes.LightGreen;
@@ -120,6 +120,8 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
                 this.Plc = "DisConnected";
                 this.PlcColor = Brushes.Red;
             }
+
+            this._PLCManager._State = state;
         }
         #endregion
     }

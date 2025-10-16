@@ -22,7 +22,7 @@ namespace SemiConductor_Equipment.Services
         private readonly IMessageBox _messageBoxManager;
 
         public event EventHandler<ChamberRPMValue> ChangeRPMData;
-        public event Action Server_Connect;
+        public event Action<bool> Server_Connect;
 
         public bool bNotConnect { get; set; }
         public bool _State { get; set; }
@@ -67,7 +67,6 @@ namespace SemiConductor_Equipment.Services
                         if (connect[(int)Registers.Registers_Slave_Connect])
                         {
                             bNotConnect = false;
-                            _State = true;
                             break;
                         }
 
@@ -75,7 +74,7 @@ namespace SemiConductor_Equipment.Services
                         await Task.Delay(1000);
                     }
 
-                    Server_Connect?.Invoke();
+                    Server_Connect?.Invoke(true);
                 }
                 else
                 {
@@ -84,28 +83,36 @@ namespace SemiConductor_Equipment.Services
             }
             catch (Exception ex)
             {
-                bNotConnect = true;
-                _State = false;
-                Server_Connect?.Invoke();
-                this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
+                await Server_End(false);
             }
         }
 
-        public async Task Server_End()
+        public async Task Server_End(bool bClick)
         {
             try
             {
-                await _master.WriteSingleCoilAsync((int)Registers.Registers_Master_Connect, false);
-                _State = false;
-
-                Server_Connect?.Invoke();
-
-                _client.Close();
-                _master.Dispose();
+                if (bClick)
+                {
+                    await _master.WriteSingleCoilAsync((int)Registers.Registers_Master_Connect, false);
+                    bNotConnect = true;
+                    Server_Connect?.Invoke(false);
+                    _client.Close();
+                    _master.Dispose();
+                }
+                else
+                {
+                    bNotConnect = true;
+                    Server_Connect?.Invoke(false);
+                    _client.Close();
+                    _master.Dispose();
+                }
             }
             catch (Exception ex)
             {
                 bNotConnect = true;
+                Server_Connect?.Invoke(false);
+                _client.Close();
+                _master.Dispose();
                 this._messageBoxManager.Show("예외 발생", $"서버 Accept 오류: {ex.Message}");
             }
         }
@@ -209,15 +216,13 @@ namespace SemiConductor_Equipment.Services
                 return currentRpm;
             }
             catch (Exception ex)
-            {
-                this._messageBoxManager.Show("예외발생", ex.ToString());
-
-                await Server_End();
+            {                
+                await Server_End(false);
                 return -1;
             }
         }
 
-        public async Task PLC_Stop(string chambername, bool bClean)
+        public async Task<bool> PLC_Stop(string chambername, bool bClean)
         {
             try
             {
@@ -250,10 +255,14 @@ namespace SemiConductor_Equipment.Services
 
                     await Task.Delay(500);
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
-                this._messageBoxManager.Show("예외발생", ex.ToString());
+                await Server_End(false);
+
+                return false;
             }
         }
     }

@@ -31,7 +31,7 @@
                                VerticalAlignment="Center"/>
                 <ui:Button x:Name="btnBack"
                    Grid.Column="1"
-                   Click="btnBack_Click"
+                   Command="{Binding ViewModel.BackCommand}"
                    MouseOverBackground="LightGray"
                    Height="34"
                    Width="44"
@@ -58,7 +58,7 @@
 
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <ui:Button Content="History" Click="btnHistory_Click" Width="120" Height="40" Margin="0 0 20 15"/>
+                <ui:Button Content="History" Command="{Binding ViewModel.OpenCommand}" Width="120" Height="40" Margin="0 0 20 15"/>
                 <ui:Button Content="Clear" Command="{Binding ViewModel.ClearCommand}" Width="120" Height="40" Margin="0 0 20 15"/>
             </StackPanel>
         </Grid>

@@ -17,8 +17,10 @@ namespace SemiConductor_Equipment.interfaces
         #region METHODS
         object? GetSVID(int svid);
         object? GetDVID(int svid, int array_data);
+        object? GetDVID(int svid, int array_data, int slot_Number);
         void SetSVID(int svid, object data);
         void SetDVID(int svid, object data, int array_data = 0);
+        void SetDVID(int svid, object data, int loadport_Number, int slot_Number);
         List<Item>? GetRPTID(int rptid, object wafer_number, int loadport_number);
         bool IsRPTID(uint rptid);
         bool IsVID(uint vid);

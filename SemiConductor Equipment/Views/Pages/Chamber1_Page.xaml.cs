@@ -78,10 +78,6 @@ namespace SemiConductor_Equipment.Views.Pages
                     SetRpm(ViewModel.WaferRPM);
 
             }
-            else if (e.PropertyName == "WaferColor")
-            {
-                
-            }
         }
 
         public void SetRpm(double rpm)
@@ -116,17 +112,6 @@ namespace SemiConductor_Equipment.Views.Pages
             _currentAngle %= 360;
 
             WaferRotate.Angle = _currentAngle;
-        }
-
-
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
         }
 
         private void Change_Image(bool isChecked)

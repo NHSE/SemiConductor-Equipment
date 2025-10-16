@@ -118,17 +118,6 @@ namespace SemiConductor_Equipment.Views.Pages
             WaferRotate.Angle = _currentAngle;
         }
 
-
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
-
         private void Change_Image(bool isChecked)
         {
             if (isChecked)

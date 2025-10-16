@@ -45,22 +45,6 @@ namespace SemiConductor_Equipment.Views.Menus
         #endregion
 
         #region METHOD
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
-
-        private void btnHistory_Click(object sender, RoutedEventArgs e) // command로 빼기
-        {
-            var vm = App.Services.GetRequiredService<AlarmLogHistoryViewModel>();
-            var carrierSetupWindow = new AlarmLogHistoryWindow(vm);
-            var result = carrierSetupWindow.ShowDialog();
-        }
         #endregion
     }
 }

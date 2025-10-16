@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Dtos;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.ViewModels.Menus
 {
@@ -86,6 +89,17 @@ namespace SemiConductor_Equipment.ViewModels.Menus
             _configManager.UpdateConfigValue("Chamber Time", this.Chambertime);
 
             _configManager.InitConfig();
+        }
+
+        [RelayCommand]
+        private void Back()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
+            }
         }
         #endregion
 

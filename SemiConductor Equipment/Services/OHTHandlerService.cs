@@ -179,7 +179,7 @@ namespace SemiConductor_Equipment.Services
 
                     Insert_Wafer?.Invoke(this, new OHTCarrierInfo(selectedWafers, (int)Loadport_Number));
 
-                    var response = new List<byte> { type, (byte)PioSignal.L_REQ };
+                    var response = new List<byte> { type, (byte)PioSignal.REQ };
                     await stream.WriteAsync(response.ToArray(), 0, response.Count);
                 }
                 else
@@ -205,7 +205,7 @@ namespace SemiConductor_Equipment.Services
                     byte Loadport_Number = buffer[2];
                     Remove_Wafer?.Invoke(Loadport_Number);
 
-                    var response = new List<byte> { type, (byte)PioSignal.L_REQ };
+                    var response = new List<byte> { type, (byte)PioSignal.REQ };
                     await stream.WriteAsync(response.ToArray(), 0, response.Count);
                 }
                 else
@@ -224,7 +224,7 @@ namespace SemiConductor_Equipment.Services
             switch (received)
             {
                 case (byte)PioSignal.VALID:
-                    ret = (byte)PioSignal.L_REQ;
+                    ret = (byte)PioSignal.REQ;
                     //L_Req ON
                     break;
 

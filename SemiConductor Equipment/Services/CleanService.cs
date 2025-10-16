@@ -283,7 +283,11 @@ namespace SemiConductor_Equipment.Services
                 if (this._simulationManager.State)
                 {
                     //RPM 감소
-                    await this._plcManager.PLC_Stop(chambername, true);
+                    bool state = await this._plcManager.PLC_Stop(chambername, true);
+                    if(!state)
+                    {
+                        throw new InvalidOperationException("PLC Connect ERROR");
+                    }
                 }
                 else
                 {
@@ -359,6 +363,7 @@ namespace SemiConductor_Equipment.Services
             {
                 wafer.Status = "Error";
                 ProcessComplete(chambername, wafer, "LoadPort");
+                this.Clean_State[chambername] = "DONE";
 
                 ResultData Result = new ResultData
                 {

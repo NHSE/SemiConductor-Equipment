@@ -35,7 +35,7 @@
                     VerticalAlignment="Center"/>
                 <ui:Button x:Name="btnBack"
                     Grid.Column="1"
-                    Click="btnBack_Click"
+                    Command="{Binding ViewModel.BackCommand}"
                     MouseOverBackground="LightGray"
                     Height="34"
                     Width="44"
@@ -147,7 +147,7 @@
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </ui:DataGrid>
-                    <ui:Button Content="ADD" Click="RPTID_ADD_Clicked" Margin="0,10,10,0" HorizontalAlignment="Right" Height="30" />
+                    <ui:Button Content="ADD" Command="{Binding ViewModel.Add_RPTIDCommand}" Margin="0,10,10,0" HorizontalAlignment="Right" Height="30" />
                     </StackPanel>
             </Border>
         </Grid>

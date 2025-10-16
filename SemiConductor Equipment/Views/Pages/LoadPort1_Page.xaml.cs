@@ -54,32 +54,7 @@ namespace SemiConductor_Equipment.Views.Pages
             viewModel.AddRequested += Add_WaferLine;
             viewModel.OHT_LoadWafer += OHT_Add_WafersLine;
             viewModel.OHT_UnLoadWafer += OHT_Remove_WafersLine; ;
-        }
-
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
-
-        private void btnSetup_Click(object sender, RoutedEventArgs e) // command로 빼기
-        {
-            var carrierSetupWindow = new CarrierSetupWindow();
-            var result = carrierSetupWindow.ShowDialog();
-
-            if (result == true)
-            {
-                var selected = carrierSetupWindow.SelectedWaferSlots;
-                // 원하는 방식으로 전달
-                ViewModel.SelectedSlots = selected;
-                DrawLinesBasedOnSelectedSlots(selected);
-                ViewModel.IsSetupEnabled = false;   // Setup 비활성
-                ViewModel.IsCancelEnabled = true;   // Cancel 활성
-            }
+            viewModel.Wafer_Change += DrawLinesBasedOnSelectedSlots;
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -157,7 +132,7 @@ namespace SemiConductor_Equipment.Views.Pages
                 {
                     brush = Brushes.Red;
                 }
-
+                
                 var line = new Line
                 {
                     X1 = XStart,
