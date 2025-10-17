@@ -62,7 +62,7 @@
 ---
 
 ### 💽 **Carrier 내 Wafer 설정**  
-([Wafer 설정 가이드](docs/LoadPort.md)와 동일)
+([Wafer 설정 가이드](LoadPort.md)와 동일)
 
 1. 아래 이미지와 같이 **Setup 버튼 클릭**
    
