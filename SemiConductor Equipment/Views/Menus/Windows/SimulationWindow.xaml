@@ -12,7 +12,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
    
-    <Grid>
+    <Grid IsEnabled="{Binding ViewModel.IsProcessing}">
         <Grid.RowDefinitions>
             <RowDefinition Height="AUTO"/>
             <RowDefinition Height="AUTO"/>

@@ -37,7 +37,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         private readonly IWaferProcessCoordinator _processManager;
         private readonly IOHTManager _ohtManager;
         public byte LoadPortId => 1;
-        private bool imgflag = false;
         #endregion
 
         #region PROPERTIES
@@ -87,7 +86,7 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             this._ohtManager.Insert_Wafer += OHT_inserts_Wafer;
             this._ohtManager.Remove_Wafer += OHT_Remove_Wafer;
 
-            PropertyChanged += OnPropertyChanged;
+            this.PropertyChanged += OnPropertyChanged;
         }
         #endregion
 
@@ -101,7 +100,6 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
             this._runningStateManager.Change_State("LoadPort1", state);
             Event_Send(101);
-            _waferinfo.Clear();
             this._ohtManager._isWafer = false;
         }
         [RelayCommand]
@@ -183,24 +181,22 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             {
                 if(this.Waferinfo.Count == 0)
                 {
-                    Console.WriteLine("XX");
                     return;
                 }
 
-                this.SelectedSlots.Clear();
                 if (Application.Current.Dispatcher.CheckAccess())
                 {
-                    this.Waferinfo.Clear();
-                    this.IsSetupEnabled = true;
-                    this.IsCancelEnabled = false;
+                    EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
+                    this._runningStateManager.Change_State("LoadPort1", state);
+                    Event_Send(101);
                 }
                 else
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        this.Waferinfo.Clear();
-                        this.IsSetupEnabled = true;
-                        this.IsCancelEnabled = false;
+                        EquipmentStatusEnum state = EquipmentStatusEnum.Ready;
+                        this._runningStateManager.Change_State("LoadPort1", state);
+                        Event_Send(101);
                     });
                 }
 

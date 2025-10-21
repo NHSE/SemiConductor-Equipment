@@ -26,6 +26,12 @@ namespace SemiConductor_Equipment.Services
         private readonly ISimulationManager _simulationManager;
         private readonly IPLCManager _plcManager;
         public event EventHandler<string> Process;
+
+        private Dictionary<string, bool> LoadPort_State = new Dictionary<string, bool>()
+        {
+            ["LoadPort1"] = false,
+            ["LoadPort2"] = false
+        };
         #endregion
 
         #region PROPERTIES
@@ -173,7 +179,12 @@ namespace SemiConductor_Equipment.Services
                             if (this._runningStateManager.Get_State() != EquipmentStatusEnum.Running)
                             {
                                 sender = wafer.CurrentLocation;
-                                this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Running);
+                            }
+
+                            if (!LoadPort_State[$"LoadPort{wafer.LoadportId}"])
+                            {
+                                this._runningStateManager.Change_State($"LoadPort{wafer.LoadportId}", EquipmentStatusEnum.Running);
+                                LoadPort_State[$"LoadPort{wafer.LoadportId}"] = true;
                             }
 
                             wafer.TargetLocation = emptyCleanChamber;
@@ -248,9 +259,29 @@ namespace SemiConductor_Equipment.Services
             {
                 waferQueue.Clear();
                 if (!isError)
-                    this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Completed);
+                {
+                    foreach(var state in LoadPort_State)
+                    {
+                        if (state.Value)
+                        {
+                            this._runningStateManager.Change_State(state.Key, EquipmentStatusEnum.Completed);
+                            LoadPort_State[state.Key] = false;
+                        }
+                    }
+
+
+                }
                 else
-                    this._runningStateManager.Change_State(sender, EquipmentStatusEnum.Error);
+                {
+                    foreach (var state in LoadPort_State)
+                    {
+                        if (state.Value)
+                        {
+                            this._runningStateManager.Change_State(state.Key, EquipmentStatusEnum.Error);
+                            LoadPort_State[state.Key] = false;
+                        }
+                    }
+                }
 
                 await _robotArmManager.StopProcessing();
 

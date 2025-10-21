@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 
 namespace SemiConductor_Equipment.ViewModels.Menus.Windows
@@ -12,6 +13,7 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
     {
         #region FIELDS
         private readonly ISimulationManager _simulationManager;
+        private readonly IRunningStateManger _runningStateManger;
         private readonly IPLCManager _PLCManager;
         private readonly IOHTManager _OHTManager;
         #endregion
@@ -31,18 +33,23 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
 
         [ObservableProperty]
         public Brush _plcColor = Brushes.Red;
+
+        [ObservableProperty]
+        public bool _isProcessing = true;
         #endregion
 
         #region CONSTRUCTOR
-        public SimulationViewModel(ISimulationManager simulationManager, IPLCManager pLCManager, IOHTManager OHTManager)
+        public SimulationViewModel(ISimulationManager simulationManager, IPLCManager pLCManager, IOHTManager OHTManager, IRunningStateManger runningStateManger)
         {
             this._simulationManager = simulationManager;
             this._PLCManager = pLCManager;
             this._OHTManager = OHTManager;
+            this._runningStateManger = runningStateManger;
 
             this._simulationManager.ConfigRead += OnConfigRead;
             this._OHTManager.Server_Connect += OHT_Server_Connect;
             this._PLCManager.Server_Connect += PLC_Server_Connect;
+            this._runningStateManger.DataChange += OnDataChange;
 
             this._simulationManager.InitConfig();
         }
@@ -122,6 +129,18 @@ namespace SemiConductor_Equipment.ViewModels.Menus.Windows
             }
 
             this._PLCManager._State = state;
+        }
+
+        private void OnDataChange(object? sender, EquipmentStatusEnum e)
+        {
+            if(e == EquipmentStatusEnum.Running)
+            {
+                this.IsProcessing = false;
+            }
+            else
+            {
+                this.IsProcessing = true;
+            }
         }
         #endregion
     }

@@ -53,7 +53,7 @@ namespace SemiConductor_Equipment.Views.Pages
             viewModel.RemoveRequested += Remove_WaferLine;
             viewModel.AddRequested += Add_WaferLine;
             viewModel.OHT_LoadWafer += OHT_Add_WafersLine;
-            viewModel.OHT_UnLoadWafer += OHT_Remove_WafersLine; ;
+            viewModel.OHT_UnLoadWafer += OHT_Remove_WafersLine;
             viewModel.Wafer_Change += DrawLinesBasedOnSelectedSlots;
         }
 
