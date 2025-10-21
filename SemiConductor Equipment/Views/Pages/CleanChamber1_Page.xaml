@@ -31,7 +31,7 @@
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
                        Grid.Column="1"
-                       Click="btnBack_Click"
+                       Command="{Binding ViewModel.BackCommand}"
                        MouseOverBackground="LightGray"
                        Height="34"
                        Width="44"

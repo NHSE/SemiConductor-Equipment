@@ -12,6 +12,9 @@ using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Models;
 using Wpf.Ui.Abstractions.Controls;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -93,6 +96,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region COMMAND
+        [RelayCommand]
+        private void Back()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
+            }
+        }
         #endregion
 
         #region METHOD

@@ -31,8 +31,20 @@ namespace SemiConductor_Equipment.Services
         public string? SWVersion { get; set; } = "20250830";
         public string?[] WaferPosition { get; set; } = new string?[26];
 
-        public string?[] PJID { get; set; } = new string?[3] {"Nothing", "Nothing", "Nothing" };
-        public string?[] CJID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
+        public string?[][] PJID { get; set; } =
+        {
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray(),
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray(),
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray()
+        };
+
+        public string?[][] CJID { get; set; } =
+        {
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray(),
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray(),
+            Enumerable.Repeat<string?>("Nothing", 26).ToArray()
+        };
+
         public string?[] CarrierID { get; set; } = new string?[3] { "Nothing", "Nothing", "Nothing" };
 
         public int? Chamber1_Chemical { get; set; }
@@ -80,7 +92,7 @@ namespace SemiConductor_Equipment.Services
             int arrNum = -1;
             foreach (var vid in RPTID_data.VIDs)
             {
-                object vidData;
+                object? vidData = new object();
                 bool solution_flag = false;
 
                 if (vid != 1002 && vid != 102 && vid < 1008 && (vid != 104 && vid != 105))
@@ -123,12 +135,35 @@ namespace SemiConductor_Equipment.Services
                             )
                         );
                     }
-                        continue;
+                    continue;
                 }
 
                 else if (vid >= 100 && vid <= 116)
                     vidData = this.GetSVID(vid);
-             
+                else if(vid == 1008 || vid == 1009)
+                {
+                    if (wafer_number is IEnumerable<int> waferList)
+                    {
+                        foreach (var v in waferList)
+                        {
+                            vidData = this.GetDVID(vid, arrNum, (int)v);
+                            vidItems.Add(
+                                L(
+                                    U4((uint)rptid),
+                                    L(
+                                        A(vidData?.ToString() ?? "")
+                                    )
+                                )
+                            );
+                        }
+
+                        continue;
+                    }
+                    else
+                    {
+                        vidData = this.GetDVID(vid, arrNum, (int)wafer_number);
+                    }
+                }
                 else
                     vidData = this.GetDVID(vid, arrNum);
 
@@ -190,9 +225,24 @@ namespace SemiConductor_Equipment.Services
                 1003 => RecipeData,
                 1005 => WaferId[array_data],
                 1007 => WaferPosition[array_data],
-                1008 => PJID[array_data],
-                1009 => CJID[array_data],
                 1010 => CarrierID[array_data],
+
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// DVID의 정보를 얻는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <param name="array_data"></param>
+        /// <returns></returns>
+        public object? GetDVID(int svid, int array_data, int slot_Number)
+        {
+            return svid switch
+            {
+                1008 => PJID[array_data][slot_Number],
+                1009 => CJID[array_data][slot_Number],
 
                 _ => null
             };
@@ -303,16 +353,28 @@ namespace SemiConductor_Equipment.Services
                     WaferPosition[array_data] = data.ToString();
                     break;
 
+                case 1010:
+                    CarrierID[array_data] = data.ToString();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// DVID의 정보를 설정하는 메서드
+        /// </summary>
+        /// <param name="svid"></param>
+        /// <param name="data"></param>
+        /// <param name="array_data"></param>
+        public void SetDVID(int svid, object data, int loadport_Number, int slot_Number)
+        {
+            switch (svid)
+            {
                 case 1008:
-                    PJID[array_data] = data.ToString();
+                    PJID[loadport_Number][slot_Number] = data.ToString();
                     break;
 
                 case 1009:
-                    CJID[array_data] = data.ToString();
-                    break;
-
-                case 1010:
-                    CarrierID[array_data] = data.ToString();
+                    CJID[loadport_Number][slot_Number] = data.ToString();
                     break;
             }
         }

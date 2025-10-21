@@ -38,7 +38,7 @@
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
                    Grid.Column="1"
-                   Click="btnBack_Click"
+                   Command="{Binding ViewModel.BackCommand}"
                    MouseOverBackground="LightGray"
                    Height="34"
                    Width="44"
@@ -112,12 +112,6 @@
                                 <RotateTransform x:Name="WaferRotate" Angle="0" CenterX="100" CenterY="100"/>
                             </Image.RenderTransform>
                         </Image>
-                        <TextBlock Text="WAFER"
-                   Foreground="White"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
             </Border>

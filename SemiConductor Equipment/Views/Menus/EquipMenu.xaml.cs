@@ -145,16 +145,6 @@ namespace SemiConductor_Equipment.Views.Menus
                 }
             }
         }
-
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
         #endregion
     }
 }

@@ -23,6 +23,8 @@ namespace SemiConductor_Equipment.Services
         private readonly IMessageBox _messageBoxManager;
         private readonly IResultFileManager _resultFileManager;
         private readonly IRunningStateManger _runningStateManager;
+        private readonly ISimulationManager _simulationManager;
+        private readonly IPLCManager _plcManager;
         public event EventHandler<string> Process;
         #endregion
 
@@ -40,7 +42,8 @@ namespace SemiConductor_Equipment.Services
         /// <param name="runningStateManager"></param>
         /// <param name="resultFileManager"></param>
         public WaferProcessCoordinatorService(IChamberManager chamberManager, ICleanManager cleanManager, IRobotArmManager robotArmManager, 
-            IMessageBox messageBoxManager, IRunningStateManger runningStateManager, IResultFileManager resultFileManager)
+            IMessageBox messageBoxManager, IRunningStateManger runningStateManager, IResultFileManager resultFileManager, 
+            ISimulationManager simulationManager, IPLCManager plcManager)
         {
             this._chamberManager = chamberManager;
             this._cleanManager = cleanManager;
@@ -48,6 +51,8 @@ namespace SemiConductor_Equipment.Services
             this._messageBoxManager = messageBoxManager;
             this._runningStateManager = runningStateManager;
             this._resultFileManager = resultFileManager;
+            this._simulationManager = simulationManager;
+            this._plcManager = plcManager;
         }
         #endregion
 
@@ -81,7 +86,7 @@ namespace SemiConductor_Equipment.Services
                     if (isAllDone)
                         break;
 
-                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함
+                    // 모든 챔버 내 Clean 용액 부족하다면 테스트 시작 안함 + 통신 중간에 종료 시
                     if(_cleanManager.IsAllDisableChamber() && waferQueue.Count > 0)
                     {
                         while(waferQueue.Count != 0)
@@ -112,13 +117,47 @@ namespace SemiConductor_Equipment.Services
                             this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
 
                         }
-                        this._messageBoxManager.Show("예외 발생", "Soultion이 부족합니다.\n설정 후 다시 진행해주세요.");
+                        this._messageBoxManager.Show("예외 발생", "Solution이 부족합니다.\n설정 후 다시 진행해주세요.");
+
+                        //메세지 박스
+                        waferQueue.Clear();
+                    }
+                    else if(this._simulationManager.State && !this._plcManager._State)
+                    {
+                        while (waferQueue.Count != 0)
+                        {
+                            var wafer = waferQueue.Dequeue();
+                            wafer.Status = "Not Process";
+
+                            //결과 파일에 HasAlarm, Yield 설정 및 ErrorInfo 설정
+                            ResultData result = new ResultData
+                            {
+                                SlotNo = wafer.Wafer_Num,
+                                LoadPort = wafer.LoadportId.ToString(),
+                                CarrierID = wafer.CarrierId,
+                                CJID = wafer.CJId,
+                                PJID = wafer.PJId,
+                                ChamberName = "",
+                                PreClean_Flow = 0,
+                                Chemical_Flow = 0,
+                                RPM = 0,
+                                TargetMaxTemperature = 0,
+                                TargetMinTemperature = 0,
+                                ActualTemperature = (int)wafer.RequiredTemperature,
+                                HasAlarm = true,
+                                ErrorInfo = "No Process",
+                            };
+
+                            this._resultFileManager.InsertData("Clean", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+                            this._resultFileManager.InsertData("Dry", new LoadPortWaferKey(wafer.LoadportId, wafer.Wafer_Num), result);
+
+                        }
 
                         //메세지 박스
                         waferQueue.Clear();
                     }
 
-                    // 1. 챔버에 빈 자리가 있는지 확인
+                    // 1. Clean 빈 자리가 있는지 확인
                     string? emptyCleanChamber = _cleanManager.FindEmptySlot();
 
                     if (emptyCleanChamber != null && waferQueue.Count > 0)
@@ -150,7 +189,7 @@ namespace SemiConductor_Equipment.Services
                         }
                     }
 
-                    // 2. 챔버 완료 → 버퍼
+                    // 2. Clean 완료 → Dry
                     if (_robotArmManager.CommandSize_Chamber() > 0)
                     {
                         while (true)
@@ -181,7 +220,7 @@ namespace SemiConductor_Equipment.Services
                         }
                     }
 
-                    //버퍼 -> 로드포트
+                    //Dry or Error -> 로드포트
                     if (_robotArmManager.CommandSize_Buffer() > 0)
                     {
                         while (true)

@@ -18,11 +18,12 @@ namespace SemiConductor_Equipment.interfaces
         #region METHODS
         bool Update_Carrier_info(Wafer newWaferData);
 
+        bool Update_Carrier_Info(Wafer newWaferData, byte slot_num);
         bool Check_Running(string cjid);
 
         string GetCarrierId();
 
-        string GetPJId(byte loadportId);
+        string GetPJId(byte loadportId, int wafer_num);
 
         List<Wafer> GetAllWaferInfo(string pjid);
         #endregion

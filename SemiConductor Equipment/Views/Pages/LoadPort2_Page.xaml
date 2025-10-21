@@ -41,7 +41,7 @@
                 </StackPanel>
                 <ui:Button x:Name="btnBack"
                            Grid.Column="1"
-                           Click="btnBack_Click"
+                           Command="{Binding BackCommand}"
                            MouseOverBackground="LightGray"
                            Height="34"
                            Width="44"
@@ -81,7 +81,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Column="0">
-                            <ui:Button x:Name="btnsetup"  Content="Setup" Click="btnSetup_Click" IsEnabled="{Binding IsSetupEnabled}" Foreground="White" HorizontalAlignment="Center" Height="46" Width="103"/>
+                            <ui:Button x:Name="btnsetup"  Content="Setup" Command="{Binding SetupCommand}" IsEnabled="{Binding IsSetupEnabled}" Foreground="White" HorizontalAlignment="Center" Height="46" Width="103"/>
                         </Grid>
                         <Grid Grid.Column="1">
                             <ui:Button x:Name="btncancel" Command="{Binding CancelCommand}" IsEnabled="{Binding IsCancelEnabled}" Content="Cancel" Click="btnCancel_Click" Foreground="White" HorizontalAlignment="Center" Height="46" Width="103"/>

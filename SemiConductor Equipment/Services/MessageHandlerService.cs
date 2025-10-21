@@ -194,6 +194,12 @@ namespace SemiConductor_Equipment.Services
             else
                 return;
 
+            List<byte> slot_list = new List<byte>();
+            for(int cnt=0; cnt < msg.SecsItem[3][0][1].Count; cnt++)
+            {
+                slot_list.Add(msg.SecsItem[3][0][1][cnt].FirstValue<byte>());
+            }
+
             string recv_log = recv_logMessage + msg.ToSml();
             _logManager.WriteLog("SECS", "RECV", recv_log);
 
@@ -212,8 +218,12 @@ namespace SemiConductor_Equipment.Services
                             {
                                 PJId = pjId
                             };
-                            success = viewModel.Update_Carrier_info(waferData);
-                            _vIDManager.SetDVID(1009, pjId, (int)loadportId);
+
+                            foreach (byte slot in slot_list)
+                            {
+                                success = viewModel.Update_Carrier_Info(waferData, slot);
+                                _vIDManager.SetDVID(1008, pjId, (int)loadportId, (int)slot);
+                            }
                         }
                     });
                 }
@@ -520,34 +530,37 @@ namespace SemiConductor_Equipment.Services
                     // Dispatcher.InvokeAsync를 사용하여 비동기 처리
                     await Application.Current.Dispatcher.InvokeAsync(async () =>
                     {
-                        if (viewModel.GetPJId(loadportId) == pjId)
+                        for (byte slot_num = 1; slot_num < 26; slot_num++)
                         {
-                            var waferData = new Wafer
+                            if (viewModel.GetPJId(loadportId, (int)slot_num) == pjId)
                             {
-                                CJId = cjId
-                            };
-                            viewModel.Update_Carrier_info(waferData);
-                            _vIDManager.SetDVID(1010, cjId, (int)loadportId);
-                            // pjId로 해당 웨이퍼 리스트를 가져옴
-                            var wafers = viewModel.GetAllWaferInfo(pjId);
-
-                            // wafers가 null 또는 비어있는지 체크
-                            if (wafers == null || wafers.Count == 0)
-                                return;
-
-                            // LoadPortId로 초기화
-                            _loadPortManager.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
-
-                            // 각 웨이퍼를 큐에 등록
-                            foreach (var wafer_info in wafers)
-                            {
-                                _waferManager.Enqueue(wafer_info);
+                                var waferData = new Wafer
+                                {
+                                    CJId = cjId
+                                };
+                                viewModel.Update_Carrier_Info(waferData, slot_num);
+                                _vIDManager.SetDVID(1009, cjId, (int)loadportId, (int)slot_num);
                             }
-                            var cts = new CancellationTokenSource();
-                            var cancellationToken = cts.Token;
-                            this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
-                            await _processManager.StartProcessAsync(_waferManager.GetQueue(), cancellationToken);
                         }
+                        // pjId로 해당 웨이퍼 리스트를 가져옴
+                        var wafers = viewModel.GetAllWaferInfo(pjId);
+
+                        // wafers가 null 또는 비어있는지 체크
+                        if (wafers == null || wafers.Count == 0)
+                            return;
+
+                        // LoadPortId로 초기화
+                        _loadPortManager.SetInitialWafers($"LoadPort{wafers[0].LoadportId}", wafers);
+
+                        // 각 웨이퍼를 큐에 등록
+                        foreach (var wafer_info in wafers)
+                        {
+                            _waferManager.Enqueue(wafer_info);
+                        }
+                        var cts = new CancellationTokenSource();
+                        var cancellationToken = cts.Token;
+                        this._logManager.SetTime(DateTime.Now.ToString("yyyyMMddss_HHmmss"));
+                        await _processManager.StartProcessAsync(_waferManager.GetQueue(), cancellationToken);
                     });
                 }
             }
@@ -661,7 +674,7 @@ namespace SemiConductor_Equipment.Services
                 string send_errorlog = send_logMessage + reply.ToSml();
                 _logManager.WriteLog("SECS", "SEND", send_errorlog);
 
-                _vIDManager.SetDVID(1008, carrierId, (int)loadportId);
+                _vIDManager.SetDVID(1010, carrierId, (int)loadportId);
             }
         }
 

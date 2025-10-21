@@ -13,7 +13,7 @@ namespace SemiConductor_Equipment.Enums
         {
             CS = 0b0000_0001,
             VALID = 0b0000_0010,
-            L_REQ = 0b0000_0011,
+            REQ = 0b0000_0011,
             TR_REQ = 0b0000_0100,
             READY = 0b0000_0101,
             BUSY = 0b0000_0111,

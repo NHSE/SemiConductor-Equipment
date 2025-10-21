@@ -9,11 +9,14 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using SemiConductor_Equipment.Enums;
 using SemiConductor_Equipment.interfaces;
 using SemiConductor_Equipment.Messages;
 using SemiConductor_Equipment.Models;
 using SemiConductor_Equipment.Services;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.Views.Windows;
 using static SemiConductor_Equipment.Models.EventInfo;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
@@ -24,7 +27,9 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         public event EventHandler<Wafer> RemoveRequested;
         public event EventHandler<Wafer> AddRequested;
         public event EventHandler<List<int>> OHT_LoadWafer;
+        public event Action<List<int>> Wafer_Change;
         public event Action OHT_UnLoadWafer;
+
         private readonly IRobotArmManager _robotArmManager;
         private readonly IRunningStateManger _runningStateManager;
         private readonly IVIDManager _vIDManager;
@@ -99,6 +104,34 @@ namespace SemiConductor_Equipment.ViewModels.Pages
             _waferinfo.Clear();
             this._ohtManager._isWafer = false;
         }
+        [RelayCommand]
+        private void Back()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
+            }
+        }
+
+        [RelayCommand]
+        private void Setup()
+        {
+            var carrierSetupWindow = new CarrierSetupWindow();
+            var result = carrierSetupWindow.ShowDialog();
+
+            if (result == true)
+            {
+                var selected = carrierSetupWindow.SelectedWaferSlots;
+                // 원하는 방식으로 전달
+                SelectedSlots = selected;
+                Wafer_Change?.Invoke(selected);
+                IsSetupEnabled = false;   // Setup 비활성
+                IsCancelEnabled = true;   // Cancel 활성
+            }
+        }
+
         #endregion
 
         #region METHOD
@@ -177,8 +210,54 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         }
 
         /// <summary>
+        /// Carrier 정보 및 Carrier 내 PJID 정보 저장 메서드
+        /// S16F11에 따라 값 변경
+        /// </summary>
+        /// <param name="newWaferData"></param>
+        /// <returns></returns>
+        public bool Update_Carrier_Info(Wafer newWaferData, byte slot_num)
+        {
+            if (SelectedSlots == null || SelectedSlots.Count == 0)
+            {
+                return false;
+            }
+            
+            var existingWafer = this.Waferinfo.FirstOrDefault(w =>
+                w.LoadportId == this.LoadPortId && w.Wafer_Num == (int)slot_num);
+
+            if (existingWafer != null)
+            {
+                // 필요한 값만 갱신
+                if (!string.IsNullOrEmpty(newWaferData.CarrierId))
+                {
+                    existingWafer.CarrierId = newWaferData.CarrierId;
+                    this.CarrierId = existingWafer.CarrierId;
+                }
+                if (!string.IsNullOrEmpty(newWaferData.PJId))
+                    existingWafer.PJId = newWaferData.PJId;
+                if (!string.IsNullOrEmpty(newWaferData.CJId))
+                    existingWafer.CJId = newWaferData.CJId;
+                if (!string.IsNullOrEmpty(newWaferData.SlotId))
+                    existingWafer.SlotId = newWaferData.SlotId;
+                if (!string.IsNullOrEmpty(newWaferData.LotId))
+                    existingWafer.LotId = newWaferData.LotId;
+
+                if (existingWafer.SlotId != string.Empty)
+                {
+                    this._vIDManager.SetDVID(1005, existingWafer.SlotId, existingWafer.Wafer_Num);
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Carrier 정보 및 Carrier 내 웨이퍼 정보 저장 메서드
-        /// S3F17, S14F9, S16F11에 따라 값 변경
+        /// S3F17, S14F9에 따라 값 변경
         /// </summary>
         /// <param name="newWaferData"></param>
         /// <returns></returns>
@@ -367,10 +446,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         /// PJID 요청 메서드
         /// </summary>
         /// <param name="loadportId"></param>
+        /// <param name="wafer_num"></param>
         /// <returns>PJID</returns>
-        public string GetPJId(byte loadportId)
+        public string GetPJId(byte loadportId, int wafer_num)
         {
-            var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId);
+            var wafer = Waferinfo.FirstOrDefault(w => w.LoadportId == loadportId && w.Wafer_Num == wafer_num);
             return wafer?.PJId ?? "";
         }
 

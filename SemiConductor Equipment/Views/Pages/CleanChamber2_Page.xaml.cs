@@ -42,16 +42,6 @@ namespace SemiConductor_Equipment.Views.Pages
 
         #region METHOD
 
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
-
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Load_Chemical();

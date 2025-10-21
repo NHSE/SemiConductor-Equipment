@@ -20,6 +20,9 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Defaults;
+using Microsoft.Extensions.DependencyInjection;
+using SemiConductor_Equipment.Views.Pages;
+using SemiConductor_Equipment.Views.Windows;
 
 namespace SemiConductor_Equipment.ViewModels.Pages
 {
@@ -127,6 +130,16 @@ namespace SemiConductor_Equipment.ViewModels.Pages
         #endregion
 
         #region COMMAND
+        [RelayCommand]
+        private void Back()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                var mainPage = App.Services.GetRequiredService<MainPage>();
+                mainWindow.MainFrame.Navigate(mainPage);
+            }
+        }
         #endregion
 
         #region METHOD
@@ -213,14 +226,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                     {
                         this.IsWafer = true;
                     }
-                    else if(chamber.State == "DONE")
+                    else if(chamber.State == "IDLE")
                     {
                         this.IsWafer = false;
+                        this.Series.Clear();
                     }
-
-                    this.StatusText = chamber.State;
-
-                    this.Series.Clear();
 
                     if (!waferDataDict.ContainsKey(chamber.WaferName))
                     {
@@ -234,6 +244,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                             Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                         });
                     }
+
+                    this.StatusText = chamber.State;
                 }
                 else
                 {
@@ -243,13 +255,11 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                         {
                             this.IsWafer = true;
                         }
-                        else if (chamber.State == "DONE")
+                        else if (chamber.State == "IDLE")
                         {
                             this.IsWafer = false;
+                            this.Series.Clear();
                         }
-
-                        this.StatusText = chamber.State;
-                        this.Series.Clear();
 
                         if (!waferDataDict.ContainsKey(chamber.WaferName))
                         {
@@ -263,6 +273,8 @@ namespace SemiConductor_Equipment.ViewModels.Pages
                                 Name = chamber.WaferName.ToString() // 혹은 Wafer_Num 등
                             });
                         }
+
+                        this.StatusText = chamber.State;
                     });
                 }
             }

@@ -32,7 +32,6 @@ namespace SemiConductor_Equipment.Views.Menus
         #region FIELDS
         public EventMenusViewModel ViewModel { get; set; }
         private readonly CEIDModifyWindow _ceidWindow;
-        private readonly CEIDModifyViewModel _ceidViewModel;
         private readonly IEventConfigManager _configManager;
         #endregion
 
@@ -47,7 +46,6 @@ namespace SemiConductor_Equipment.Views.Menus
             DataContext = this;
 
             this._ceidWindow = ceidWindow;
-            this._ceidViewModel = ceidViewModel;
             this._configManager = configManager;
         }
         #endregion
@@ -56,15 +54,6 @@ namespace SemiConductor_Equipment.Views.Menus
         #endregion
 
         #region METHOD
-        private void btnBack_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                var mainPage = App.Services.GetRequiredService<MainPage>();
-                mainWindow.MainFrame.Navigate(mainPage);
-            }
-        }
 
         private void CEID_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -114,15 +103,6 @@ namespace SemiConductor_Equipment.Views.Menus
                     window.ShowDialog();
                 }
             }
-        }
-
-        private void RPTID_ADD_Clicked(object sender, RoutedEventArgs e)
-        {
-            var vm = App.Services.GetRequiredService<RPTIDAddViewModel>();
-            vm.Clear();
-            var window = new RPTIDAddWindow(vm);
-            window.SetItem();
-            window.ShowDialog();
         }
         #endregion
     }
