@@ -52,21 +52,9 @@ SECS/GEM 통신을 포함하여 장비 상태 모니터링, 데이터 관리, �
 ## 🛠 사용 방법
 ### 1. 저장소 Clone 및 설치 방법
 
-(git, dotnet이 설치가 되어 있지 않다면 설치 후 진행해주세요)
+Releases 파일 저장 -> 압축 해제
 
-- git : [Download](https://git-scm.com/downloads)  
-- dotnet : [Download](https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.304/dotnet-sdk-9.0.304-win-x64.exe)
-```bash
-
-git clone --branch master https://github.com/NHSE/SemiConductor-Equipment.git
-cd SemiConductor-Equipment/SemiConductor Equipment
-
-2. 빌드
-dotnet build
-
-3. 실행
-dotnet run
-```
+2026.03.28 - [v1.0](https://github.com/NHSE/SemiConductor-Equipment/releases/tag/v1.0.0)
 
 ### 2. 📡 SECS/GEM 통신 방법
 
